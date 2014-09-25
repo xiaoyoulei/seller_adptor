@@ -3,17 +3,88 @@
 
 namespace cpp internal
 
+struct Media {
+	1: required string appsid,
+	2: required string channel_id,
+}
+struct Size {
+	1: i32 width ,
+	2: i32 height
+}
+
+// 广告位类型
+enum AdSlotType {
+	BANNER = 1,
+	OFFERWALL = 2,
+	RECOMMEND = 3,
+	INTERSTITIAL = 4
+}
+// 广告位风格
+enum AdSlotStyle {
+	TEXT = 1,
+	IMAGE = 2,
+	ICON_TEXT = 3,
+	SMART_AD = 4,
+	VIDEO = 5
+}
+struct AdSlot {
+	1: string id,
+	2: AdSlotType type,
+	3: list<AdSlotStyle> style,
+	4: Size size,
+	5: optional set<i32> templates,
+	6: optional i32 ad_count = 1,
+}
+// 操作系统类型
+enum OSType {
+	UNKNOWN = 0,  // 未知或其他系统
+	ANDROID = 1,  // 安卓
+	IOS = 2,  // iOS
+	WP = 3,  // Windows Phone
+}
+
+// 设备ID类型
+enum DeviceIDType {
+	IMEI = 1,
+	MAC = 2,
+	IDFA = 3,
+	AAID = 4,
+	OPENUDID = 5,
+	ANDROIDID = 6,
+	UDID = 7,
+	ODIN = 8,
+	DUID = 9,
+}
+// 设备ID
+struct DeviceID {
+	1: DeviceIDType type,  // 设备ID类型
+	2: string id,  // 设备ID
+	3: bool compact,  // 是否精简编码（对MAC等有辅助字符的ID生效）
+	4: bool md5  // 是否使用MD5签名
+}
+struct Device {
+	1: required OSType os,
+	2: optional string osv,
+	3: list<DeviceID> dev_id
+}
+enum NetworkType {
+	WIFI = 1,
+	CELLULAR_UNKNOWN = 2,
+	CELLULAR_2G = 3,
+	CELLULAR_3G = 4,
+	CELLULAR_4G = 5
+}
+struct Network {
+	1: string ip,
+	2: optional NetworkType type,
+	3: optional i32 cellular_operator,
+	4: optional string cellular_id,
+}
 struct BSRequest {
-	1: optional string searchid,
-	2: optional string userid,
-	3: optional string sequence_id,
-	4: optional string cookie,
-	5: optional string ad_block_id,
-	6: optional i32	width,
-	7: optional i32 height,
-	8: optional string os,
-	9: optional string osv,
-	10:optional string ip
+	1: required string searchid,
+	2: required Media  media,
+	3: required AdSlot adslot,
+	4: required Device device,
 }
 
 struct Ad {
@@ -41,6 +112,5 @@ struct BSResponse {
 }
 
 service BSService {
-	void search2(),
 	BSResponse search(1:BSRequest req)
 }

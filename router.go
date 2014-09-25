@@ -20,6 +20,11 @@ func CallbackTanx(resp http.ResponseWriter, req *http.Request) {
 	parser.ParseTanxRequest(req, inner_data)
 	reqads.ReqBs(inner_data)
 	pack.PackTanxResponse(inner_data)
-	resp.Write([]byte("hello"))
+	if len(inner_data.Resp.Ads) > 0 {
+		resp.Write([]byte("get one ad" + inner_data.Resp.Ads[0].Title))
+		log.Println(inner_data.Resp.Ads)
+	} else {
+		resp.Write([]byte("hello"))
+	}
 	return
 }
