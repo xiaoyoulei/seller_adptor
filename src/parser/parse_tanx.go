@@ -1,9 +1,11 @@
 package parser
 
-import(
-	  "net/http"
-	  "context"
-		)
+import (
+	"context"
+	"net/http"
+)
 
-func ParseTanxRequest (req *http.Request, inner_data* context.Context) {
+func ParseTanxRequest(req *http.Request, inner_data *context.Context) (err error) {
+
+	return
 }

@@ -1,15 +1,16 @@
 package main
 
-import(
-	"log"	
+import (
+	"log"
 	"net/http"
-		)
+)
 
-func main () {
+func main() {
 
+	log.SetFlags(log.Lshortfile | log.LstdFlags)
 	log.Println("start server")
-	
+
 	InitServer()
-	http.HandleFunc("/", CallbackTanx)
+	http.HandleFunc("/", CallbackJesgoo)
 	http.ListenAndServe(":8081", nil)
 }

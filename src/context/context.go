@@ -23,7 +23,7 @@ type NetworkInfo struct {
 type OSType int64
 
 const (
-	OSType_UNKNOW  OSType = 0
+	OSType_UNKNOWN OSType = 0
 	OSType_ANDROID OSType = 1
 	OSType_IOS     OSType = 2
 	OSType_WP      OSType = 3
@@ -86,6 +86,8 @@ type InnerResp struct {
 
 type Context struct {
 	Searchid string
+	ReqBody  []byte
 	Req      InnerReq
 	Resp     InnerResp
+	RespBody []byte
 }

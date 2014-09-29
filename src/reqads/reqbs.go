@@ -2,11 +2,17 @@ package reqads
 
 import (
 	"context"
+	"errors"
 	"github.com/apache/thrift/lib/go/thrift"
 	"log"
 	"net"
 	"ui2bs"
 )
+
+type ReqBSModule struct {
+	//	Init(inner_data *context.Context)
+	//	Run(inner_data *context.Context)
+}
 
 var transportFactory thrift.TTransportFactory
 var protocolFactory *thrift.TBinaryProtocolFactory
@@ -30,13 +36,16 @@ func InitReqBs(host string, port string) {
 	if err != nil {
 		log.Fatal("open transport fail")
 	}
+	return
 
 }
 
-func pack_req(inner_data *context.Context, bs_req *ui2bs.BSRequest) {
-	bs_req.Media = new(ui2bs.Media)
-	bs_req.Device = new(ui2bs.Device)
-	bs_req.Adslot = new(ui2bs.AdSlot)
+func pack_req(inner_data *context.Context, bs_req *ui2bs.BSRequest) (err error) {
+	if bs_req == nil || bs_req.Media == nil || bs_req.Device == nil || bs_req.Adslot == nil {
+		log.Println("bs_req is null")
+		err = errors.New("bs_req is null")
+		return
+	}
 	bs_req.Searchid = inner_data.Searchid
 	bs_req.Media.Appsid = inner_data.Req.MediaT.Appsid
 	bs_req.Media.ChannelId = inner_data.Req.MediaT.ChannelId
@@ -44,13 +53,37 @@ func pack_req(inner_data *context.Context, bs_req *ui2bs.BSRequest) {
 	bs_req.Adslot.Size = new(ui2bs.Size)
 	bs_req.Adslot.Size.Width = inner_data.Req.AdSlotT.Size.Width
 	bs_req.Adslot.Size.Height = inner_data.Req.AdSlotT.Size.Height
-	//	bs_req.Device.Os = inner_data.Req.DeviceT.OSTypeT
-	//	bs_req.Device.Osv = inner_data.Req.DeviceT.OSVersion
-	//	var temp_device_id context.DeviceID
-	//	temp_device_id.DevIDType = inner_data.Req.DeviceT.DevIDType
-	//	temp_device_id.ID = inner_data.Req.DeviceT.ID
-	//	bs_req.Device.DevID = make(context.Req.DeviceT.DeviceID, 0)
-	//	append(bs_req.Device.DevID, temp_device_id)
+	switch inner_data.Req.DeviceT.OSTypeT {
+	case context.OSType_ANDROID:
+		bs_req.Device.Os = ui2bs.OSType_ANDROID
+	case context.OSType_IOS:
+		bs_req.Device.Os = ui2bs.OSType_IOS
+	case context.OSType_WP:
+		bs_req.Device.Os = ui2bs.OSType_WP
+	default:
+		bs_req.Device.Os = ui2bs.OSType_UNKNOWN
+	}
+	bs_req.Device.Osv = inner_data.Req.DeviceT.OSVersion
+	var temp_device_id *ui2bs.DeviceID
+	temp_device_id = new(ui2bs.DeviceID)
+	if len(inner_data.Req.DeviceT.DevID) > 0 {
+		switch inner_data.Req.DeviceT.DevID[0].DevIDType {
+		case context.DeviceIDType_IMEI:
+			temp_device_id.TypeA1 = ui2bs.DeviceIDType_IMEI
+		case context.DeviceIDType_MAC:
+			temp_device_id.TypeA1 = ui2bs.DeviceIDType_MAC
+		case context.DeviceIDType_IDFA:
+			temp_device_id.TypeA1 = ui2bs.DeviceIDType_IDFA
+		default:
+			// 临时方案，之后会增加不同类型ID
+			temp_device_id.TypeA1 = ui2bs.DeviceIDType_AAID
+		}
+		temp_device_id.Id = inner_data.Req.DeviceT.DevID[0].ID
+	}
+	bs_req.Device.DevId = make([]*ui2bs.DeviceID, 0)
+	bs_req.Device.DevId = append(bs_req.Device.DevId, temp_device_id)
+	log.Println(bs_req)
+	return
 
 }
 func convert_resp_ad(inad *context.AdInfo, bsad *ui2bs.Ad) {
@@ -86,20 +119,37 @@ func parse_resp(inner_data *context.Context, bs_resp *ui2bs.BSResponse) {
 
 }
 
-func ReqBs(inner_data *context.Context) {
+func ReqBs(inner_data *context.Context) (err error) {
 
 	bs_req := new(ui2bs.BSRequest)
+	bs_req.Media = new(ui2bs.Media)
+	bs_req.Device = new(ui2bs.Device)
+	bs_req.Adslot = new(ui2bs.AdSlot)
 
 	bs_resp := new(ui2bs.BSResponse)
 	InitReqBs("218.244.131.175", "8900")
 	transport.Open()
 	defer transport.Close()
-	pack_req(inner_data, bs_req)
+	err = pack_req(inner_data, bs_req)
+	log.Println(bs_req)
+	if err != nil {
+		log.Println(err)
+		return
+	}
 	bs_resp, err = client.Search(bs_req)
 	if err != nil {
 		log.Println("request bs fail")
 		log.Println(err)
 	}
 	parse_resp(inner_data, bs_resp)
+	return
+}
+
+func (this ReqBSModule) Run(inner_data *context.Context) (err error) {
+	err = ReqBs(inner_data)
+	return
+}
+func (this ReqBSModule) Init(inner_data *context.Context) (err error) {
+	InitReqBs("218.244.131.175", "8900")
 	return
 }
