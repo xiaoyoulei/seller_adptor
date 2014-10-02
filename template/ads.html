@@ -1,1 +1,16 @@
-ni hao
+<div style="max-width:100%;font-size:100%;">
+
+	<div style='margin:0;border:1px solid #ebebeb;position:relative;overflow:hidden;padding:0.2em 0 0.2em 1.3em;'>
+		<a target="_blank" href="{{.ClickUrl}}" style="text-decoration: none;line-height:0;">
+			<span style="white-space:nowrap;font-family:Microsoft YaHei;font-size:150%;">
+				<span style="font-weight:bold;color:#003399;line-height:1.2em;">{{.Title}}</span><br>
+				<span style="color:#999;font-size:63%;line-height:1.2em;">{{.Description1}}</span>
+			</span>
+		</a>
+		<img src="http://mobads.baidu.com/ads/img/logo_bottom_left.png" style="position:absolute;bottom:0;left:0;width:7.4em;height:1.2em;margin-left:-5.6em;">
+	</div>
+	{%if $ad.show_log_url ne ""%}
+	<img src="{%$ad.show_log_url%}&win_src=1" style="display:none;">
+	{%/if%}
+</div>
+
