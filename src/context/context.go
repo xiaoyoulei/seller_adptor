@@ -49,15 +49,15 @@ type DeviceID struct {
 }
 
 type Device struct {
-	OSTypeT   OSType
+	OSType    OSType
 	OSVersion string
 	DevID     []DeviceID
 }
 type InnerReq struct {
-	MediaT   MediaInfo
-	AdSlotT  AdSlotInfo
-	NetworkT NetworkInfo
-	DeviceT  Device
+	Media   MediaInfo
+	AdSlot  AdSlotInfo
+	Network NetworkInfo
+	Device  Device
 }
 
 type AdInfo struct {
@@ -85,9 +85,15 @@ type InnerResp struct {
 }
 
 type Context struct {
-	Searchid string
-	ReqBody  []byte
-	Req      InnerReq
-	Resp     InnerResp
-	RespBody []byte
+	Searchid  string
+	ReqBody   []byte
+	Req       InnerReq
+	Resp      InnerResp
+	BaiduAds  []AdInfo
+	JesgooAds []AdInfo
+	RespBody  []byte
+}
+
+// 服务器全局信息
+type GlobalContext struct {
 }

@@ -10,8 +10,6 @@ import (
 )
 
 type ReqBSModule struct {
-	//	Init(inner_data *context.Context)
-	//	Run(inner_data *context.Context)
 }
 
 var transportFactory thrift.TTransportFactory
@@ -21,7 +19,7 @@ var useTransport thrift.TTransport
 var client *ui2bs.BSServiceClient
 var err error
 
-func InitReqBs(host string, port string) {
+func (this *ReqBSModule) InitReqBs(host string, port string) {
 
 	transportFactory = thrift.NewTFramedTransportFactory(thrift.NewTTransportFactory())
 	protocolFactory = thrift.NewTBinaryProtocolFactoryDefault()
@@ -40,20 +38,20 @@ func InitReqBs(host string, port string) {
 
 }
 
-func pack_req(inner_data *context.Context, bs_req *ui2bs.BSRequest) (err error) {
+func (this *ReqBSModule) pack_req(inner_data *context.Context, bs_req *ui2bs.BSRequest) (err error) {
 	if bs_req == nil || bs_req.Media == nil || bs_req.Device == nil || bs_req.Adslot == nil {
 		log.Println("bs_req is null")
 		err = errors.New("bs_req is null")
 		return
 	}
 	bs_req.Searchid = inner_data.Searchid
-	bs_req.Media.Appsid = inner_data.Req.MediaT.Appsid
-	bs_req.Media.ChannelId = inner_data.Req.MediaT.ChannelId
-	bs_req.Adslot.Id = inner_data.Req.AdSlotT.Slotid
+	bs_req.Media.Appsid = inner_data.Req.Media.Appsid
+	bs_req.Media.ChannelId = inner_data.Req.Media.ChannelId
+	bs_req.Adslot.Id = inner_data.Req.AdSlot.Slotid
 	bs_req.Adslot.Size = new(ui2bs.Size)
-	bs_req.Adslot.Size.Width = inner_data.Req.AdSlotT.Size.Width
-	bs_req.Adslot.Size.Height = inner_data.Req.AdSlotT.Size.Height
-	switch inner_data.Req.DeviceT.OSTypeT {
+	bs_req.Adslot.Size.Width = inner_data.Req.AdSlot.Size.Width
+	bs_req.Adslot.Size.Height = inner_data.Req.AdSlot.Size.Height
+	switch inner_data.Req.Device.OSType {
 	case context.OSType_ANDROID:
 		bs_req.Device.Os = ui2bs.OSType_ANDROID
 	case context.OSType_IOS:
@@ -63,11 +61,11 @@ func pack_req(inner_data *context.Context, bs_req *ui2bs.BSRequest) (err error) 
 	default:
 		bs_req.Device.Os = ui2bs.OSType_UNKNOWN
 	}
-	bs_req.Device.Osv = inner_data.Req.DeviceT.OSVersion
+	bs_req.Device.Osv = inner_data.Req.Device.OSVersion
 	var temp_device_id *ui2bs.DeviceID
 	temp_device_id = new(ui2bs.DeviceID)
-	if len(inner_data.Req.DeviceT.DevID) > 0 {
-		switch inner_data.Req.DeviceT.DevID[0].DevIDType {
+	if len(inner_data.Req.Device.DevID) > 0 {
+		switch inner_data.Req.Device.DevID[0].DevIDType {
 		case context.DeviceIDType_IMEI:
 			temp_device_id.TypeA1 = ui2bs.DeviceIDType_IMEI
 		case context.DeviceIDType_MAC:
@@ -78,7 +76,7 @@ func pack_req(inner_data *context.Context, bs_req *ui2bs.BSRequest) (err error) 
 			// 临时方案，之后会增加不同类型ID
 			temp_device_id.TypeA1 = ui2bs.DeviceIDType_AAID
 		}
-		temp_device_id.Id = inner_data.Req.DeviceT.DevID[0].ID
+		temp_device_id.Id = inner_data.Req.Device.DevID[0].ID
 	}
 	bs_req.Device.DevId = make([]*ui2bs.DeviceID, 0)
 	bs_req.Device.DevId = append(bs_req.Device.DevId, temp_device_id)
@@ -86,7 +84,7 @@ func pack_req(inner_data *context.Context, bs_req *ui2bs.BSRequest) (err error) 
 	return
 
 }
-func convert_resp_ad(inad *context.AdInfo, bsad *ui2bs.Ad) {
+func (this *ReqBSModule) convert_resp_ad(inad *context.AdInfo, bsad *ui2bs.Ad) {
 	inad.Adid = bsad.Adid
 	inad.Groupid = bsad.Groupid
 	inad.Planid = bsad.Groupid
@@ -105,21 +103,19 @@ func convert_resp_ad(inad *context.AdInfo, bsad *ui2bs.Ad) {
 	inad.ImpressionUrl = ""
 }
 
-func parse_resp(inner_data *context.Context, bs_resp *ui2bs.BSResponse) {
-	var inner_resp *context.InnerResp
-	inner_resp = &inner_data.Resp
-	inner_resp.Ads = make([]context.AdInfo, 0)
+func (this *ReqBSModule) parse_resp(inner_data *context.Context, bs_resp *ui2bs.BSResponse) {
+	inner_data.JesgooAds = make([]context.AdInfo, 0)
 	var ad_num int
 	ad_num = len(bs_resp.Ads)
 	for i := 0; i < ad_num; i++ {
 		var tmpad context.AdInfo
-		convert_resp_ad(&tmpad, bs_resp.Ads[i])
-		inner_resp.Ads = append(inner_resp.Ads, tmpad)
+		this.convert_resp_ad(&tmpad, bs_resp.Ads[i])
+		inner_data.JesgooAds = append(inner_data.JesgooAds, tmpad)
 	}
 
 }
 
-func ReqBs(inner_data *context.Context) (err error) {
+func (this *ReqBSModule) ReqBs(inner_data *context.Context) (err error) {
 
 	bs_req := new(ui2bs.BSRequest)
 	bs_req.Media = new(ui2bs.Media)
@@ -127,10 +123,10 @@ func ReqBs(inner_data *context.Context) (err error) {
 	bs_req.Adslot = new(ui2bs.AdSlot)
 
 	bs_resp := new(ui2bs.BSResponse)
-	InitReqBs("218.244.131.175", "8900")
+	this.InitReqBs("218.244.131.175", "8900")
 	transport.Open()
 	defer transport.Close()
-	err = pack_req(inner_data, bs_req)
+	err = this.pack_req(inner_data, bs_req)
 	log.Println(bs_req)
 	if err != nil {
 		log.Println(err)
@@ -141,15 +137,17 @@ func ReqBs(inner_data *context.Context) (err error) {
 		log.Println("request bs fail")
 		log.Println(err)
 	}
-	parse_resp(inner_data, bs_resp)
+	this.parse_resp(inner_data, bs_resp)
+	log.Println("bs return :")
+	log.Println(bs_resp)
 	return
 }
 
-func (this ReqBSModule) Run(inner_data *context.Context) (err error) {
-	err = ReqBs(inner_data)
+func (this *ReqBSModule) Run(inner_data *context.Context) (err error) {
+	err = this.ReqBs(inner_data)
 	return
 }
-func (this ReqBSModule) Init(inner_data *context.Context) (err error) {
-	InitReqBs("218.244.131.175", "8900")
+func (this *ReqBSModule) Init(inner_data *context.GlobalContext) (err error) {
+	this.InitReqBs("218.244.131.175", "8900")
 	return
 }

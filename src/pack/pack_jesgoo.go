@@ -46,6 +46,6 @@ func (this PackJesgooResponseModule) Run(inner_data *context.Context) (err error
 	return
 }
 
-func (this PackJesgooResponseModule) Init(inner_data *context.Context) (err error) {
+func (this PackJesgooResponseModule) Init(inner_data *context.GlobalContext) (err error) {
 	return
 }

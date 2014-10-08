@@ -23,7 +23,7 @@ type SellerReponse struct {
 	Search_id string
 }
 
-func (this PackJesgooResponseJsonModule) Init(inner_data *context.Context) (err error) {
+func (this PackJesgooResponseJsonModule) Init(inner_data *context.GlobalContext) (err error) {
 	return
 }
 
@@ -48,6 +48,8 @@ func (this PackJesgooResponseJsonModule) Run(inner_data *context.Context) (err e
 		}
 		temp_ad.Html_snippet = temp_html.String()
 		temp_resp.Ads = append(temp_resp.Ads, temp_ad)
+	} else {
+		log.Println("ads num is 0 ")
 	}
 	inner_data.RespBody, err = json.Marshal(temp_resp)
 	return

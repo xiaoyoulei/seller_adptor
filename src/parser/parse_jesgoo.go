@@ -41,6 +41,6 @@ func (this ParseJesgooRequestModule) Run(inner_data *context.Context) (err error
 	return
 }
 
-func (this ParseJesgooRequestModule) Init(inner_data *context.Context) (err error) {
+func (this ParseJesgooRequestModule) Init(inner_data *context.GlobalContext) (err error) {
 	return
 }

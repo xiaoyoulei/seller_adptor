@@ -11,6 +11,7 @@ func main() {
 	log.Println("start server")
 
 	InitServer()
-	http.HandleFunc("/", CallbackJesgoo)
+	http.HandleFunc("/v1/protobuf", CallbackJesgoo)
+	http.HandleFunc("/v1/json", CallbackJesgooJson)
 	http.ListenAndServe(":8081", nil)
 }
