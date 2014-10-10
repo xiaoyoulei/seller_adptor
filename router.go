@@ -23,7 +23,8 @@ func InitServer() {
 	log.Println("init server succ")
 	var global_context context.GlobalContext
 	jesgoo_models = append(jesgoo_models, &parser.ParseJesgooRequestModule{})
-	jesgoo_models = append(jesgoo_models, &reqads.ReqBSModule{})
+	//	jesgoo_models = append(jesgoo_models, &reqads.ReqBSModule{})
+	jesgoo_models = append(jesgoo_models, &reqads.ReqQiushiModule{})
 	jesgoo_models = append(jesgoo_models, &rank.RankModule{})
 	jesgoo_models = append(jesgoo_models, &pack.PackJesgooResponseModule{})
 

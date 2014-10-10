@@ -3,22 +3,51 @@ package context
 type AppInfo struct {
 	PackageName string
 }
+
+type MediaType int64
+
+const (
+	MediaType_APP MediaType = 1
+	MediaType_WEB MediaType = 2
+	MediaType_WAP MediaType = 3
+)
+
 type MediaInfo struct {
 	Appsid    string
 	ChannelId string
+	MediaType MediaType
 	App       AppInfo
 }
 type SizeInfo struct {
 	Width  int32
 	Height int32
 }
+type AdSlotType int64
+
+const (
+	AdSlotType_BANNER    AdSlotType = 1
+	AdSlotType_OFFERWALL AdSlotType = 2
+	AdSlotType_RECOMMEND AdSlotType = 3
+)
+
 type AdSlotInfo struct {
-	Slotid string
-	Size   SizeInfo
+	Slotid     string
+	AdSlotType AdSlotType
+	Size       SizeInfo
 }
+type NetworkType int64
+
+const (
+	NetworkType_WIFI    NetworkType = 1
+	NetworkType_UNKNOWN NetworkType = 2
+	NetworkType_2G      NetworkType = 3
+	NetworkType_3G      NetworkType = 4
+	NetworkType_4G      NetworkType = 5
+)
+
 type NetworkInfo struct {
 	Ip          string
-	NetworkType int
+	NetworkType NetworkType
 }
 type OSType int64
 
@@ -41,6 +70,7 @@ const (
 	DeviceIDType_UDID      DeviceIDType = 7
 	DeviceIDType_ODIN      DeviceIDType = 8
 	DeviceIDType_DUID      DeviceIDType = 9
+	DeviceIDType_UNKNOWN   DeviceIDType = 10
 )
 
 type DeviceID struct {
@@ -60,7 +90,18 @@ type InnerReq struct {
 	Device  Device
 }
 
+type AdType int64
+
+const (
+	TEXT      AdType = 1
+	IMAGE     AdType = 2
+	HTML      AdType = 3
+	VIDEO     AdType = 4
+	TEXT_ICON AdType = 5
+)
+
 type AdInfo struct {
+	AdType        AdType
 	Adid          int64
 	Groupid       int64
 	Planid        int64
@@ -78,7 +119,7 @@ type AdInfo struct {
 	LogoUrl       string
 	LogoSize      SizeInfo
 	ClickUrl      string
-	ImpressionUrl string
+	ImpressionUrl []string
 }
 type InnerResp struct {
 	Ads []AdInfo

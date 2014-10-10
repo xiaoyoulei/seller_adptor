@@ -100,7 +100,7 @@ func (this *ReqBSModule) convert_resp_ad(inad *context.AdInfo, bsad *ui2bs.Ad) {
 	inad.ImageUrl = bsad.ImgUrl
 	inad.LogoUrl = bsad.AppLogo
 	inad.ClickUrl = bsad.TargetUrl
-	inad.ImpressionUrl = ""
+	//inad.ImpressionUrl = ""
 }
 
 func (this *ReqBSModule) parse_resp(inner_data *context.Context, bs_resp *ui2bs.BSResponse) {

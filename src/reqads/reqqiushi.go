@@ -35,7 +35,8 @@ func (this *ReqQiushiModule) packreq(request *mobads_api.BidRequest, inner_data 
 	app_static_info.BundleId = new(string)
 	*app_static_info.BundleId = "com.jesgoo.app"
 	app_tmp.Id = new(string)
-	*app_tmp.Id = "10042c1f"
+	//	*app_tmp.Id = "10042c1f"
+	*app_tmp.Id = "fa117bd6"
 
 	//device parament
 	request.Device = new(mobads_api.Device)
@@ -44,7 +45,7 @@ func (this *ReqQiushiModule) packreq(request *mobads_api.BidRequest, inner_data 
 	*device_tmp.Type = mobads_api.Device_PHONE
 	device_tmp.Os = new(mobads_api.Device_Os)
 	*device_tmp.Os = mobads_api.Device_ANDROID
-	*version_tmp.Major = 1
+	*version_tmp.Major = 4
 	device_tmp.OsVersion = new(mobads_api.Version)
 	device_tmp.OsVersion.Major = new(uint32)
 	*device_tmp.OsVersion.Major = 1
@@ -62,11 +63,13 @@ func (this *ReqQiushiModule) packreq(request *mobads_api.BidRequest, inner_data 
 	network_tmp := request.Network
 	network_tmp.Ipv4 = new(string)
 	*network_tmp.Ipv4 = inner_data.Req.Network.Ip
+	log.Printf("req qiushi inner_ip [%s]", inner_data.Req.Network.Ip)
 
 	//adslot
 	var adslot_tmp mobads_api.AdSlot
 	adslot_tmp.Id = new(string)
-	*adslot_tmp.Id = "L0000041"
+	//	*adslot_tmp.Id = "L0000041"
+	*adslot_tmp.Id = "L0000011"
 	var size_tmp mobads_api.Size
 	size_tmp.Width = new(uint32)
 	size_tmp.Height = new(uint32)
@@ -79,8 +82,71 @@ func (this *ReqQiushiModule) packreq(request *mobads_api.BidRequest, inner_data 
 	return
 }
 
+func (this *ReqQiushiModule) convert_ad(inad *context.AdInfo, bsad *mobads_api.Ad) (err error) {
+	if bsad.AdId != nil {
+		inad.Adid = int64(*bsad.AdId)
+	}
+	//	inad.Groupid = bsad.Groupid
+	//	inad.Planid = bsad.Groupid
+	//	inad.Userid = bsad.Userid
+	admeta := bsad.MaterialMeta
+	if admeta != nil {
+		if admeta.CreativeType != nil {
+			switch *admeta.CreativeType {
+			case mobads_api.CreativeType_TEXT:
+				inad.AdType = context.TEXT
+			case mobads_api.CreativeType_IMAGE:
+				inad.AdType = context.IMAGE
+			case mobads_api.CreativeType_HTML:
+				inad.AdType = context.HTML
+			case mobads_api.CreativeType_VIDEO:
+				inad.AdType = context.VIDEO
+			case mobads_api.CreativeType_TEXT_ICON:
+				inad.AdType = context.TEXT_ICON
+			}
+		}
+		if admeta.Title != nil {
+			inad.Title = *admeta.Title
+		}
+		if admeta.Description1 != nil {
+			inad.Description1 = *admeta.Description1
+		}
+		if admeta.Description2 != nil {
+			inad.Description2 = *admeta.Description2
+		}
+		if admeta.MediaUrl != nil {
+			inad.ImageUrl = *admeta.MediaUrl
+		}
+		for i := 0; i < len(admeta.WinNoticeUrl); i++ {
+			inad.ImpressionUrl = append(inad.ImpressionUrl, admeta.WinNoticeUrl[i])
+		}
+		if admeta.ClickUrl != nil {
+			inad.ClickUrl = *admeta.ClickUrl
+		}
+	}
+	inad.Bid = 0
+	inad.Price = 0
+	inad.Ctr = 0
+	inad.Cpm = 0
+	//	inad.Wuliao_type = bsad.WuliaoType
+	//	inad.LogoUrl = bsad.AppLogo
+	return
+}
+
 func (this *ReqQiushiModule) parse_resp(response *mobads_api.BidResponse, inner_data *context.Context) (err error) {
-	log.Printf("req success ans: %s \n", response.String())
+	if response.ErrorCode != nil {
+		log.Printf("request qiushi fail . error_code is %u\n", *response.ErrorCode)
+		err = errors.New("request qiushi fail .")
+		return
+	}
+	for i := 0; i < len(response.Ads); i++ {
+		var inner_ad context.AdInfo
+		err = this.convert_ad(&inner_ad, response.Ads[i])
+		if err != nil {
+			continue
+		}
+		inner_data.BaiduAds = append(inner_data.BaiduAds, inner_ad)
+	}
 	return
 }
 func (this *ReqQiushiModule) Run(inner_data *context.Context) (err error) {
@@ -144,7 +210,8 @@ func main() {
 	temp.Req.Network.Ip = "220.181.111.85"
 	var module *ReqQiushiModule
 	module = new(ReqQiushiModule)
-	module.Init(&temp)
+	var temp_global context.GlobalContext
+	module.Init(&temp_global)
 	module.Run(&temp)
 }
 */

@@ -34,6 +34,8 @@ func main() {
 	req_body.Device = new(jesgoo_protocol.Device)
 	*req_body.Device = device_tmp
 	req_body.Network = new(jesgoo_protocol.Network)
+	req_body.Network.Ip = new(string)
+	*req_body.Network.Ip = "61.171.44.61" 
 
 	var client_tmp jesgoo_protocol.Client
 	client_tmp.Type = new(jesgoo_protocol.ClientType)
