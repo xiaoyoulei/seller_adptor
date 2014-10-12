@@ -1,5 +1,7 @@
 package context
 
+import "bytes"
+
 type AppInfo struct {
 	PackageName string
 }
@@ -34,6 +36,7 @@ type AdSlotInfo struct {
 	Slotid     string
 	AdSlotType AdSlotType
 	Size       SizeInfo
+	Capacity   uint32
 }
 type NetworkType int64
 
@@ -100,8 +103,16 @@ const (
 	TEXT_ICON AdType = 5
 )
 
+type AdSrc int64
+
+const (
+	AdSrc_JESGOO AdSrc = 1
+	AdSrc_BAIDU  AdSrc = 2
+)
+
 type AdInfo struct {
 	AdType        AdType
+	AdSrc         AdSrc
 	Adid          int64
 	Groupid       int64
 	Planid        int64
@@ -120,6 +131,7 @@ type AdInfo struct {
 	LogoSize      SizeInfo
 	ClickUrl      string
 	ImpressionUrl []string
+	HtmlSnippet   bytes.Buffer
 }
 type InnerResp struct {
 	Ads []AdInfo

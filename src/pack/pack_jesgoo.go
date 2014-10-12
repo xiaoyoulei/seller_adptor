@@ -1,10 +1,8 @@
 package pack
 
 import (
-	"bytes"
 	"code.google.com/p/goprotobuf/proto"
 	"context"
-	"html/template"
 	"jesgoo_protocol"
 	"log"
 )
@@ -19,29 +17,27 @@ func (this PackJesgooResponseModule) Run(inner_data *context.Context) (err error
 	*temp_response.Success = true
 	temp_response.SearchId = new(string)
 	*temp_response.SearchId = inner_data.Searchid
-	var temp_ad jesgoo_protocol.SellerResponse_Ad
-	temp_ad.AdslotId = new(string)
-	*temp_ad.AdslotId = "123"
-	temp_ad.MaterialType = new(jesgoo_protocol.SellerResponse_Ad_MaterialType)
-	*temp_ad.MaterialType = jesgoo_protocol.SellerResponse_Ad_DYNAMIC
-	var tpl *template.Template
-	tpl, err = template.ParseFiles("template/ads.html")
-	if err != nil || tpl == nil {
-		log.Printf("parse template fail %s", err.Error())
-		return
-	}
-	var temp_html bytes.Buffer
-	if len(inner_data.Resp.Ads) > 0 {
-		err = tpl.Execute(&temp_html, inner_data.Resp.Ads[0])
-		if err != nil {
-			log.Printf("execute template fail %s", err.Error())
-			return
-		}
-		temp_ad.HtmlSnippet = make([]byte, 0)
-		temp_ad.HtmlSnippet = temp_html.Bytes()
-	}
 	temp_response.Ads = make([]*jesgoo_protocol.SellerResponse_Ad, 0)
-	temp_response.Ads = append(temp_response.Ads, &temp_ad)
+	need_ad := inner_data.Req.AdSlot.Capacity
+	ad_num := len(inner_data.Resp.Ads)
+	var pack_num int32
+	if int32(need_ad) < int32(ad_num) {
+		pack_num = int32(need_ad)
+	} else {
+		pack_num = int32(ad_num)
+	}
+	log.Printf("pack_num is %d", pack_num)
+	var i int32
+	for i = 0; i < pack_num; i++ {
+		var temp_ad jesgoo_protocol.SellerResponse_Ad
+		temp_ad.AdslotId = new(string)
+		*temp_ad.AdslotId = inner_data.Req.AdSlot.Slotid
+		temp_ad.MaterialType = new(jesgoo_protocol.SellerResponse_Ad_MaterialType)
+		*temp_ad.MaterialType = jesgoo_protocol.SellerResponse_Ad_DYNAMIC
+		temp_ad.HtmlSnippet = make([]byte, 0)
+		temp_ad.HtmlSnippet = inner_data.Resp.Ads[i].HtmlSnippet.Bytes()
+		temp_response.Ads = append(temp_response.Ads, &temp_ad)
+	}
 	inner_data.RespBody, err = proto.Marshal(&temp_response)
 	return
 }

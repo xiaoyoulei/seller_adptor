@@ -3,6 +3,7 @@ package parser
 import (
 	"context"
 	"encoding/json"
+	"errors"
 	"log"
 	"utils"
 )
@@ -40,9 +41,10 @@ type Size struct {
 	Height int32
 }
 type Adslot struct {
-	Id   string
-	Type int
-	Size Size
+	Id       string
+	Type     int
+	Size     Size
+	Capacity uint32
 }
 type SellerRequest struct {
 	Media   Media
@@ -128,7 +130,9 @@ func (this *ParseJesgooJsonRequestModule) parse(inner_data *context.Context) (er
 			log.Println("request has no network")
 		} else {
 			inner_network := &inner_data.Req.Network
-			inner_network.Ip = temp_req_network.Ip
+
+			//	inner_network.Ip = temp_req_network.Ip
+
 			switch temp_req_network.Type {
 			case 1:
 				inner_network.NetworkType = context.NetworkType_WIFI
@@ -160,6 +164,14 @@ func (this *ParseJesgooJsonRequestModule) parse(inner_data *context.Context) (er
 			}
 			inner_adslot.Size.Width = temp_req_adslot.Size.Width
 			inner_adslot.Size.Height = temp_req_adslot.Size.Height
+			if temp_req_adslot.Capacity != 0 {
+				inner_adslot.Capacity = temp_req_adslot.Capacity
+			} else {
+				inner_adslot.Capacity = 1
+			}
+		} else {
+			err = errors.New("no adslot info in request")
+			return
 		}
 
 		//searchid

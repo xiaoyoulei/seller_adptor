@@ -35,8 +35,8 @@ func (this *ReqQiushiModule) packreq(request *mobads_api.BidRequest, inner_data 
 	app_static_info.BundleId = new(string)
 	*app_static_info.BundleId = "com.jesgoo.app"
 	app_tmp.Id = new(string)
-	//	*app_tmp.Id = "10042c1f"
-	*app_tmp.Id = "fa117bd6"
+	*app_tmp.Id = "10042c1f"
+	//	*app_tmp.Id = "fa117bd6"
 
 	//device parament
 	request.Device = new(mobads_api.Device)
@@ -68,8 +68,8 @@ func (this *ReqQiushiModule) packreq(request *mobads_api.BidRequest, inner_data 
 	//adslot
 	var adslot_tmp mobads_api.AdSlot
 	adslot_tmp.Id = new(string)
-	//	*adslot_tmp.Id = "L0000041"
-	*adslot_tmp.Id = "L0000011"
+	*adslot_tmp.Id = "L0000041"
+	//	*adslot_tmp.Id = "L0000011"
 	var size_tmp mobads_api.Size
 	size_tmp.Width = new(uint32)
 	size_tmp.Height = new(uint32)
@@ -91,6 +91,9 @@ func (this *ReqQiushiModule) convert_ad(inad *context.AdInfo, bsad *mobads_api.A
 	//	inad.Userid = bsad.Userid
 	admeta := bsad.MaterialMeta
 	if admeta != nil {
+
+		inad.AdSrc = context.AdSrc_BAIDU
+
 		if admeta.CreativeType != nil {
 			switch *admeta.CreativeType {
 			case mobads_api.CreativeType_TEXT:
@@ -134,6 +137,8 @@ func (this *ReqQiushiModule) convert_ad(inad *context.AdInfo, bsad *mobads_api.A
 }
 
 func (this *ReqQiushiModule) parse_resp(response *mobads_api.BidResponse, inner_data *context.Context) (err error) {
+	log.Println("baidu_response")
+	log.Println(response)
 	if response.ErrorCode != nil {
 		log.Printf("request qiushi fail . error_code is %u\n", *response.ErrorCode)
 		err = errors.New("request qiushi fail .")
@@ -187,10 +192,12 @@ func (this *ReqQiushiModule) Run(inner_data *context.Context) (err error) {
 	response_byte, err = ioutil.ReadAll(response.Body)
 	if err != nil {
 		log.Printf("error occured %s\n", err.Error())
+		return
 	}
 	err = proto.Unmarshal(response_byte, &response_body)
 	if err != nil {
 		log.Printf("error occur %s\n", err.Error())
+		return
 	}
 	err = this.parse_resp(&response_body, inner_data)
 

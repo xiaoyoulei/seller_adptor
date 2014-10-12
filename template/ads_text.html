@@ -1,0 +1,105 @@
+<style>
+       div,body {
+            padding: 0;
+            margin: 0;
+            border: 0;
+        }
+        /* 广告容器 */
+        .mobads-ad-container {
+            font-size: 20px;
+            /*width: 300px;
+              height: 250px;*/
+
+            width: 100%;
+            height: 100%;
+            overflow: hidden;
+            text-shadow: none;
+        }
+
+        .mobads-ad-wrapper {
+            width: 100%;
+            height: 100%;
+            position: absolute;
+            overflow: hidden;
+        }
+        /* 正常广告样式 */
+        .mobads-ad {
+            position: absolute;
+            width: 100%;
+            height: 100%;
+            background: dimgray;
+            background: -webkit-gradient(linear, left top, left bottom, from(#7f7f7f), to(#424242));
+            border: 0.1em solid #c4c4c4;
+            -moz-box-sizing: border-box;
+            -webkit-box-sizing: border-box;
+            -o-box-sizing: border-box;
+            -ms-box-sizing: border-box;
+            box-sizing: border-box;
+            cursor: pointer;
+            bottom: 0;
+        }
+
+        .mobads-ad-icon {
+            position: absolute;
+            border: none;
+            width: 3.8em;
+            height: 3.8em;
+            left: 1em;
+            top: 0.4em;
+            -webkit-border-radius: 0.5em;
+            border-radius: 0.5em;
+            display: block;
+        }
+
+        .mobads-ad-content {
+            position: absolute;
+            color: white;
+            text-align: left;
+            width: 100%;
+            padding: 0.2em;
+            -moz-box-sizing: border-box;
+            -webkit-box-sizing: border-box;
+            -o-box-sizing: border-box;
+            -ms-box-sizing: border-box;
+            box-sizing: border-box;
+            text-decoration: none;
+        }
+
+        .mobads-ad-content .highlight {
+            color: #FFD326;
+        }
+
+        .mobads-ad-title,
+        .mobads-ad-desc {
+            white-space: nowrap;
+            overflow: hidden;
+        }
+
+        .mobads-ad-title {
+            font-size: 110%;
+            line-height: 1.364em;
+            height: 1.364em;
+            color: white;
+            text-decoration: underline;
+        }
+
+        .mobads-ad.text .mobads-ad-title {
+            font-size: 120%;
+        }
+
+        .mobads-ad-desc {
+            line-height: 1.5em;
+            height: 1.5em;
+            color: #dedede;
+        }
+    </style>
+    <div class="mobads-ad-container">
+        <div class="mobads-ad-wrapper">
+            <div class="mobads-ad text">
+                <a class="mobads-ad-content" href="#">
+                    <div class="mobads-ad-title"><span class="highlight">大众点评</span>鲜花订购</div>
+                    <div class="mobads-ad-desc">鲜花订购大众点评鲜花订购鲜花订购</div>
+                </a>
+            </div>
+        </div>
+    </div>

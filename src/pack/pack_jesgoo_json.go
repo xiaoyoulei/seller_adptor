@@ -1,10 +1,8 @@
 package pack
 
 import (
-	"bytes"
 	"context"
 	"encoding/json"
-	"html/template"
 	"log"
 )
 
@@ -31,25 +29,20 @@ func (this PackJesgooResponseJsonModule) Run(inner_data *context.Context) (err e
 	var temp_resp SellerReponse
 	temp_resp.Success = true
 	temp_resp.Search_id = inner_data.Searchid
-	var temp_ad Ad
-	if len(inner_data.Resp.Ads) > 0 {
-		temp_ad.Material_type = 1
-		var tpl *template.Template
-		tpl, err = template.ParseFiles("template/ads.html")
-		if err != nil || tpl == nil {
-			log.Printf("parse template fail %s", err.Error())
-			return
-		}
-		var temp_html bytes.Buffer
-		err = tpl.Execute(&temp_html, inner_data.Resp.Ads[0])
-		if err != nil {
-			log.Printf("execute template fail %s", err.Error())
-			return
-		}
-		temp_ad.Html_snippet = temp_html.String()
-		temp_resp.Ads = append(temp_resp.Ads, temp_ad)
+	need_ad := inner_data.Req.AdSlot.Capacity
+	ad_num := len(inner_data.Resp.Ads)
+	var pack_num int32
+	if int32(need_ad) < int32(ad_num) {
+		pack_num = int32(need_ad)
 	} else {
-		log.Println("ads num is 0 ")
+		pack_num = int32(ad_num)
+	}
+	log.Printf("pack_num is %d, need_ad %d, ad_num %d", pack_num, need_ad, ad_num)
+	var i int32
+	for i = 0; i < pack_num; i++ {
+		var temp_ad Ad
+		temp_ad.Html_snippet = inner_data.Resp.Ads[i].HtmlSnippet.String()
+		temp_resp.Ads = append(temp_resp.Ads, temp_ad)
 	}
 	inner_data.RespBody, err = json.Marshal(temp_resp)
 	return

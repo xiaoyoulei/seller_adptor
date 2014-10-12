@@ -58,6 +58,7 @@ func main() {
 		log.Fatal(err)
 		return
 	}
+	fmt.Printf("response header is: %d\n", res.StatusCode)
 	result, err := ioutil.ReadAll(res.Body)
 	res.Body.Close()
 	if err != nil {

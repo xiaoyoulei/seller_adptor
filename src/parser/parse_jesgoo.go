@@ -104,18 +104,33 @@ func (this ParseJesgooRequestModule) Run(inner_data *context.Context) (err error
 	if len(temp_req.Adslots) > 0 {
 		inner_adslot := &inner_req.AdSlot
 		temp_adslot := *temp_req.Adslots[0]
-		inner_adslot.Slotid = *temp_adslot.Id
-		switch *temp_adslot.Type {
-		case jesgoo_protocol.AdSlotType_BANNER:
-			inner_adslot.AdSlotType = context.AdSlotType_BANNER
-		case jesgoo_protocol.AdSlotType_OFFERWALL:
-			inner_adslot.AdSlotType = context.AdSlotType_OFFERWALL
-		case jesgoo_protocol.AdSlotType_RECOMMEND:
-			inner_adslot.AdSlotType = context.AdSlotType_RECOMMEND
-		default:
-			inner_adslot.AdSlotType = context.AdSlotType_BANNER
-
+		if temp_adslot.Id != nil {
+			inner_adslot.Slotid = *temp_adslot.Id
+		} else {
+			inner_adslot.Slotid = "0"
 		}
+		if temp_adslot.Type != nil {
+			switch *temp_adslot.Type {
+			case jesgoo_protocol.AdSlotType_BANNER:
+				inner_adslot.AdSlotType = context.AdSlotType_BANNER
+			case jesgoo_protocol.AdSlotType_OFFERWALL:
+				inner_adslot.AdSlotType = context.AdSlotType_OFFERWALL
+			case jesgoo_protocol.AdSlotType_RECOMMEND:
+				inner_adslot.AdSlotType = context.AdSlotType_RECOMMEND
+			default:
+				inner_adslot.AdSlotType = context.AdSlotType_BANNER
+			}
+		} else {
+			inner_adslot.AdSlotType = context.AdSlotType_BANNER
+		}
+		if temp_adslot.Capacity != nil {
+			inner_adslot.Capacity = *temp_adslot.Capacity
+		} else {
+			inner_adslot.Capacity = 1
+		}
+	} else {
+		err = errors.New("no adslot in request")
+		return
 	}
 
 	//searchid
