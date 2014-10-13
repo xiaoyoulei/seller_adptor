@@ -135,7 +135,6 @@ func (this *ParseJesgooJsonRequestModule) parse(inner_data *context.Context) (er
 				inner_network.Ip = temp_req_network.Ip
 				log.Printf("client ip is %s", temp_req_network.Ip)
 			}
-
 			switch temp_req_network.Type {
 			case 1:
 				inner_network.NetworkType = context.NetworkType_WIFI
@@ -149,6 +148,7 @@ func (this *ParseJesgooJsonRequestModule) parse(inner_data *context.Context) (er
 				inner_network.NetworkType = context.NetworkType_4G
 			}
 		}
+		log.Printf("now ip is %s", inner_data.Req.Network.Ip)
 
 		//adslot
 		if len(temp_req.Adslots) > 0 {
