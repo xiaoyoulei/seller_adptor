@@ -60,9 +60,7 @@ func CallbackJesgooJson(resp http.ResponseWriter, req *http.Request) {
 
 	if req.Header["Remoteaddr"] != nil {
 		inner_data.Req.Network.Ip = req.Header["Remoteaddr"][0]
-		log.Printf("get remoteaddr from head [%s]", req.Header["Remoteaddr"][0])
 	}
-	inner_data.Req.Network.Ip = req.RemoteAddr
 	var err error
 	if req.Body == nil {
 		log.Println("req.Body is nil")

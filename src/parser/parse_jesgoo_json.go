@@ -148,7 +148,6 @@ func (this *ParseJesgooJsonRequestModule) parse(inner_data *context.Context) (er
 				inner_network.NetworkType = context.NetworkType_4G
 			}
 		}
-		log.Printf("now ip is %s", inner_data.Req.Network.Ip)
 
 		//adslot
 		if len(temp_req.Adslots) > 0 {
