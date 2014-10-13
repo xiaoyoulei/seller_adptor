@@ -131,7 +131,9 @@ func (this *ParseJesgooJsonRequestModule) parse(inner_data *context.Context) (er
 		} else {
 			inner_network := &inner_data.Req.Network
 
-			//	inner_network.Ip = temp_req_network.Ip
+			if len(temp_req_network.Ip) > 6 {
+				inner_network.Ip = temp_req_network.Ip
+			}
 
 			switch temp_req_network.Type {
 			case 1:

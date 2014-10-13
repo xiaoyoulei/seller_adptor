@@ -39,7 +39,7 @@ func InitServer() {
 	jesgoo_json_modules = append(jesgoo_json_modules, &rank.RankModule{})
 	jesgoo_json_modules = append(jesgoo_json_modules, &prepack.PrePackModule{})
 	jesgoo_json_modules = append(jesgoo_json_modules, &pack.PackJesgooResponseJsonModule{})
-	for i := 0; i < len(jesgoo_json_modules); i++ {
+	for i := 0; i < len(jesgoo_json_modules); i++ .Ads{
 		jesgoo_json_modules[i].Init(&global_context)
 	}
 }
@@ -58,6 +58,9 @@ func CallbackJesgooJson(resp http.ResponseWriter, req *http.Request) {
 	var inner_data *context.Context
 	inner_data = InitThread()
 
+	if req.Header["Remoteaddr"] != nil {
+		inner_data.Req.Network.Ip = req.Header["Remoteaddr"][0]
+	}
 	inner_data.Req.Network.Ip = req.RemoteAddr
 	var err error
 	if req.Body == nil {
@@ -82,6 +85,9 @@ func CallbackJesgoo(resp http.ResponseWriter, req *http.Request) {
 	var inner_data *context.Context
 	inner_data = InitThread()
 
+	if req.Header["Remoteaddr"] != nil {
+		inner_data.Req.Network.Ip = req.Header["Remoteaddr"][0]
+	}
 	var err error
 	if req.Body == nil {
 		log.Fatal("req.body is nil")
