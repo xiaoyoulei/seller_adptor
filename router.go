@@ -39,7 +39,7 @@ func InitServer() {
 	jesgoo_json_modules = append(jesgoo_json_modules, &rank.RankModule{})
 	jesgoo_json_modules = append(jesgoo_json_modules, &prepack.PrePackModule{})
 	jesgoo_json_modules = append(jesgoo_json_modules, &pack.PackJesgooResponseJsonModule{})
-	for i := 0; i < len(jesgoo_json_modules); i++ .Ads{
+	for i := 0; i < len(jesgoo_json_modules); i++ {
 		jesgoo_json_modules[i].Init(&global_context)
 	}
 }
