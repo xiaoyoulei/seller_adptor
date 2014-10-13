@@ -35,7 +35,7 @@ func InitServer() {
 	}
 	jesgoo_json_modules = append(jesgoo_json_modules, &parser.ParseJesgooJsonRequestModule{})
 	//	jesgoo_json_modules = append(jesgoo_json_modules, &reqads.ReqBSModule{})
-	jesgoo_modules = append(jesgoo_modules, &reqads.ReqQiushiModule{})
+	jesgoo_json_modules = append(jesgoo_json_modules, &reqads.ReqQiushiModule{})
 	jesgoo_json_modules = append(jesgoo_json_modules, &rank.RankModule{})
 	jesgoo_json_modules = append(jesgoo_json_modules, &prepack.PrePackModule{})
 	jesgoo_json_modules = append(jesgoo_json_modules, &pack.PackJesgooResponseJsonModule{})
@@ -72,7 +72,7 @@ func CallbackJesgooJson(resp http.ResponseWriter, req *http.Request) {
 	for i := 0; i < len(jesgoo_json_modules); i++ {
 		err = jesgoo_json_modules[i].Run(inner_data)
 		if err != nil {
-			log.Printf("run module %d fail !", i)
+			log.Printf("run module %d fail ! err[%s]\n", i, err.Error())
 			resp.WriteHeader(http.StatusBadRequest)
 			return
 		}
@@ -100,7 +100,7 @@ func CallbackJesgoo(resp http.ResponseWriter, req *http.Request) {
 	for i := 0; i < len(jesgoo_modules); i++ {
 		err = jesgoo_modules[i].Run(inner_data)
 		if err != nil {
-			log.Printf("run module %d fail !", i)
+			log.Printf("run module %d fail ! err[%s]", i, err.Error())
 			resp.WriteHeader(http.StatusBadRequest)
 			return
 		}

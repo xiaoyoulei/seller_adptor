@@ -133,6 +133,7 @@ func (this *ParseJesgooJsonRequestModule) parse(inner_data *context.Context) (er
 
 			if len(temp_req_network.Ip) > 6 {
 				inner_network.Ip = temp_req_network.Ip
+				log.Printf("client ip is %s", temp_req_network.Ip)
 			}
 
 			switch temp_req_network.Type {
@@ -189,7 +190,7 @@ func (this *ParseJesgooJsonRequestModule) parse(inner_data *context.Context) (er
 func (this *ParseJesgooJsonRequestModule) Run(inner_data *context.Context) (err error) {
 	err = this.parse(inner_data)
 	if err != nil {
-		log.Println("parse jesgoo json fail")
+		log.Printf("parse jesgoo json fail [%s]", err.Error())
 	}
 	return
 }

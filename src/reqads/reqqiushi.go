@@ -167,7 +167,7 @@ func (this *ReqQiushiModule) Run(inner_data *context.Context) (err error) {
 		return
 	}
 	var request *http.Request
-	request, err = http.NewRequest("POST", "http://61.135.186.214/api", bytes.NewBuffer(request_byte))
+	request, err = http.NewRequest("POST", "http://mobads.baidu.com/api", bytes.NewBuffer(request_byte))
 	if err != nil {
 		log.Println("create http post request fail")
 		return
