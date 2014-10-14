@@ -19,12 +19,21 @@ type DeviceId struct {
 	Compact bool
 	Md5     bool
 }
+
+type Version struct {
+	Major uint32
+	Minor uint32
+	Micro uint32
+	Build uint32
+}
+
 type Device struct {
-	Type    int
-	Os_type int
-	Brand   string
-	Model   string
-	Ids     []DeviceId
+	Type       int
+	Os_type    int
+	Os_version Version
+	Brand      string
+	Model      string
+	Ids        []DeviceId
 }
 type Network struct {
 	Ip               string
@@ -102,6 +111,11 @@ func (this *ParseJesgooJsonRequestModule) parse(inner_data *context.Context) (er
 		default:
 			inner_device.OSType = context.OSType_UNKNOWN
 		}
+		inner_device.OSVersion.Major = temp_req_device.Os_version.Major
+		inner_device.OSVersion.Minor = temp_req_device.Os_version.Minor
+		inner_device.OSVersion.Micro = temp_req_device.Os_version.Micro
+		inner_device.Brand = temp_req_device.Brand
+		inner_device.Model = temp_req_device.Model
 		if temp_req_device.Ids != nil {
 			var device_id DeviceId
 			if len(temp_req_device.Ids) > 0 {

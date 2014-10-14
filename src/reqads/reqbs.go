@@ -61,7 +61,7 @@ func (this *ReqBSModule) pack_req(inner_data *context.Context, bs_req *ui2bs.BSR
 	default:
 		bs_req.Device.Os = ui2bs.OSType_UNKNOWN
 	}
-	bs_req.Device.Osv = inner_data.Req.Device.OSVersion
+	//	bs_req.Device.Osv = inner_data.Req.Device.OSVersion
 	var temp_device_id *ui2bs.DeviceID
 	temp_device_id = new(ui2bs.DeviceID)
 	if len(inner_data.Req.Device.DevID) > 0 {

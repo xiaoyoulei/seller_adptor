@@ -81,10 +81,19 @@ type DeviceID struct {
 	ID        string
 }
 
+type Version struct {
+	Major uint32
+	Minor uint32
+	Micro uint32
+	Build uint32
+}
+
 type Device struct {
 	OSType    OSType
-	OSVersion string
+	OSVersion Version
 	DevID     []DeviceID
+	Brand     string
+	Model     string
 }
 type InnerReq struct {
 	Media   MediaInfo
@@ -110,28 +119,40 @@ const (
 	AdSrc_BAIDU  AdSrc = 2
 )
 
+type InteractionType int32
+
+const (
+	NO_INTERACT InteractionType = 0
+	SURFING     InteractionType = 1
+	DOWNLOAD    InteractionType = 2
+	DIALING     InteractionType = 3
+	MESSAGE     InteractionType = 4
+	MAIL        InteractionType = 5
+)
+
 type AdInfo struct {
-	AdType        AdType
-	AdSrc         AdSrc
-	Adid          int64
-	Groupid       int64
-	Planid        int64
-	Userid        int64
-	Title         string
-	Bid           int64
-	Price         int64
-	Ctr           int64
-	Cpm           int64
-	WuliaoType    int32
-	Description1  string
-	Description2  string
-	ImageUrl      string
-	ImageSize     SizeInfo
-	LogoUrl       string
-	LogoSize      SizeInfo
-	ClickUrl      string
-	ImpressionUrl []string
-	HtmlSnippet   bytes.Buffer
+	AdType          AdType
+	AdSrc           AdSrc
+	InteractionType InteractionType
+	Adid            int64
+	Groupid         int64
+	Planid          int64
+	Userid          int64
+	Title           string
+	Bid             int64
+	Price           int64
+	Ctr             int64
+	Cpm             int64
+	WuliaoType      int32
+	Description1    string
+	Description2    string
+	ImageUrl        string
+	ImageSize       SizeInfo
+	LogoUrl         string
+	LogoSize        SizeInfo
+	ClickUrl        string
+	ImpressionUrl   []string
+	HtmlSnippet     bytes.Buffer
 }
 type InnerResp struct {
 	Ads []AdInfo

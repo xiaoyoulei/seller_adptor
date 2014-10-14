@@ -25,7 +25,11 @@ func (this *ReqQiushiModule) packreq(request *mobads_api.BidRequest, inner_data 
 	request.ApiVersion = new(mobads_api.Version)
 	version_tmp := request.ApiVersion
 	version_tmp.Major = new(uint32)
-	*version_tmp.Major = 1
+	version_tmp.Minor = new(uint32)
+	version_tmp.Micro = new(uint32)
+	*version_tmp.Major = 4
+	*version_tmp.Minor = 0
+	*version_tmp.Micro = 0
 
 	//app parament
 	request.App = new(mobads_api.App)
@@ -36,7 +40,6 @@ func (this *ReqQiushiModule) packreq(request *mobads_api.BidRequest, inner_data 
 	*app_static_info.BundleId = "com.jesgoo.app"
 	app_tmp.Id = new(string)
 	*app_tmp.Id = "10042c1f"
-	//	*app_tmp.Id = "fa117bd6"
 
 	//device parament
 	request.Device = new(mobads_api.Device)
@@ -45,18 +48,38 @@ func (this *ReqQiushiModule) packreq(request *mobads_api.BidRequest, inner_data 
 	*device_tmp.Type = mobads_api.Device_PHONE
 	device_tmp.Os = new(mobads_api.Device_Os)
 	*device_tmp.Os = mobads_api.Device_ANDROID
-	*version_tmp.Major = 4
+	*version_tmp.Major = inner_data.Req.Device.OSVersion.Major
+	*version_tmp.Minor = inner_data.Req.Device.OSVersion.Minor
+	*version_tmp.Micro = inner_data.Req.Device.OSVersion.Micro
 	device_tmp.OsVersion = new(mobads_api.Version)
 	device_tmp.OsVersion.Major = new(uint32)
-	*device_tmp.OsVersion.Major = 1
+	device_tmp.OsVersion.Minor = new(uint32)
+	device_tmp.OsVersion.Micro = new(uint32)
+	*device_tmp.OsVersion.Major = inner_data.Req.Device.OSVersion.Major
+	*device_tmp.OsVersion.Minor = inner_data.Req.Device.OSVersion.Minor
+	*device_tmp.OsVersion.Micro = inner_data.Req.Device.OSVersion.Micro
 	device_tmp.Udid = new(mobads_api.Device_UdId)
 	device_udid := device_tmp.Udid
-	device_udid.Imei = new(string)
-	*device_udid.Imei = "013474004923670"
+	if len(inner_data.Req.Device.DevID) > 0 {
+		switch inner_data.Req.Device.DevID[0].DevIDType {
+		case context.DeviceIDType_IMEI:
+			device_udid.Imei = new(string)
+			*device_udid.Imei = inner_data.Req.Device.DevID[0].ID
+		case context.DeviceIDType_MAC:
+			device_udid.Mac = new(string)
+			*device_udid.Mac = inner_data.Req.Device.DevID[0].ID
+		case context.DeviceIDType_IDFA:
+			device_udid.Idfa = new(string)
+			*device_udid.Idfa = inner_data.Req.Device.DevID[0].ID
+		default:
+			device_udid.Imei = new(string)
+			*device_udid.Imei = inner_data.Req.Device.DevID[0].ID
+		}
+	}
 	device_tmp.Vendor = new(string)
-	*device_tmp.Vendor = "levnovo"
+	*device_tmp.Vendor = inner_data.Req.Device.Brand
 	device_tmp.Model = new(string)
-	*device_tmp.Model = "lenovo"
+	*device_tmp.Model = inner_data.Req.Device.Model
 
 	//network
 	request.Network = new(mobads_api.Network)
@@ -69,7 +92,6 @@ func (this *ReqQiushiModule) packreq(request *mobads_api.BidRequest, inner_data 
 	var adslot_tmp mobads_api.AdSlot
 	adslot_tmp.Id = new(string)
 	*adslot_tmp.Id = "L0000041"
-	//	*adslot_tmp.Id = "L0000011"
 	var size_tmp mobads_api.Size
 	size_tmp.Width = new(uint32)
 	size_tmp.Height = new(uint32)
