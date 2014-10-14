@@ -73,8 +73,13 @@ func (this *ReqQiushiModule) packreq(request *mobads_api.BidRequest, inner_data 
 	var size_tmp mobads_api.Size
 	size_tmp.Width = new(uint32)
 	size_tmp.Height = new(uint32)
-	*size_tmp.Width = 480
-	*size_tmp.Height = 96
+	if inner_data.Req.AdSlot.Size.Width != 0 {
+		*size_tmp.Width = uint32(inner_data.Req.AdSlot.Size.Width)
+		*size_tmp.Height = uint32(inner_data.Req.AdSlot.Size.Height)
+	} else {
+		*size_tmp.Width = 320
+		*size_tmp.Height = 48
+	}
 	adslot_tmp.Size = new(mobads_api.Size)
 	*adslot_tmp.Size = size_tmp
 	request.Adslots = make([]*mobads_api.AdSlot, 0)

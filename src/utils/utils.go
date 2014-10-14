@@ -4,12 +4,17 @@ import (
 	"context"
 	"crypto/sha1"
 	"fmt"
+	//	"github.com/op/go-logging"
 	"io"
 	"log"
 	"math/rand"
 	"strconv"
 	"time"
 )
+
+func Init() {
+
+}
 
 func GenSearchid(imei string) (searchid string) {
 

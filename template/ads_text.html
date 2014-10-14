@@ -56,7 +56,8 @@
             color: white;
             text-align: left;
             width: 100%;
-            padding: 0.2em;
+            padding: 0.2em 0.8em;
+            font-size: 140%;
             -moz-box-sizing: border-box;
             -webkit-box-sizing: border-box;
             -o-box-sizing: border-box;
@@ -84,7 +85,7 @@
         }
 
         .mobads-ad.text .mobads-ad-title {
-            font-size: 120%;
+            font-size: 150%;
         }
 
         .mobads-ad-desc {
@@ -93,13 +94,37 @@
             color: #dedede;
         }
     </style>
-    <div class="mobads-ad-container">
+    <div id="unique-id-container" class="mobads-ad-container">
         <div class="mobads-ad-wrapper">
             <div class="mobads-ad text">
-                <a class="mobads-ad-content" style="text-decoration: none;"  href={{.ClickUrl}}>
+                <a class="mobads-ad-content" style="text-decoration: none;" href={{.ClickUrl}} extra="{}">
                     <div class="mobads-ad-title"><span class="highlight">{{.Title}}</span></div>
                     <div class="mobads-ad-desc">{{.Description1}}</div>
                 </a>
             </div>
         </div>
     </div>
+    <script>
+        var containerId = 'unique-id-container';
+        var resetSize = function () {
+            var containerEle = document.getElementById(containerId);
+            var win = window;
+            var winW = win.innerWidth;
+            var winH = win.innerHeight;
+            var fzW, fzH;
+            if (winW / winH < 5 / 2) {
+                fzW = winW / 300 * 20;
+                // fzH = winH / 250 * 20;
+                fzH = 1000;
+            }
+            else {
+                // fzW = winW / 640 * 20;
+                fzW = 1000;
+                fzH = winH / 96 * 20;
+            }
+            var fz = fzW > fzH ? fzH : fzW;
+
+            containerEle.style.fontSize = fz + 'px';
+        };
+        resetSize();
+    </script>
