@@ -3,7 +3,7 @@ package pack
 import (
 	"code.google.com/p/goprotobuf/proto"
 	"context"
-	"jesgoo_protocol"
+	"jesgoo_interface"
 	"log"
 )
 
@@ -12,12 +12,12 @@ type PackJesgooResponseModule struct {
 
 func (this PackJesgooResponseModule) Run(inner_data *context.Context) (err error) {
 
-	var temp_response jesgoo_protocol.SellerResponse
+	var temp_response jesgoo_interface.SellerResponse
 	temp_response.Success = new(bool)
 	*temp_response.Success = true
 	temp_response.SearchId = new(string)
 	*temp_response.SearchId = inner_data.Searchid
-	temp_response.Ads = make([]*jesgoo_protocol.SellerResponse_Ad, 0)
+	temp_response.Ads = make([]*jesgoo_interface.SellerResponse_Ad, 0)
 	need_ad := inner_data.Req.AdSlot.Capacity
 	ad_num := len(inner_data.Resp.Ads)
 	var pack_num int32
@@ -29,11 +29,11 @@ func (this PackJesgooResponseModule) Run(inner_data *context.Context) (err error
 	log.Printf("pack_num is %d", pack_num)
 	var i int32
 	for i = 0; i < pack_num; i++ {
-		var temp_ad jesgoo_protocol.SellerResponse_Ad
+		var temp_ad jesgoo_interface.SellerResponse_Ad
 		temp_ad.AdslotId = new(string)
 		*temp_ad.AdslotId = inner_data.Req.AdSlot.Slotid
-		temp_ad.MaterialType = new(jesgoo_protocol.SellerResponse_Ad_MaterialType)
-		*temp_ad.MaterialType = jesgoo_protocol.SellerResponse_Ad_DYNAMIC
+		temp_ad.MaterialType = new(jesgoo_interface.SellerResponse_Ad_MaterialType)
+		*temp_ad.MaterialType = jesgoo_interface.SellerResponse_Ad_DYNAMIC
 		temp_ad.HtmlSnippet = make([]byte, 0)
 		temp_ad.HtmlSnippet = inner_data.Resp.Ads[i].HtmlSnippet.Bytes()
 		temp_response.Ads = append(temp_response.Ads, &temp_ad)

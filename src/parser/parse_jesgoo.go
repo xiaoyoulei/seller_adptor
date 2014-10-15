@@ -4,7 +4,7 @@ import (
 	"code.google.com/p/goprotobuf/proto"
 	"context"
 	"errors"
-	"jesgoo_protocol"
+	"jesgoo_interface"
 	"log"
 	"utils"
 )
@@ -13,7 +13,7 @@ type ParseJesgooRequestModule struct {
 }
 
 func (this ParseJesgooRequestModule) Run(inner_data *context.Context) (err error) {
-	var temp_req jesgoo_protocol.SellerRequest
+	var temp_req jesgoo_interface.SellerRequest
 	proto.Unmarshal(inner_data.ReqBody, &temp_req)
 	if err != nil {
 		log.Println("err is not null " + err.Error())
@@ -34,11 +34,11 @@ func (this ParseJesgooRequestModule) Run(inner_data *context.Context) (err error
 	inner_media.Appsid = *temp_req.Media.Id
 	inner_media.ChannelId = *temp_req.Media.ChannelId
 	switch *temp_req.Media.Type {
-	case jesgoo_protocol.MediaType_APP:
+	case jesgoo_interface.MediaType_APP:
 		inner_media.MediaType = context.MediaType_APP
-	case jesgoo_protocol.MediaType_WAP:
+	case jesgoo_interface.MediaType_WAP:
 		inner_media.MediaType = context.MediaType_WAP
-	case jesgoo_protocol.MediaType_WEB:
+	case jesgoo_interface.MediaType_WEB:
 		inner_media.MediaType = context.MediaType_WEB
 	default:
 		inner_media.MediaType = context.MediaType_APP
@@ -49,11 +49,11 @@ func (this ParseJesgooRequestModule) Run(inner_data *context.Context) (err error
 	if temp_req.Device != nil {
 		if temp_req.Device.OsType != nil {
 			switch *temp_req.Device.OsType {
-			case jesgoo_protocol.OSType_ANDROID:
+			case jesgoo_interface.OSType_ANDROID:
 				inner_device.OSType = context.OSType_ANDROID
-			case jesgoo_protocol.OSType_IOS:
+			case jesgoo_interface.OSType_IOS:
 				inner_device.OSType = context.OSType_IOS
-			case jesgoo_protocol.OSType_WP:
+			case jesgoo_interface.OSType_WP:
 				inner_device.OSType = context.OSType_WP
 			default:
 				inner_device.OSType = context.OSType_UNKNOWN
@@ -62,11 +62,11 @@ func (this ParseJesgooRequestModule) Run(inner_data *context.Context) (err error
 		if len(temp_req.Device.Ids) > 0 {
 			var device_id context.DeviceID
 			switch *temp_req.Device.Ids[0].Type {
-			case jesgoo_protocol.DeviceIDType_IMEI:
+			case jesgoo_interface.DeviceIDType_IMEI:
 				device_id.DevIDType = context.DeviceIDType_IMEI
-			case jesgoo_protocol.DeviceIDType_MAC:
+			case jesgoo_interface.DeviceIDType_MAC:
 				device_id.DevIDType = context.DeviceIDType_MAC
-			case jesgoo_protocol.DeviceIDType_IDFA:
+			case jesgoo_interface.DeviceIDType_IDFA:
 				device_id.DevIDType = context.DeviceIDType_IDFA
 			default:
 				device_id.DevIDType = context.DeviceIDType_IMEI
@@ -84,15 +84,15 @@ func (this ParseJesgooRequestModule) Run(inner_data *context.Context) (err error
 		}
 		if temp_req.Network.Type != nil {
 			switch *temp_req.Network.Type {
-			case jesgoo_protocol.NetworkType_WIFI:
+			case jesgoo_interface.NetworkType_WIFI:
 				inner_network.NetworkType = context.NetworkType_WIFI
-			case jesgoo_protocol.NetworkType_CELLULAR_UNKNOWN:
+			case jesgoo_interface.NetworkType_CELLULAR_UNKNOWN:
 				inner_network.NetworkType = context.NetworkType_UNKNOWN
-			case jesgoo_protocol.NetworkType_CELLULAR_2G:
+			case jesgoo_interface.NetworkType_CELLULAR_2G:
 				inner_network.NetworkType = context.NetworkType_2G
-			case jesgoo_protocol.NetworkType_CELLULAR_3G:
+			case jesgoo_interface.NetworkType_CELLULAR_3G:
 				inner_network.NetworkType = context.NetworkType_3G
-			case jesgoo_protocol.NetworkType_CELLULAR_4G:
+			case jesgoo_interface.NetworkType_CELLULAR_4G:
 				inner_network.NetworkType = context.NetworkType_4G
 			default:
 				inner_network.NetworkType = context.NetworkType_UNKNOWN
@@ -111,11 +111,11 @@ func (this ParseJesgooRequestModule) Run(inner_data *context.Context) (err error
 		}
 		if temp_adslot.Type != nil {
 			switch *temp_adslot.Type {
-			case jesgoo_protocol.AdSlotType_BANNER:
+			case jesgoo_interface.AdSlotType_BANNER:
 				inner_adslot.AdSlotType = context.AdSlotType_BANNER
-			case jesgoo_protocol.AdSlotType_OFFERWALL:
+			case jesgoo_interface.AdSlotType_OFFERWALL:
 				inner_adslot.AdSlotType = context.AdSlotType_OFFERWALL
-			case jesgoo_protocol.AdSlotType_RECOMMEND:
+			case jesgoo_interface.AdSlotType_RECOMMEND:
 				inner_adslot.AdSlotType = context.AdSlotType_RECOMMEND
 			default:
 				inner_adslot.AdSlotType = context.AdSlotType_BANNER

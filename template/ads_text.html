@@ -97,13 +97,13 @@
     <div id="unique-id-container" class="mobads-ad-container">
         <div class="mobads-ad-wrapper">
             <div class="mobads-ad text">
-                <a class="mobads-ad-content" style="text-decoration: none;" href={{.ClickUrl}} extra="{}">
+                <a class="mobads-ad-content" style="text-decoration: none;" href={{.ClickUrl}} extra="{'act':{{.InteractionType}}}">
                     <div class="mobads-ad-title"><span class="highlight">{{.Title}}</span></div>
                     <div class="mobads-ad-desc">{{.Description1}}</div>
                 </a>
             </div>
             {{range .ImpressionUrl}}
-            <img src={{.}}>
+            <img src={{.}} style="display:none">
             {{end}}
         </div>
     </div>

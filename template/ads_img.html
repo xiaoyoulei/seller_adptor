@@ -1,10 +1,10 @@
 <div style="max-width:100%;font-size:100%;">
 	<div style='margin:0;border:0px solid #ebebeb;position:relative;overflow:hidden;'>
-		<a target="_blank" href={{.ClickUrl}} style="text-decoration:none;display:block;line-height:0; " extra="{}">
+		<a target="_blank" href={{.ClickUrl}} style="text-decoration:none;display:block;line-height:0; " extra="{'act':{{.InteractionType}}}">
 			<img src={{.ImageUrl}} style="width:100%;">
 		</a>
 		{{range .ImpressionUrl}}
-		<img src={{.}}>
+		<img src={{.}} style="display:none">
 		{{end}}
 	</div>
 </div>

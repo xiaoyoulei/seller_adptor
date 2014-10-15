@@ -10,7 +10,9 @@ import (
 	"io/ioutil"
 	"log"
 	"mobads_api"
+	"net"
 	"net/http"
+	"time"
 )
 
 type ReqQiushiModule struct {
@@ -135,6 +137,23 @@ func (this *ReqQiushiModule) convert_ad(inad *context.AdInfo, bsad *mobads_api.A
 				inad.AdType = context.TEXT_ICON
 			}
 		}
+		if admeta.InteractionType != nil {
+			switch *admeta.InteractionType {
+			case mobads_api.InteractionType_SURFING:
+				inad.InteractionType = context.SURFING
+			case mobads_api.InteractionType_DOWNLOAD:
+				inad.InteractionType = context.DOWNLOAD
+			case mobads_api.InteractionType_DIALING:
+				inad.InteractionType = context.DIALING
+			case mobads_api.InteractionType_MESSAGE:
+				inad.InteractionType = context.MESSAGE
+			case mobads_api.InteractionType_MAIL:
+				inad.InteractionType = context.MAIL
+			default:
+				inad.InteractionType = context.NO_INTERACT
+
+			}
+		}
 		if admeta.Title != nil {
 			inad.Title = *admeta.Title
 		}
@@ -232,7 +251,20 @@ func (this *ReqQiushiModule) Run(inner_data *context.Context) (err error) {
 }
 
 func (this *ReqQiushiModule) Init(inner_data *context.GlobalContext) (err error) {
-	this.client = &http.Client{}
+	this.client = &http.Client{
+		Transport: &http.Transport{
+			Dial: func(netw, addr string) (net.Conn, error) {
+				c, err := net.DialTimeout(netw, addr, time.Millisecond*500)
+				if err != nil {
+					log.Println("dail timeout", err)
+					return nil, err
+				}
+				return c, nil
+			},
+			MaxIdleConnsPerHost:   10,
+			ResponseHeaderTimeout: time.Millisecond * 500,
+		},
+	}
 	return
 }
 
