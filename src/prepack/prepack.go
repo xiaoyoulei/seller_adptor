@@ -98,18 +98,18 @@ func (this *PrePackModule) gencurl(ad *context.AdInfo, inner_data *context.Conte
 		return
 	}
 	/////////test code //////////////
-	log.Printf("body [%s]", event_body.String())
+	/*	log.Printf("body [%s]", event_body.String())
 
-	test_file := "encode.txt"
-	var fout *os.File
-	fout, err = os.Create(test_file)
-	defer fout.Close()
-	if err != nil {
-		log.Printf("open file fail\n")
-	} else {
-		fout.Write(body_enc)
-	}
-
+		test_file := "encode.txt"
+		var fout *os.File
+		fout, err = os.Create(test_file)
+		defer fout.Close()
+		if err != nil {
+			log.Printf("open file fail\n")
+		} else {
+			fout.Write(body_enc)
+		}
+	*/
 	/////////////////////////////////
 	body_str := coder.EncodeToString(body_enc)
 	curl = this.click_head + strings.Replace(head_str, "=", "", -1) + "." + strings.Replace(body_str, "=", "", -1)
