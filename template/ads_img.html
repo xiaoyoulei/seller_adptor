@@ -1,9 +1,11 @@
 <div style="max-width:100%;font-size:100%;">
-
-	<div style='margin:0;border:1px solid #ebebeb;position:relative;overflow:hidden;'>
+	<div style='margin:0;border:0px solid #ebebeb;position:relative;overflow:hidden;'>
 		<a target="_blank" href={{.ClickUrl}} style="text-decoration:none;display:block;line-height:0; " extra="{}">
 			<img src={{.ImageUrl}} style="width:100%;">
 		</a>
+		{{range .ImpressionUrl}}
+		<img src={{.}}>
+		{{end}}
 	</div>
 </div>
 
