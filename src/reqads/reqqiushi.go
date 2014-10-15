@@ -78,6 +78,11 @@ func (this *ReqQiushiModule) packreq(request *mobads_api.BidRequest, inner_data 
 			*device_udid.Imei = inner_data.Req.Device.DevID[0].ID
 		}
 	}
+	//trick code
+	if device_udid.Imei == nil {
+		device_udid.Imei = new(string)
+		*device_udid.Imei = "863778014726969"
+	}
 	device_tmp.Vendor = new(string)
 	*device_tmp.Vendor = inner_data.Req.Device.Brand
 	device_tmp.Model = new(string)
