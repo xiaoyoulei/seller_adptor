@@ -62,7 +62,7 @@ func (this *ReqQiushiModule) packreq(request *mobads_api.BidRequest, inner_data 
 	*device_tmp.OsVersion.Micro = inner_data.Req.Device.OSVersion.Micro
 	device_tmp.Udid = new(mobads_api.Device_UdId)
 	device_udid := device_tmp.Udid
-	if len(inner_data.Req.Device.DevID) > 0 {
+	for i := 0; i < len(inner_data.Req.Device.DevID); i++ {
 		switch inner_data.Req.Device.DevID[0].DevIDType {
 		case context.DeviceIDType_IMEI:
 			device_udid.Imei = new(string)

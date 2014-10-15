@@ -118,8 +118,8 @@ func (this *ParseJesgooJsonRequestModule) parse(inner_data *context.Context) (er
 		inner_device.Model = temp_req_device.Model
 		if temp_req_device.Ids != nil {
 			var device_id DeviceId
-			if len(temp_req_device.Ids) > 0 {
-				device_id = temp_req_device.Ids[0]
+			for i := 0; i < len(temp_req_device.Ids); i++ {
+				device_id = temp_req_device.Ids[i]
 				var inner_device_id context.DeviceID
 				switch device_id.Type {
 				case 1:
