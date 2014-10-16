@@ -8,7 +8,6 @@ import (
 	"jesgoo_protocol"
 	"log"
 	"math/rand"
-	"os"
 	"strings"
 	"time"
 )

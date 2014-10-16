@@ -10,6 +10,7 @@ import (
 	"prepack"
 	"rank"
 	"reqads"
+	"utils"
 )
 
 type IModule interface {
@@ -20,9 +21,33 @@ type IModule interface {
 var jesgoo_modules []IModule
 var jesgoo_json_modules []IModule
 
-func InitServer() {
+func InitServer() (err error) {
 	log.Println("init server succ")
 	var global_context context.GlobalContext
+
+	/************ init log **************/
+	utils.GlobalLogLevel = utils.DebugLevel
+	utils.DebugLog = &utils.LogControl{}
+	utils.FatalLog = &utils.LogControl{}
+	utils.WarnLog = &utils.LogControl{}
+	utils.NoticeLog = &utils.LogControl{}
+	err = utils.DebugLog.Init(1, "debug.log", "./log/", utils.DebugLevel)
+	if err != nil {
+		return
+	}
+	err = utils.WarnLog.Init(3, "fatal.log", "./log/", utils.FatalLevel)
+	if err != nil {
+		return
+	}
+	err = utils.WarnLog.Init(3, "warning.log", "./log/", utils.WarningLevel)
+	if err != nil {
+		return
+	}
+	err = utils.NoticeLog.Init(5, "notice.log", "./log/", utils.NoticeLevel)
+	if err != nil {
+		return
+	}
+	/************ init log end **********/
 	jesgoo_modules = append(jesgoo_modules, &parser.ParseJesgooRequestModule{})
 	//jesgoo_modules = append(jesgoo_modules, &reqads.ReqBSModule{})
 	jesgoo_modules = append(jesgoo_modules, &reqads.ReqQiushiModule{})
@@ -42,6 +67,7 @@ func InitServer() {
 	for i := 0; i < len(jesgoo_json_modules); i++ {
 		jesgoo_json_modules[i].Init(&global_context)
 	}
+	return
 }
 
 func InitThread() (inner_data *context.Context) {
@@ -58,6 +84,9 @@ func CallbackJesgooJson(resp http.ResponseWriter, req *http.Request) {
 	var inner_data *context.Context
 	inner_data = InitThread()
 
+	utils.DebugLog.Write("recv a request")
+	utils.WarnLog.Write("recv a request")
+	utils.NoticeLog.Write("recv a request")
 	if req.Header["Remoteaddr"] != nil {
 		inner_data.Req.Network.Ip = req.Header["Remoteaddr"][0]
 	}
