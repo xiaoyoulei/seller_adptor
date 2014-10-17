@@ -6,10 +6,10 @@ import (
 	"encoding/base64"
 	"html/template"
 	"jesgoo_protocol"
-	"log"
 	"math/rand"
 	"strings"
 	"time"
+	"utils"
 )
 
 type PrePackModule struct {
@@ -85,7 +85,7 @@ func (this *PrePackModule) gencurl(ad *context.AdInfo, inner_data *context.Conte
 	var head_enc []byte
 	head_enc, err = proto.Marshal(&event_head)
 	if err != nil {
-		log.Println("marshal click_head fail")
+		utils.WarningLog.Write("marshal click_head fail")
 		return
 	}
 	head_str := this.basecoder.EncodeToString(head_enc)
@@ -93,26 +93,13 @@ func (this *PrePackModule) gencurl(ad *context.AdInfo, inner_data *context.Conte
 	var body_enc []byte
 	body_enc, err = proto.Marshal(&event_body)
 	if err != nil {
-		log.Println("marshal click_body fail")
+		utils.WarningLog.Write("marshal click_body fail")
 		return
 	}
-	/////////test code //////////////
-	/*	log.Printf("body [%s]", event_body.String())
 
-		test_file := "encode.txt"
-		var fout *os.File
-		fout, err = os.Create(test_file)
-		defer fout.Close()
-		if err != nil {
-			log.Printf("open file fail\n")
-		} else {
-			fout.Write(body_enc)
-		}
-	*/
-	/////////////////////////////////
 	body_str := coder.EncodeToString(body_enc)
 	curl = this.click_head + strings.Replace(head_str, "=", "", -1) + "." + strings.Replace(body_str, "=", "", -1)
-	log.Printf("curl is [%s]", curl)
+	utils.DebugLog.Write("curl is [%s]", curl)
 	return
 }
 
@@ -157,7 +144,7 @@ func (this *PrePackModule) genwinnotice(ad *context.AdInfo, inner_data *context.
 	var head_enc []byte
 	head_enc, err = proto.Marshal(&event_head)
 	if err != nil {
-		log.Println("marshal click_head fail")
+		utils.WarningLog.Write("marshal click_head fail")
 		return
 	}
 	head_str := this.basecoder.EncodeToString(head_enc)
@@ -165,7 +152,7 @@ func (this *PrePackModule) genwinnotice(ad *context.AdInfo, inner_data *context.
 	var body_enc []byte
 	body_enc, err = proto.Marshal(&event_body)
 	if err != nil {
-		log.Println("marshal click_body fail")
+		utils.WarningLog.Write("marshal click_body fail")
 		return
 	}
 	body_str := coder.EncodeToString(body_enc)
@@ -179,12 +166,12 @@ func (this *PrePackModule) Run(inner_data *context.Context) (err error) {
 		var temp_winnotice string
 		temp_click, err = this.gencurl(&inner_data.Resp.Ads[i], inner_data)
 		if err != nil {
-			log.Printf("make curl fail [%s]\n", err.Error())
+			utils.WarningLog.Write("make curl fail [%s]\n", err.Error())
 			return
 		}
 		temp_winnotice, err = this.genwinnotice(&inner_data.Resp.Ads[i], inner_data)
 		if err != nil {
-			log.Printf("make winnotice fail [%s]\n", err.Error())
+			utils.WarningLog.Write("make winnotice fail [%s]\n", err.Error())
 			return
 		}
 		inner_data.Resp.Ads[i].ClickUrl = temp_click
@@ -198,7 +185,7 @@ func (this *PrePackModule) Run(inner_data *context.Context) (err error) {
 			err = this.gentexthtml(&inner_data.Resp.Ads[i], inner_data)
 		}
 		if err != nil {
-			log.Printf("make html fail [%s]\n", err.Error())
+			utils.WarningLog.Write("make html fail [%s]\n", err.Error())
 			return
 		}
 	}

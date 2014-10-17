@@ -4,7 +4,7 @@ import (
 	"code.google.com/p/goprotobuf/proto"
 	"context"
 	"jesgoo_interface"
-	"log"
+	"utils"
 )
 
 type PackJesgooResponseModule struct {
@@ -26,7 +26,7 @@ func (this PackJesgooResponseModule) Run(inner_data *context.Context) (err error
 	} else {
 		pack_num = int32(ad_num)
 	}
-	log.Printf("pack_num is %d", pack_num)
+	utils.DebugLog.Write("pack_num is %d", pack_num)
 	var i int32
 	for i = 0; i < pack_num; i++ {
 		var temp_ad jesgoo_interface.SellerResponse_Ad

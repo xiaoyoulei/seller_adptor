@@ -31,11 +31,12 @@ type LogControl struct {
 	FileOut   *os.File
 	FileMutex sync.Mutex //日志锁
 	LogLevel  LogLevel   //当前日志级别
+	LogFormat string
 }
 
 var DebugLog *LogControl
 var FatalLog *LogControl
-var WarnLog *LogControl
+var WarningLog *LogControl
 var NoticeLog *LogControl
 var GlobalLogLevel LogLevel
 
@@ -46,6 +47,16 @@ func (this *LogControl) Init(timegap int64, filename string, filepath string, lo
 	this.FileName = filename
 	this.FilePath = filepath
 	this.LogLevel = loglevel
+	switch loglevel {
+	case NoticeLevel:
+		this.LogFormat = "NOTICE: "
+	case FatalLevel:
+		this.LogFormat = "FATAL: "
+	case WarningLevel:
+		this.LogFormat = "WARNING: "
+	case DebugLevel:
+		this.LogFormat = "DEBUG: "
+	}
 	err = this.open_file()
 	if err != nil {
 		return
@@ -54,7 +65,7 @@ func (this *LogControl) Init(timegap int64, filename string, filepath string, lo
 	return
 }
 
-func (this *LogControl) Write(logstr string) (err error) {
+func (this *LogControl) Write(format string, args ...interface{}) (err error) {
 	if this.LogLevel > GlobalLogLevel {
 		return
 	}
@@ -64,7 +75,14 @@ func (this *LogControl) Write(logstr string) (err error) {
 	if err != nil {
 		return err
 	}
-	_, err = this.FileOut.Write([]byte(logstr))
+	var body string
+	head := fmt.Sprintf("%s %s * ", this.LogFormat, time.Now().Format("2006-01-02 15:04:05"))
+	if args != nil {
+		body = fmt.Sprintf(format, args...)
+	} else {
+		body = format
+	}
+	_, err = this.FileOut.Write([]byte(head + body + "\n"))
 	return
 }
 
@@ -120,7 +138,7 @@ func GenSearchid(imei string) (searchid string) {
 	tmp = imei
 	tmp += time.Now().String()
 	tmp += strconv.Itoa(rand.Int())
-	log.Println(tmp)
+	DebugLog.Write("searchid is %s", tmp)
 	sha1_t := sha1.New()
 	io.WriteString(sha1_t, tmp)
 	searchid = fmt.Sprintf("%x", sha1_t.Sum(nil))

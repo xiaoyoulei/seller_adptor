@@ -3,6 +3,7 @@ package main
 import (
 	"log"
 	"net/http"
+	"utils"
 )
 
 func main() {
@@ -16,5 +17,8 @@ func main() {
 	}
 	http.HandleFunc("/v1/protobuf", CallbackJesgoo)
 	http.HandleFunc("/v1/json", CallbackJesgooJson)
-	http.ListenAndServe(":8081", nil)
+	err = http.ListenAndServe(":8081", nil)
+	if err != nil {
+		utils.FatalLog.Write("start server fail . err[%s]", err.Error())
+	}
 }

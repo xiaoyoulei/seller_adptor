@@ -29,24 +29,25 @@ func InitServer() (err error) {
 	utils.GlobalLogLevel = utils.DebugLevel
 	utils.DebugLog = &utils.LogControl{}
 	utils.FatalLog = &utils.LogControl{}
-	utils.WarnLog = &utils.LogControl{}
+	utils.WarningLog = &utils.LogControl{}
 	utils.NoticeLog = &utils.LogControl{}
-	err = utils.DebugLog.Init(1, "debug.log", "./log/", utils.DebugLevel)
+	err = utils.DebugLog.Init(60, "debug.log", "./log/", utils.DebugLevel)
 	if err != nil {
 		return
 	}
-	err = utils.WarnLog.Init(3, "fatal.log", "./log/", utils.FatalLevel)
+	err = utils.FatalLog.Init(60, "fatal.log", "./log/", utils.FatalLevel)
 	if err != nil {
 		return
 	}
-	err = utils.WarnLog.Init(3, "warning.log", "./log/", utils.WarningLevel)
+	err = utils.WarningLog.Init(60, "warning.log", "./log/", utils.WarningLevel)
 	if err != nil {
 		return
 	}
-	err = utils.NoticeLog.Init(5, "notice.log", "./log/", utils.NoticeLevel)
+	err = utils.NoticeLog.Init(60, "notice.log", "./log/", utils.NoticeLevel)
 	if err != nil {
 		return
 	}
+
 	/************ init log end **********/
 	jesgoo_modules = append(jesgoo_modules, &parser.ParseJesgooRequestModule{})
 	//jesgoo_modules = append(jesgoo_modules, &reqads.ReqBSModule{})
@@ -84,15 +85,12 @@ func CallbackJesgooJson(resp http.ResponseWriter, req *http.Request) {
 	var inner_data *context.Context
 	inner_data = InitThread()
 
-	utils.DebugLog.Write("recv a request")
-	utils.WarnLog.Write("recv a request")
-	utils.NoticeLog.Write("recv a request")
 	if req.Header["Remoteaddr"] != nil {
 		inner_data.Req.Network.Ip = req.Header["Remoteaddr"][0]
 	}
 	var err error
 	if req.Body == nil {
-		log.Println("req.Body is nil")
+		utils.WarningLog.Write("req.Body is nil")
 		return
 	}
 	inner_data.ReqBody, err = ioutil.ReadAll(req.Body)
@@ -100,7 +98,7 @@ func CallbackJesgooJson(resp http.ResponseWriter, req *http.Request) {
 	for i := 0; i < len(jesgoo_json_modules); i++ {
 		err = jesgoo_json_modules[i].Run(inner_data)
 		if err != nil {
-			log.Printf("run module %d fail ! err[%s]\n", i, err.Error())
+			utils.FatalLog.Write("run module %d fail ! err[%s]\n", i, err.Error())
 			resp.WriteHeader(http.StatusBadRequest)
 			return
 		}
@@ -128,7 +126,7 @@ func CallbackJesgoo(resp http.ResponseWriter, req *http.Request) {
 	for i := 0; i < len(jesgoo_modules); i++ {
 		err = jesgoo_modules[i].Run(inner_data)
 		if err != nil {
-			log.Printf("run module %d fail ! err[%s]", i, err.Error())
+			utils.FatalLog.Write("run module %d fail ! err[%s]", i, err.Error())
 			resp.WriteHeader(http.StatusBadRequest)
 			return
 		}

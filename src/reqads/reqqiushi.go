@@ -8,11 +8,11 @@ import (
 	"context"
 	"errors"
 	"io/ioutil"
-	"log"
 	"mobads_api"
 	"net"
 	"net/http"
 	"time"
+	"utils"
 )
 
 type ReqQiushiModule struct {
@@ -93,7 +93,7 @@ func (this *ReqQiushiModule) packreq(request *mobads_api.BidRequest, inner_data 
 	network_tmp := request.Network
 	network_tmp.Ipv4 = new(string)
 	*network_tmp.Ipv4 = inner_data.Req.Network.Ip
-	log.Printf("req qiushi inner_ip [%s]", inner_data.Req.Network.Ip)
+	utils.DebugLog.Write("req qiushi inner_ip [%s]", inner_data.Req.Network.Ip)
 
 	//adslot
 	var adslot_tmp mobads_api.AdSlot
@@ -188,10 +188,9 @@ func (this *ReqQiushiModule) convert_ad(inad *context.AdInfo, bsad *mobads_api.A
 }
 
 func (this *ReqQiushiModule) parse_resp(response *mobads_api.BidResponse, inner_data *context.Context) (err error) {
-	log.Println("baidu_response")
-	log.Println(response)
+	utils.DebugLog.Write("baidu_response [%s]", response.String())
 	if response.ErrorCode != nil {
-		log.Printf("request qiushi fail . error_code is %u\n", *response.ErrorCode)
+		utils.WarningLog.Write("request qiushi fail . error_code is %u\n", *response.ErrorCode)
 		err = errors.New("request qiushi fail .")
 		return
 	}
@@ -209,18 +208,18 @@ func (this *ReqQiushiModule) Run(inner_data *context.Context) (err error) {
 	//	client := &http.Client{}
 	var request_body = mobads_api.BidRequest{}
 	err = this.packreq(&request_body, inner_data)
-	log.Println(request_body)
+	utils.DebugLog.Write("baidu_request [%s]", request_body.String())
 	var request_byte []byte
 	request_byte = make([]byte, 0)
 	request_byte, err = proto.Marshal(&request_body)
 	if err != nil {
-		log.Printf("proto marshal fail ! %s", err.Error())
+		utils.WarningLog.Write("proto marshal fail ! %s", err.Error())
 		return
 	}
 	var request *http.Request
 	request, err = http.NewRequest("POST", "http://mobads.baidu.com/api", bytes.NewBuffer(request_byte))
 	if err != nil {
-		log.Println("create http post request fail")
+		utils.WarningLog.Write("create http post request fail [%s]", err.Error())
 		return
 	}
 	request.Header.Set("Content-Type", "application/x-protobuf")
@@ -230,24 +229,24 @@ func (this *ReqQiushiModule) Run(inner_data *context.Context) (err error) {
 	var response *http.Response
 	response, err = this.client.Do(request)
 	if err != nil {
-		log.Println("request qiushi server fail")
+		utils.WarningLog.Write("request qiushi server fail [%s]", err.Error())
 		return
 	}
 	if response.StatusCode != 200 {
 		err = errors.New("qiushi respose code is " + string(response.StatusCode))
-		log.Printf("qiushi response code is %d\n", response.StatusCode)
+		utils.WarningLog.Write("qiushi response code is %d", response.StatusCode)
 		return
 	}
 	var response_body = mobads_api.BidResponse{}
 	var response_byte []byte
 	response_byte, err = ioutil.ReadAll(response.Body)
 	if err != nil {
-		log.Printf("error occured %s\n", err.Error())
+		utils.WarningLog.Write("error occured [%s]", err.Error())
 		return
 	}
 	err = proto.Unmarshal(response_byte, &response_body)
 	if err != nil {
-		log.Printf("error occur %s\n", err.Error())
+		utils.WarningLog.Write("error occur [%s]", err.Error())
 		return
 	}
 	err = this.parse_resp(&response_body, inner_data)
@@ -261,7 +260,7 @@ func (this *ReqQiushiModule) Init(inner_data *context.GlobalContext) (err error)
 			Dial: func(netw, addr string) (net.Conn, error) {
 				c, err := net.DialTimeout(netw, addr, time.Millisecond*500)
 				if err != nil {
-					log.Println("dail timeout", err)
+					utils.WarningLog.Write("dail timeout [%s]", err.Error())
 					return nil, err
 				}
 				return c, nil

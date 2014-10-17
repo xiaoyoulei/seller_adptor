@@ -4,7 +4,6 @@ import (
 	"context"
 	"encoding/json"
 	"errors"
-	"log"
 	"utils"
 )
 
@@ -76,7 +75,7 @@ func (this *ParseJesgooJsonRequestModule) parse(inner_data *context.Context) (er
 	var temp_req SellerRequest
 	err = json.Unmarshal(inner_data.ReqBody, &temp_req)
 	if err != nil {
-		log.Println("error occur " + err.Error())
+		utils.WarningLog.Write("deserialized jesgoo json fail [%s]", err.Error())
 		return
 	}
 
@@ -99,7 +98,7 @@ func (this *ParseJesgooJsonRequestModule) parse(inner_data *context.Context) (er
 	inner_device := &inner_data.Req.Device
 	temp_req_device := &temp_req.Device
 	if temp_req_device == nil {
-		log.Println("request has no device")
+		utils.DebugLog.Write("request has no device")
 	} else {
 		switch temp_req_device.Os_type {
 		case 1:
@@ -141,13 +140,13 @@ func (this *ParseJesgooJsonRequestModule) parse(inner_data *context.Context) (er
 		//network
 		temp_req_network := &temp_req.Network
 		if temp_req_network == nil {
-			log.Println("request has no network")
+			utils.DebugLog.Write("request has no network")
 		} else {
 			inner_network := &inner_data.Req.Network
 
 			if len(temp_req_network.Ip) > 6 {
 				inner_network.Ip = temp_req_network.Ip
-				log.Printf("client ip is %s", temp_req_network.Ip)
+				utils.DebugLog.Write("client ip is %s", temp_req_network.Ip)
 			}
 			switch temp_req_network.Type {
 			case 1:
@@ -203,7 +202,7 @@ func (this *ParseJesgooJsonRequestModule) parse(inner_data *context.Context) (er
 func (this *ParseJesgooJsonRequestModule) Run(inner_data *context.Context) (err error) {
 	err = this.parse(inner_data)
 	if err != nil {
-		log.Printf("parse jesgoo json fail [%s]", err.Error())
+		utils.DebugLog.Write("parse jesgoo json fail [%s]", err.Error())
 	}
 	return
 }

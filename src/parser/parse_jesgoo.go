@@ -5,7 +5,6 @@ import (
 	"context"
 	"errors"
 	"jesgoo_interface"
-	"log"
 	"utils"
 )
 
@@ -16,7 +15,7 @@ func (this ParseJesgooRequestModule) Run(inner_data *context.Context) (err error
 	var temp_req jesgoo_interface.SellerRequest
 	proto.Unmarshal(inner_data.ReqBody, &temp_req)
 	if err != nil {
-		log.Println("err is not null " + err.Error())
+		utils.WarningLog.Write("deseriallize jesgoo proto request fail [%s]", err.Error())
 	}
 	var inner_req *context.InnerReq
 	inner_req = &inner_data.Req

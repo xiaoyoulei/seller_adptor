@@ -3,7 +3,7 @@ package pack
 import (
 	"context"
 	"encoding/json"
-	"log"
+	"utils"
 )
 
 type PackJesgooResponseJsonModule struct {
@@ -37,7 +37,7 @@ func (this PackJesgooResponseJsonModule) Run(inner_data *context.Context) (err e
 	} else {
 		pack_num = int32(ad_num)
 	}
-	log.Printf("pack_num is %d, need_ad %d, ad_num %d", pack_num, need_ad, ad_num)
+	utils.DebugLog.Write("pack_num is %d, need_ad %d, ad_num %d", pack_num, need_ad, ad_num)
 	var i int32
 	for i = 0; i < pack_num; i++ {
 		var temp_ad Ad

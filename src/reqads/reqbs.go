@@ -4,9 +4,9 @@ import (
 	"context"
 	"errors"
 	"github.com/apache/thrift/lib/go/thrift"
-	"log"
 	"net"
 	"ui2bs"
+	"utils"
 )
 
 type ReqBSModule struct {
@@ -25,14 +25,14 @@ func (this *ReqBSModule) InitReqBs(host string, port string) {
 	protocolFactory = thrift.NewTBinaryProtocolFactoryDefault()
 	transport, err = thrift.NewTSocket(net.JoinHostPort(host, port))
 	if err != nil {
-		log.Fatal("create transport fail")
+		utils.FatalLog.Write("create transport fail")
 	}
 
 	useTransport = transportFactory.GetTransport(transport)
 	client = ui2bs.NewBSServiceClientFactory(useTransport, protocolFactory)
 	err := transport.Open()
 	if err != nil {
-		log.Fatal("open transport fail")
+		utils.FatalLog.Write("open transport fail")
 	}
 	return
 
@@ -40,7 +40,7 @@ func (this *ReqBSModule) InitReqBs(host string, port string) {
 
 func (this *ReqBSModule) pack_req(inner_data *context.Context, bs_req *ui2bs.BSRequest) (err error) {
 	if bs_req == nil || bs_req.Media == nil || bs_req.Device == nil || bs_req.Adslot == nil {
-		log.Println("bs_req is null")
+		utils.FatalLog.Write("bs_req is null")
 		err = errors.New("bs_req is null")
 		return
 	}
@@ -80,7 +80,6 @@ func (this *ReqBSModule) pack_req(inner_data *context.Context, bs_req *ui2bs.BSR
 	}
 	bs_req.Device.DevId = make([]*ui2bs.DeviceID, 0)
 	bs_req.Device.DevId = append(bs_req.Device.DevId, temp_device_id)
-	log.Println(bs_req)
 	return
 
 }
@@ -128,19 +127,15 @@ func (this *ReqBSModule) ReqBs(inner_data *context.Context) (err error) {
 	transport.Open()
 	defer transport.Close()
 	err = this.pack_req(inner_data, bs_req)
-	log.Println(bs_req)
 	if err != nil {
-		log.Println(err)
+		utils.WarningLog.Write("reqbs pack req fail [%s]", err.Error())
 		return
 	}
 	bs_resp, err = client.Search(bs_req)
 	if err != nil {
-		log.Println("request bs fail")
-		log.Println(err)
+		utils.WarningLog.Write("request bs fail [%s]", err.Error())
 	}
 	this.parse_resp(inner_data, bs_resp)
-	log.Println("bs return :")
-	log.Println(bs_resp)
 	return
 }
 
