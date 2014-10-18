@@ -10,6 +10,7 @@ import (
 	"prepack"
 	"rank"
 	"reqads"
+	"searchlog"
 	"utils"
 )
 
@@ -55,6 +56,7 @@ func InitServer() (err error) {
 	jesgoo_modules = append(jesgoo_modules, &rank.RankModule{})
 	jesgoo_modules = append(jesgoo_modules, &prepack.PrePackModule{})
 	jesgoo_modules = append(jesgoo_modules, &pack.PackJesgooResponseModule{})
+	jesgoo_modules = append(jesgoo_modules, &searchlog.SearchLogModule{})
 
 	for i := 0; i < len(jesgoo_modules); i++ {
 		jesgoo_modules[i].Init(&global_context)
@@ -65,6 +67,7 @@ func InitServer() (err error) {
 	jesgoo_json_modules = append(jesgoo_json_modules, &rank.RankModule{})
 	jesgoo_json_modules = append(jesgoo_json_modules, &prepack.PrePackModule{})
 	jesgoo_json_modules = append(jesgoo_json_modules, &pack.PackJesgooResponseJsonModule{})
+	jesgoo_json_modules = append(jesgoo_json_modules, &searchlog.SearchLogModule{})
 	for i := 0; i < len(jesgoo_json_modules); i++ {
 		jesgoo_json_modules[i].Init(&global_context)
 	}
@@ -98,7 +101,7 @@ func CallbackJesgooJson(resp http.ResponseWriter, req *http.Request) {
 	for i := 0; i < len(jesgoo_json_modules); i++ {
 		err = jesgoo_json_modules[i].Run(inner_data)
 		if err != nil {
-			utils.FatalLog.Write("run module %d fail ! err[%s]\n", i, err.Error())
+			utils.FatalLog.Write("run module %d fail ! err[%s]", i, err.Error())
 			resp.WriteHeader(http.StatusBadRequest)
 			return
 		}
