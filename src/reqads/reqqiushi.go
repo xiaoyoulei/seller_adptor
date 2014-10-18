@@ -11,6 +11,7 @@ import (
 	"mobads_api"
 	"net"
 	"net/http"
+	"net/url"
 	"time"
 	"utils"
 )
@@ -255,6 +256,10 @@ func (this *ReqQiushiModule) Run(inner_data *context.Context) (err error) {
 }
 
 func (this *ReqQiushiModule) Init(inner_data *context.GlobalContext) (err error) {
+	/*********设置代理访问****************/
+	url_i := url.URL{}
+	url_proxy, _ := url_i.Parse("http://192.168.0.101:6060")
+	/**********************************/
 	this.client = &http.Client{
 		Transport: &http.Transport{
 			Dial: func(netw, addr string) (net.Conn, error) {
@@ -267,8 +272,11 @@ func (this *ReqQiushiModule) Init(inner_data *context.GlobalContext) (err error)
 			},
 			MaxIdleConnsPerHost:   10,
 			ResponseHeaderTimeout: time.Millisecond * 500,
+			// 设置代理访问
+			Proxy: http.ProxyURL(url_proxy),
 		},
 	}
+
 	return
 }
 
