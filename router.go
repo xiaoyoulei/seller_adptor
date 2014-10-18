@@ -32,19 +32,19 @@ func InitServer() (err error) {
 	utils.FatalLog = &utils.LogControl{}
 	utils.WarningLog = &utils.LogControl{}
 	utils.NoticeLog = &utils.LogControl{}
-	err = utils.DebugLog.Init(60, "debug.log", "./log/", utils.DebugLevel)
+	err = utils.DebugLog.Init(60, "ui.dg", "./log/", utils.DebugLevel)
 	if err != nil {
 		return
 	}
-	err = utils.FatalLog.Init(60, "fatal.log", "./log/", utils.FatalLevel)
+	err = utils.FatalLog.Init(60, "ui.fatal", "./log/", utils.FatalLevel)
 	if err != nil {
 		return
 	}
-	err = utils.WarningLog.Init(60, "warning.log", "./log/", utils.WarningLevel)
+	err = utils.WarningLog.Init(60, "ui.warn", "./log/", utils.WarningLevel)
 	if err != nil {
 		return
 	}
-	err = utils.NoticeLog.Init(60, "notice.log", "./log/", utils.NoticeLevel)
+	err = utils.NoticeLog.Init(60, "ui.log", "./log/", utils.NoticeLevel)
 	if err != nil {
 		return
 	}

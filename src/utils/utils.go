@@ -118,14 +118,16 @@ func (this *LogControl) LogCut() {
 		delta = time.Duration(nexttime - nowtime)
 		time.Sleep(time.Second * delta)
 		this.FileMutex.Lock()
-		date_format := time.Now().Format("200601021504")
+		//		date_format := time.Now().Truncate(time.Duration(this.TimeGap * time.Second)).Format("200601021504")
+		date_now := time.Now().Unix() - this.TimeGap
+		date_format := time.Unix(date_now, 0).Format("200610021504")
 		err = this.check_valid()
 		if err != nil {
 			log.Printf("check log file fail. err[%s]", err.Error())
 			os.Exit(-1)
 		}
 		this.FileOut.Close()
-		os.Rename(this.FilePath+this.FileName, this.FilePath+this.FileName+"."+date_format)
+		os.Rename(this.FilePath+this.FileName, this.FilePath+this.FileName+"."+date_format+"00")
 		err = this.open_file()
 		if err != nil {
 			os.Exit(-1)
