@@ -57,6 +57,9 @@ func (this *LogControl) Init(timegap int64, filename string, filepath string, lo
 	case DebugLevel:
 		this.LogFormat = "DEBUG: "
 	}
+	if this.LogLevel > GlobalLogLevel {
+		return
+	}
 	err = this.open_file()
 	if err != nil {
 		return

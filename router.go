@@ -27,7 +27,7 @@ func InitServer() (err error) {
 	var global_context context.GlobalContext
 
 	/************ init log **************/
-	utils.GlobalLogLevel = utils.DebugLevel
+	utils.GlobalLogLevel = utils.WarningLevel
 	utils.DebugLog = &utils.LogControl{}
 	utils.FatalLog = &utils.LogControl{}
 	utils.WarningLog = &utils.LogControl{}
