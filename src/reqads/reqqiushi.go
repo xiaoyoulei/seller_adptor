@@ -7,6 +7,7 @@ import (
 	"code.google.com/p/goprotobuf/proto"
 	"context"
 	"errors"
+	"fmt"
 	"io/ioutil"
 	"mobads_api"
 	"net"
@@ -80,10 +81,10 @@ func (this *ReqQiushiModule) packreq(request *mobads_api.BidRequest, inner_data 
 		}
 	}
 	//trick code
-	if device_udid.Imei == nil {
+	/*	if device_udid.Imei == nil {
 		device_udid.Imei = new(string)
 		*device_udid.Imei = "863778014726969"
-	}
+	}*/
 	device_tmp.Vendor = new(string)
 	*device_tmp.Vendor = inner_data.Req.Device.Brand
 	device_tmp.Model = new(string)
@@ -191,8 +192,9 @@ func (this *ReqQiushiModule) convert_ad(inad *context.AdInfo, bsad *mobads_api.A
 func (this *ReqQiushiModule) parse_resp(response *mobads_api.BidResponse, inner_data *context.Context) (err error) {
 	utils.DebugLog.Write("baidu_response [%s]", response.String())
 	if response.ErrorCode != nil {
-		utils.WarningLog.Write("request qiushi fail . error_code is %u\n", *response.ErrorCode)
-		err = errors.New("request qiushi fail .")
+		utils.WarningLog.Write("request qiushi fail . error_code is %u", *response.ErrorCode)
+		errstr := fmt.Sprintf("request qiushi fail . errcode[%d]", *response.ErrorCode)
+		err = errors.New(errstr)
 		return
 	}
 	for i := 0; i < len(response.Ads); i++ {
