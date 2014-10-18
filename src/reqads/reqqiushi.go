@@ -262,8 +262,9 @@ func (this *ReqQiushiModule) Init(inner_data *context.GlobalContext) (err error)
 	/**********************************/
 	this.client = &http.Client{
 		Transport: &http.Transport{
+			// 控制超时
 			Dial: func(netw, addr string) (net.Conn, error) {
-				c, err := net.DialTimeout(netw, addr, time.Millisecond*500)
+				c, err := net.DialTimeout(netw, addr, time.Millisecond*1000)
 				if err != nil {
 					utils.WarningLog.Write("dail timeout [%s]", err.Error())
 					return nil, err
@@ -271,7 +272,7 @@ func (this *ReqQiushiModule) Init(inner_data *context.GlobalContext) (err error)
 				return c, nil
 			},
 			MaxIdleConnsPerHost:   10,
-			ResponseHeaderTimeout: time.Millisecond * 500,
+			ResponseHeaderTimeout: time.Millisecond * 1000,
 			// 设置代理访问
 			Proxy: http.ProxyURL(url_proxy),
 		},
