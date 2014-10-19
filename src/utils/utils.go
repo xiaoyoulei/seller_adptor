@@ -120,7 +120,7 @@ func (this *LogControl) LogCut() {
 		this.FileMutex.Lock()
 		//		date_format := time.Now().Truncate(time.Duration(this.TimeGap * time.Second)).Format("200601021504")
 		date_now := time.Now().Unix() - this.TimeGap
-		date_format := time.Unix(date_now, 0).Format("200610021504")
+		date_format := time.Unix(date_now, 0).Format("200601021504")
 		err = this.check_valid()
 		if err != nil {
 			log.Printf("check log file fail. err[%s]", err.Error())
