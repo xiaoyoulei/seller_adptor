@@ -170,4 +170,19 @@ type Context struct {
 
 // 服务器全局信息
 type GlobalContext struct {
+	Log struct {
+		LogLevel int
+	}
+	Proxy struct {
+		Open     bool
+		Location string
+	}
+	Qiushi struct {
+		Location string
+		Timeout  int //单位毫秒
+	}
+	Prepack struct {
+		ClickHeader string
+		WinHeader   string
+	}
 }

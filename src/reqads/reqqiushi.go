@@ -18,7 +18,8 @@ import (
 )
 
 type ReqQiushiModule struct {
-	client *http.Client
+	client     *http.Client
+	qiushi_url string
 }
 
 func (this *ReqQiushiModule) packreq(request *mobads_api.BidRequest, inner_data *context.Context) (err error) {
@@ -220,7 +221,7 @@ func (this *ReqQiushiModule) Run(inner_data *context.Context) (err error) {
 		return
 	}
 	var request *http.Request
-	request, err = http.NewRequest("POST", "http://mobads.baidu.com/api", bytes.NewBuffer(request_byte))
+	request, err = http.NewRequest("POST", this.qiushi_url, bytes.NewBuffer(request_byte))
 	if err != nil {
 		utils.WarningLog.Write("create http post request fail [%s]", err.Error())
 		return
@@ -257,42 +258,30 @@ func (this *ReqQiushiModule) Run(inner_data *context.Context) (err error) {
 	return
 }
 
-func (this *ReqQiushiModule) Init(inner_data *context.GlobalContext) (err error) {
-	/*********设置代理访问****************/
-	url_i := url.URL{}
-	url_proxy, _ := url_i.Parse("http://192.168.0.101:6060")
-	/**********************************/
-	this.client = &http.Client{
-		Transport: &http.Transport{
-			// 控制超时
-			Dial: func(netw, addr string) (net.Conn, error) {
-				c, err := net.DialTimeout(netw, addr, time.Millisecond*1000)
-				if err != nil {
-					utils.WarningLog.Write("dail timeout [%s]", err.Error())
-					return nil, err
-				}
-				return c, nil
-			},
-			MaxIdleConnsPerHost:   10,
-			ResponseHeaderTimeout: time.Millisecond * 1000,
-			// 设置代理访问
-			Proxy: http.ProxyURL(url_proxy),
-		},
+func (this *ReqQiushiModule) Init(global_conf *context.GlobalContext) (err error) {
+	/*********设置传输层参数****************/
+	transport := &http.Transport{}
+	transport.Dial = func(netw, addr string) (net.Conn, error) {
+		c, err := net.DialTimeout(netw, addr, time.Millisecond*time.Duration(global_conf.Qiushi.Timeout))
+		if err != nil {
+			utils.WarningLog.Write("dail timeout [%s]", err.Error())
+			return nil, err
+		}
+		return c, nil
 	}
+	transport.MaxIdleConnsPerHost = 10
+	transport.ResponseHeaderTimeout = time.Millisecond * time.Duration(global_conf.Qiushi.Timeout)
+	if global_conf.Proxy.Open {
+		url_i := url.URL{}
+		url_proxy, _ := url_i.Parse(global_conf.Proxy.Location)
+		transport.Proxy = http.ProxyURL(url_proxy)
+		utils.DebugLog.Write("open http proxy , proxy location [%s]", global_conf.Proxy.Location)
+	}
+	/**********************************/
+	this.client = &http.Client{}
+	this.client.Transport = transport
+	this.qiushi_url = global_conf.Qiushi.Location
+	utils.DebugLog.Write("req qiushi url [%s]", this.qiushi_url)
 
 	return
 }
-
-/*
-func main() {
-	log.SetFlags(log.Lshortfile | log.LstdFlags)
-
-	var temp context.Context
-	temp.Req.Network.Ip = "220.181.111.85"
-	var module *ReqQiushiModule
-	module = new(ReqQiushiModule)
-	var temp_global context.GlobalContext
-	module.Init(&temp_global)
-	module.Run(&temp)
-}
-*/

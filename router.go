@@ -1,6 +1,7 @@
 package main
 
 import (
+	"code.google.com/p/gcfg"
 	"context"
 	"io/ioutil"
 	"log"
@@ -25,9 +26,25 @@ var jesgoo_json_modules []IModule
 func InitServer() (err error) {
 	log.Println("init server succ")
 	var global_context context.GlobalContext
+	err = gcfg.ReadFileInto(&global_context, "conf/ui.conf")
+	if err != nil {
+		log.Fatalf("init global conf fail . err[%s]", err.Error())
+	}
 
 	/************ init log **************/
-	utils.GlobalLogLevel = utils.WarningLevel
+	switch global_context.Log.LogLevel {
+	case 1:
+		utils.GlobalLogLevel = utils.NoticeLevel
+	case 2:
+		utils.GlobalLogLevel = utils.FatalLevel
+	case 3:
+		utils.GlobalLogLevel = utils.WarningLevel
+	case 4:
+		utils.GlobalLogLevel = utils.DebugLevel
+	default:
+		utils.GlobalLogLevel = utils.DebugLevel
+	}
+	//	utils.GlobalLogLevel = utils.WarningLevel
 	utils.DebugLog = &utils.LogControl{}
 	utils.FatalLog = &utils.LogControl{}
 	utils.WarningLog = &utils.LogControl{}
