@@ -170,6 +170,9 @@ type Context struct {
 
 // 服务器全局信息
 type GlobalContext struct {
+	Server struct {
+		ListenPort int
+	}
 	Log struct {
 		LogLevel int
 	}

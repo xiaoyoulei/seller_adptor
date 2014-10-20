@@ -23,10 +23,9 @@ type IModule interface {
 var jesgoo_modules []IModule
 var jesgoo_json_modules []IModule
 
-func InitServer() (err error) {
+func InitServer(global_context *context.GlobalContext, conf_path string) (err error) {
 	log.Println("init server succ")
-	var global_context context.GlobalContext
-	err = gcfg.ReadFileInto(&global_context, "conf/ui.conf")
+	err = gcfg.ReadFileInto(global_context, conf_path)
 	if err != nil {
 		log.Fatalf("init global conf fail . err[%s]", err.Error())
 	}
@@ -76,7 +75,7 @@ func InitServer() (err error) {
 	jesgoo_modules = append(jesgoo_modules, &searchlog.SearchLogModule{})
 
 	for i := 0; i < len(jesgoo_modules); i++ {
-		jesgoo_modules[i].Init(&global_context)
+		jesgoo_modules[i].Init(global_context)
 	}
 	jesgoo_json_modules = append(jesgoo_json_modules, &parser.ParseJesgooJsonRequestModule{})
 	//	jesgoo_json_modules = append(jesgoo_json_modules, &reqads.ReqBSModule{})
@@ -86,7 +85,7 @@ func InitServer() (err error) {
 	jesgoo_json_modules = append(jesgoo_json_modules, &pack.PackJesgooResponseJsonModule{})
 	jesgoo_json_modules = append(jesgoo_json_modules, &searchlog.SearchLogModule{})
 	for i := 0; i < len(jesgoo_json_modules); i++ {
-		jesgoo_json_modules[i].Init(&global_context)
+		jesgoo_json_modules[i].Init(global_context)
 	}
 	return
 }
