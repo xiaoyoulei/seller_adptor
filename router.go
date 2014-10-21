@@ -3,6 +3,8 @@ package main
 import (
 	"code.google.com/p/gcfg"
 	"context"
+	"dict"
+	"dmp"
 	"io/ioutil"
 	"log"
 	"net/http"
@@ -64,10 +66,20 @@ func InitServer(global_context *context.GlobalContext, conf_path string) (err er
 	if err != nil {
 		return
 	}
-
 	/************ init log end **********/
+
+	/************ init dict  **********/
+	dict.IPDict = &dict.IPDictModule{}
+	err = dict.IPDict.Init(global_context)
+	if err != nil {
+		utils.FatalLog.Write("Init ipdict fail. err[%s]", err.Error())
+		return
+	}
+	/************ init dict end**********/
+
+	/************ init module ************/
 	jesgoo_modules = append(jesgoo_modules, &parser.ParseJesgooRequestModule{})
-	//jesgoo_modules = append(jesgoo_modules, &reqads.ReqBSModule{})
+	jesgoo_modules = append(jesgoo_modules, &dmp.DMPModule{})
 	jesgoo_modules = append(jesgoo_modules, &reqads.ReqQiushiModule{})
 	jesgoo_modules = append(jesgoo_modules, &rank.RankModule{})
 	jesgoo_modules = append(jesgoo_modules, &prepack.PrePackModule{})
@@ -78,7 +90,7 @@ func InitServer(global_context *context.GlobalContext, conf_path string) (err er
 		jesgoo_modules[i].Init(global_context)
 	}
 	jesgoo_json_modules = append(jesgoo_json_modules, &parser.ParseJesgooJsonRequestModule{})
-	//	jesgoo_json_modules = append(jesgoo_json_modules, &reqads.ReqBSModule{})
+	jesgoo_json_modules = append(jesgoo_json_modules, &dmp.DMPModule{})
 	jesgoo_json_modules = append(jesgoo_json_modules, &reqads.ReqQiushiModule{})
 	jesgoo_json_modules = append(jesgoo_json_modules, &rank.RankModule{})
 	jesgoo_json_modules = append(jesgoo_json_modules, &prepack.PrePackModule{})
@@ -87,6 +99,7 @@ func InitServer(global_context *context.GlobalContext, conf_path string) (err er
 	for i := 0; i < len(jesgoo_json_modules); i++ {
 		jesgoo_json_modules[i].Init(global_context)
 	}
+	/************ init module end************/
 	return
 }
 

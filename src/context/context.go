@@ -1,6 +1,8 @@
 package context
 
-import "bytes"
+import (
+	"bytes"
+)
 
 type AppInfo struct {
 	PackageName string
@@ -95,11 +97,17 @@ type Device struct {
 	Brand     string
 	Model     string
 }
+type LocationInfo struct {
+	Country  uint32
+	Province uint32
+	City     uint32
+}
 type InnerReq struct {
-	Media   MediaInfo
-	AdSlot  AdSlotInfo
-	Network NetworkInfo
-	Device  Device
+	Media    MediaInfo
+	AdSlot   AdSlotInfo
+	Network  NetworkInfo
+	Device   Device
+	Location LocationInfo
 }
 
 type AdType int64
@@ -187,5 +195,8 @@ type GlobalContext struct {
 	Prepack struct {
 		ClickHeader string
 		WinHeader   string
+	}
+	Dict struct {
+		IPDictPath string
 	}
 }

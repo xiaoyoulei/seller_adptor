@@ -13,7 +13,7 @@ type ParseJesgooRequestModule struct {
 
 func (this ParseJesgooRequestModule) Run(inner_data *context.Context) (err error) {
 	var temp_req jesgoo_interface.SellerRequest
-	proto.Unmarshal(inner_data.ReqBody, &temp_req)
+	err = proto.Unmarshal(inner_data.ReqBody, &temp_req)
 	if err != nil {
 		utils.WarningLog.Write("deseriallize jesgoo proto request fail [%s]", err.Error())
 	}
