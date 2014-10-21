@@ -189,6 +189,9 @@ func (this *ParseJesgooJsonRequestModule) parse(inner_data *context.Context) (er
 			return
 		}
 
+		inner_data.Req.Debug = temp_req.Debug
+		utils.DebugLog.Write("get debug flag [%d]", inner_data.Req.Debug)
+
 		//searchid
 		if len(inner_data.Req.Device.DevID) > 0 {
 			inner_data.Searchid = utils.GenSearchid(inner_data.Req.Device.DevID[0].ID)

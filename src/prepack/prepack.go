@@ -58,11 +58,20 @@ func (this *PrePackModule) gencurl(ad *context.AdInfo, inner_data *context.Conte
 	*event_body.SearchId = inner_data.Searchid
 	event_body.SearchTimestamp = new(uint32)
 	*event_body.SearchTimestamp = uint32(time.Now().Unix())
+	event_body.SearchIp = new(uint32)
+	*event_body.SearchIp = inner_data.Req.Network.Ipint
 	event_body.Media = new(jesgoo_protocol.Event_Body_Media)
 	event_body.Media.MediaId = new(string)
 	event_body.Media.ChannelId = new(string)
 	*event_body.Media.MediaId = inner_data.Req.Media.Appsid
 	*event_body.Media.ChannelId = inner_data.Req.Media.ChannelId
+	event_body.Region = new(jesgoo_protocol.Event_Body_Region)
+	event_body.Region.Country = new(uint32)
+	event_body.Region.Province = new(uint32)
+	event_body.Region.City = new(uint32)
+	*event_body.Region.Country = inner_data.Req.Location.Country
+	*event_body.Region.Province = inner_data.Req.Location.Province
+	*event_body.Region.City = inner_data.Req.Location.City
 	//	event_body.Region = new(jesgoo_protocol.Event_Body_Region)
 	event_body.Ad = new(jesgoo_protocol.Event_Body_Ad)
 	event_body.Ad.UserId = new(uint32)
@@ -78,9 +87,20 @@ func (this *PrePackModule) gencurl(ad *context.AdInfo, inner_data *context.Conte
 	*event_body.Charge.Type = jesgoo_protocol.ChargeType_CPC
 	event_body.Charge.Price = new(uint32)
 	*event_body.Charge.Price = uint32(ad.Price)
+	event_body.Dsp = new(jesgoo_protocol.Dsp)
+	switch ad.AdSrc {
+	case context.AdSrc_JESGOO:
+		*event_body.Dsp = jesgoo_protocol.Dsp_JESGOO_DSP
+	case context.AdSrc_BAIDU:
+		*event_body.Dsp = jesgoo_protocol.Dsp_BAIDU_DSP
+	default:
+		*event_body.Dsp = jesgoo_protocol.Dsp_JESGOO_DSP
+	}
 	event_body.Action = new(jesgoo_protocol.Event_Body_Action)
 	event_body.Action.TargetUrl = new(string)
 	*event_body.Action.TargetUrl = ad.ClickUrl
+	event_body.Debug = new(bool)
+	*event_body.Debug = inner_data.Req.Debug
 
 	var head_enc []byte
 	head_enc, err = proto.Marshal(&event_head)
@@ -117,11 +137,20 @@ func (this *PrePackModule) genwinnotice(ad *context.AdInfo, inner_data *context.
 	*event_body.SearchId = inner_data.Searchid
 	event_body.SearchTimestamp = new(uint32)
 	*event_body.SearchTimestamp = uint32(time.Now().Unix())
+	event_body.SearchIp = new(uint32)
+	*event_body.SearchIp = inner_data.Req.Network.Ipint
 	event_body.Media = new(jesgoo_protocol.Event_Body_Media)
 	event_body.Media.MediaId = new(string)
 	event_body.Media.ChannelId = new(string)
 	*event_body.Media.MediaId = inner_data.Req.Media.Appsid
 	*event_body.Media.ChannelId = inner_data.Req.Media.ChannelId
+	event_body.Region = new(jesgoo_protocol.Event_Body_Region)
+	event_body.Region.Country = new(uint32)
+	event_body.Region.Province = new(uint32)
+	event_body.Region.City = new(uint32)
+	*event_body.Region.Country = inner_data.Req.Location.Country
+	*event_body.Region.Province = inner_data.Req.Location.Province
+	*event_body.Region.City = inner_data.Req.Location.City
 	//	event_body.Region = new(jesgoo_protocol.Event_Body_Region)
 	event_body.Ad = new(jesgoo_protocol.Event_Body_Ad)
 	event_body.Ad.UserId = new(uint32)
@@ -140,6 +169,18 @@ func (this *PrePackModule) genwinnotice(ad *context.AdInfo, inner_data *context.
 	//	event_body.Action = new(jesgoo_protocol.Event_Body_Action)
 	//	event_body.Action.TargetUrl = new(string)
 	//	*event_body.Action.TargetUrl = ad.ClickUrl
+
+	event_body.Dsp = new(jesgoo_protocol.Dsp)
+	switch ad.AdSrc {
+	case context.AdSrc_JESGOO:
+		*event_body.Dsp = jesgoo_protocol.Dsp_JESGOO_DSP
+	case context.AdSrc_BAIDU:
+		*event_body.Dsp = jesgoo_protocol.Dsp_BAIDU_DSP
+	default:
+		*event_body.Dsp = jesgoo_protocol.Dsp_JESGOO_DSP
+	}
+	event_body.Debug = new(bool)
+	*event_body.Debug = inner_data.Req.Debug
 
 	var head_enc []byte
 	head_enc, err = proto.Marshal(&event_head)

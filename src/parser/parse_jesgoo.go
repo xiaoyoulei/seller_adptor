@@ -132,6 +132,12 @@ func (this ParseJesgooRequestModule) Run(inner_data *context.Context) (err error
 		return
 	}
 
+	//is debug request
+	inner_data.Req.Debug = false
+	if temp_req.Debug != nil {
+		inner_data.Req.Debug = *temp_req.Debug
+	}
+
 	//searchid
 	if len(inner_data.Req.Device.DevID) > 0 {
 		inner_data.Searchid = utils.GenSearchid(inner_data.Req.Device.DevID[0].ID)

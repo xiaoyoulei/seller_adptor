@@ -88,8 +88,9 @@ func (this *IPDictModule) Search(ip uint32) (country uint32, province uint32, ci
 		country = *sec.Country
 		province = *sec.Province
 		city = *sec.City
-		utils.WarningLog.Write("ip not find in dict .")
 		return
+	} else {
+		utils.WarningLog.Write("ip not find in dict .")
 	}
 	return
 }

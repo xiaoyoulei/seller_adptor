@@ -18,6 +18,7 @@ It has these top-level messages:
 	DeviceId
 	Device
 	AdInfo
+	AdDspRet
 	NoticeLogBody
 */
 package jesgoo_uilog
@@ -696,16 +697,40 @@ func (m *AdInfo) GetCpm() uint64 {
 	return 0
 }
 
+type AdDspRet struct {
+	Src              *AdSrc  `protobuf:"varint,1,req,name=src,enum=jesgoo.uilog.AdSrc" json:"src,omitempty"`
+	Adnum            *uint32 `protobuf:"varint,2,req,name=adnum" json:"adnum,omitempty"`
+	XXX_unrecognized []byte  `json:"-"`
+}
+
+func (m *AdDspRet) Reset()         { *m = AdDspRet{} }
+func (m *AdDspRet) String() string { return proto.CompactTextString(m) }
+func (*AdDspRet) ProtoMessage()    {}
+
+func (m *AdDspRet) GetSrc() AdSrc {
+	if m != nil && m.Src != nil {
+		return *m.Src
+	}
+	return AdSrc_JESGOO
+}
+
+func (m *AdDspRet) GetAdnum() uint32 {
+	if m != nil && m.Adnum != nil {
+		return *m.Adnum
+	}
+	return 0
+}
+
 type NoticeLogBody struct {
-	Searchid         *string   `protobuf:"bytes,1,req,name=searchid" json:"searchid,omitempty"`
-	Timestamp        *uint32   `protobuf:"varint,2,req,name=timestamp" json:"timestamp,omitempty"`
-	Media            *Media    `protobuf:"bytes,3,opt,name=media" json:"media,omitempty"`
-	Adslot           []*Adslot `protobuf:"bytes,4,rep,name=adslot" json:"adslot,omitempty"`
-	Device           *Device   `protobuf:"bytes,5,opt,name=device" json:"device,omitempty"`
-	Ads              []*AdInfo `protobuf:"bytes,6,rep,name=ads" json:"ads,omitempty"`
-	Baiduadsnum      *uint32   `protobuf:"varint,7,opt,name=baiduadsnum" json:"baiduadsnum,omitempty"`
-	Jesgooadsnum     *uint32   `protobuf:"varint,8,opt,name=jesgooadsnum" json:"jesgooadsnum,omitempty"`
-	XXX_unrecognized []byte    `json:"-"`
+	Searchid         *string     `protobuf:"bytes,1,req,name=searchid" json:"searchid,omitempty"`
+	Timestamp        *uint32     `protobuf:"varint,2,req,name=timestamp" json:"timestamp,omitempty"`
+	Media            *Media      `protobuf:"bytes,3,opt,name=media" json:"media,omitempty"`
+	Adslot           []*Adslot   `protobuf:"bytes,4,rep,name=adslot" json:"adslot,omitempty"`
+	Device           *Device     `protobuf:"bytes,5,opt,name=device" json:"device,omitempty"`
+	Ads              []*AdInfo   `protobuf:"bytes,6,rep,name=ads" json:"ads,omitempty"`
+	Dspret           []*AdDspRet `protobuf:"bytes,7,rep,name=dspret" json:"dspret,omitempty"`
+	Debug            *bool       `protobuf:"varint,8,opt,name=debug" json:"debug,omitempty"`
+	XXX_unrecognized []byte      `json:"-"`
 }
 
 func (m *NoticeLogBody) Reset()         { *m = NoticeLogBody{} }
@@ -754,18 +779,18 @@ func (m *NoticeLogBody) GetAds() []*AdInfo {
 	return nil
 }
 
-func (m *NoticeLogBody) GetBaiduadsnum() uint32 {
-	if m != nil && m.Baiduadsnum != nil {
-		return *m.Baiduadsnum
+func (m *NoticeLogBody) GetDspret() []*AdDspRet {
+	if m != nil {
+		return m.Dspret
 	}
-	return 0
+	return nil
 }
 
-func (m *NoticeLogBody) GetJesgooadsnum() uint32 {
-	if m != nil && m.Jesgooadsnum != nil {
-		return *m.Jesgooadsnum
+func (m *NoticeLogBody) GetDebug() bool {
+	if m != nil && m.Debug != nil {
+		return *m.Debug
 	}
-	return 0
+	return false
 }
 
 func init() {

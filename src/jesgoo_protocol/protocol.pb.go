@@ -541,23 +541,23 @@ func (x *ChargeType) UnmarshalJSON(data []byte) error {
 type Dsp int32
 
 const (
-	Dsp_JESGOO_DSP    Dsp = 0
-	Dsp_BAIDU_DSP     Dsp = 1
-	Dsp_AMAX_EXCHANGE Dsp = 2
-	Dsp_TANX_EXCHANGE Dsp = 3
+	Dsp_JESGOO_DSP    Dsp = 1
+	Dsp_BAIDU_DSP     Dsp = 2
+	Dsp_AMAX_EXCHANGE Dsp = 3
+	Dsp_TANX_EXCHANGE Dsp = 4
 )
 
 var Dsp_name = map[int32]string{
-	0: "JESGOO_DSP",
-	1: "BAIDU_DSP",
-	2: "AMAX_EXCHANGE",
-	3: "TANX_EXCHANGE",
+	1: "JESGOO_DSP",
+	2: "BAIDU_DSP",
+	3: "AMAX_EXCHANGE",
+	4: "TANX_EXCHANGE",
 }
 var Dsp_value = map[string]int32{
-	"JESGOO_DSP":    0,
-	"BAIDU_DSP":     1,
-	"AMAX_EXCHANGE": 2,
-	"TANX_EXCHANGE": 3,
+	"JESGOO_DSP":    1,
+	"BAIDU_DSP":     2,
+	"AMAX_EXCHANGE": 3,
+	"TANX_EXCHANGE": 4,
 }
 
 func (x Dsp) Enum() *Dsp {
@@ -610,20 +610,25 @@ func (x *Event_Head_CryptoType) UnmarshalJSON(data []byte) error {
 type Event_Body_EventType int32
 
 const (
+	// 基础事件范围 0 ~ 9
 	Event_Body_CLICK      Event_Body_EventType = 0
 	Event_Body_IMPRESSION Event_Body_EventType = 1
 	Event_Body_ACTIVATION Event_Body_EventType = 2
+	// SDK监控事件范围 10 ~ 29
+	Event_Body_INSTALL_PACKAGES Event_Body_EventType = 10
 )
 
 var Event_Body_EventType_name = map[int32]string{
-	0: "CLICK",
-	1: "IMPRESSION",
-	2: "ACTIVATION",
+	0:  "CLICK",
+	1:  "IMPRESSION",
+	2:  "ACTIVATION",
+	10: "INSTALL_PACKAGES",
 }
 var Event_Body_EventType_value = map[string]int32{
-	"CLICK":      0,
-	"IMPRESSION": 1,
-	"ACTIVATION": 2,
+	"CLICK":            0,
+	"IMPRESSION":       1,
+	"ACTIVATION":       2,
+	"INSTALL_PACKAGES": 10,
 }
 
 func (x Event_Body_EventType) Enum() *Event_Body_EventType {
@@ -1229,20 +1234,22 @@ func (m *Event_Head) GetCryptoParam() uint32 {
 }
 
 type Event_Body struct {
-	Type             *Event_Body_EventType `protobuf:"varint,1,req,name=type,enum=jesgoo.protocol.Event_Body_EventType" json:"type,omitempty"`
-	SearchId         *string               `protobuf:"bytes,2,req,name=search_id" json:"search_id,omitempty"`
-	SearchTimestamp  *uint32               `protobuf:"varint,3,req,name=search_timestamp" json:"search_timestamp,omitempty"`
-	SearchIp         *uint32               `protobuf:"varint,4,opt,name=search_ip" json:"search_ip,omitempty"`
-	EventTimestamp   *uint32               `protobuf:"varint,5,opt,name=event_timestamp" json:"event_timestamp,omitempty"`
-	EventIp          *uint32               `protobuf:"varint,6,opt,name=event_ip" json:"event_ip,omitempty"`
-	Media            *Event_Body_Media     `protobuf:"bytes,7,opt,name=media" json:"media,omitempty"`
-	Region           *Event_Body_Region    `protobuf:"bytes,8,opt,name=region" json:"region,omitempty"`
-	Ad               *Event_Body_Ad        `protobuf:"bytes,9,opt,name=ad" json:"ad,omitempty"`
-	Charge           *Event_Body_Charge    `protobuf:"bytes,10,opt,name=charge" json:"charge,omitempty"`
-	Dsp              *Dsp                  `protobuf:"varint,11,opt,name=dsp,enum=jesgoo.protocol.Dsp" json:"dsp,omitempty"`
-	Action           *Event_Body_Action    `protobuf:"bytes,12,opt,name=action" json:"action,omitempty"`
-	Debug            *bool                 `protobuf:"varint,13,opt,name=debug,def=0" json:"debug,omitempty"`
-	XXX_unrecognized []byte                `json:"-"`
+	Type            *Event_Body_EventType `protobuf:"varint,1,req,name=type,enum=jesgoo.protocol.Event_Body_EventType" json:"type,omitempty"`
+	SearchId        *string               `protobuf:"bytes,2,req,name=search_id" json:"search_id,omitempty"`
+	SearchTimestamp *uint32               `protobuf:"varint,3,req,name=search_timestamp" json:"search_timestamp,omitempty"`
+	SearchIp        *uint32               `protobuf:"varint,4,opt,name=search_ip" json:"search_ip,omitempty"`
+	EventTimestamp  *uint32               `protobuf:"varint,5,opt,name=event_timestamp" json:"event_timestamp,omitempty"`
+	EventIp         *uint32               `protobuf:"varint,6,opt,name=event_ip" json:"event_ip,omitempty"`
+	Media           *Event_Body_Media     `protobuf:"bytes,7,opt,name=media" json:"media,omitempty"`
+	Region          *Event_Body_Region    `protobuf:"bytes,8,opt,name=region" json:"region,omitempty"`
+	Ad              *Event_Body_Ad        `protobuf:"bytes,9,opt,name=ad" json:"ad,omitempty"`
+	Charge          *Event_Body_Charge    `protobuf:"bytes,10,opt,name=charge" json:"charge,omitempty"`
+	Dsp             *Dsp                  `protobuf:"varint,11,opt,name=dsp,enum=jesgoo.protocol.Dsp" json:"dsp,omitempty"`
+	Action          *Event_Body_Action    `protobuf:"bytes,12,opt,name=action" json:"action,omitempty"`
+	Apps            []*Event_Body_App     `protobuf:"bytes,13,rep,name=apps" json:"apps,omitempty"`
+	// 特殊标记位范围 100 ~ 999
+	Debug            *bool  `protobuf:"varint,100,opt,name=debug,def=0" json:"debug,omitempty"`
+	XXX_unrecognized []byte `json:"-"`
 }
 
 func (m *Event_Body) Reset()         { *m = Event_Body{} }
@@ -1331,6 +1338,13 @@ func (m *Event_Body) GetDsp() Dsp {
 func (m *Event_Body) GetAction() *Event_Body_Action {
 	if m != nil {
 		return m.Action
+	}
+	return nil
+}
+
+func (m *Event_Body) GetApps() []*Event_Body_App {
+	if m != nil {
+		return m.Apps
 	}
 	return nil
 }
@@ -1492,6 +1506,54 @@ func (m *Event_Body_Action) GetTargetUrl() string {
 		return *m.TargetUrl
 	}
 	return ""
+}
+
+type Event_Body_App struct {
+	PackageName      *string  `protobuf:"bytes,1,req,name=package_name" json:"package_name,omitempty"`
+	InstallTime      *uint32  `protobuf:"varint,2,opt,name=install_time" json:"install_time,omitempty"`
+	UpdateTime       *uint32  `protobuf:"varint,3,opt,name=update_time" json:"update_time,omitempty"`
+	LastRunningTime  *uint32  `protobuf:"varint,4,opt,name=last_running_time" json:"last_running_time,omitempty"`
+	Version          *Version `protobuf:"bytes,5,opt,name=version" json:"version,omitempty"`
+	XXX_unrecognized []byte   `json:"-"`
+}
+
+func (m *Event_Body_App) Reset()         { *m = Event_Body_App{} }
+func (m *Event_Body_App) String() string { return proto.CompactTextString(m) }
+func (*Event_Body_App) ProtoMessage()    {}
+
+func (m *Event_Body_App) GetPackageName() string {
+	if m != nil && m.PackageName != nil {
+		return *m.PackageName
+	}
+	return ""
+}
+
+func (m *Event_Body_App) GetInstallTime() uint32 {
+	if m != nil && m.InstallTime != nil {
+		return *m.InstallTime
+	}
+	return 0
+}
+
+func (m *Event_Body_App) GetUpdateTime() uint32 {
+	if m != nil && m.UpdateTime != nil {
+		return *m.UpdateTime
+	}
+	return 0
+}
+
+func (m *Event_Body_App) GetLastRunningTime() uint32 {
+	if m != nil && m.LastRunningTime != nil {
+		return *m.LastRunningTime
+	}
+	return 0
+}
+
+func (m *Event_Body_App) GetVersion() *Version {
+	if m != nil {
+		return m.Version
+	}
+	return nil
 }
 
 func init() {

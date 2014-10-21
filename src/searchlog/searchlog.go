@@ -173,11 +173,11 @@ func (this *SearchLogModule) fill_notice(noticelog *jesgoo_uilog.NoticeLogBody, 
 		*tempad.Cpm = uint64(inner_ad.Cpm)
 		noticelog.Ads = append(noticelog.Ads, tempad)
 	}
-
-	noticelog.Baiduadsnum = new(uint32)
-	*noticelog.Baiduadsnum = uint32(len(inner_data.BaiduAds))
-	noticelog.Jesgooadsnum = new(uint32)
-	*noticelog.Jesgooadsnum = uint32(len(inner_data.JesgooAds))
+	//	noticelog.Dspret = make([]*AdDspRet, 0)
+	//	var dspret *jesgoo_uilog.AdDspRet
+	//	dspret = new(jesgoo_uilog.AdDspRet)
+	noticelog.Debug = new(bool)
+	*noticelog.Debug = inner_data.Req.Debug
 	return
 }
 

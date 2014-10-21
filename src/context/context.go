@@ -52,6 +52,7 @@ const (
 
 type NetworkInfo struct {
 	Ip          string
+	Ipint       uint32
 	NetworkType NetworkType
 }
 type OSType int64
@@ -108,6 +109,7 @@ type InnerReq struct {
 	Network  NetworkInfo
 	Device   Device
 	Location LocationInfo
+	Debug    bool
 }
 
 type AdType int64

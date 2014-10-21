@@ -45,6 +45,7 @@ func (this *DMPModule) ip2int(ipstr string) (ipint uint32, err error) {
 func (this *DMPModule) Run(inner_data *context.Context) (err error) {
 	var ipint uint32
 	ipint, err = this.ip2int(inner_data.Req.Network.Ip)
+	inner_data.Req.Network.Ipint = ipint
 	loc := &inner_data.Req.Location
 	if err != nil {
 		loc.Country = 0
