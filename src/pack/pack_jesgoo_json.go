@@ -39,18 +39,18 @@ func (this *PackJesgooResponseJsonModule) Init(inner_data *context.GlobalContext
 	return
 }
 
-func (this *PackJesgooResponseJsonModule) pack_kaiping_ad(ad *Ad, inner_ad *context.AdInfo) (err error) {
+func (this *PackJesgooResponseJsonModule) pack_native_ad(ad *Ad, inner_ad *context.AdInfo) (err error) {
+	admaterial := &ad.Native_material
 	switch inner_ad.AdType {
 	case context.TEXT:
-		ad.Material_type = 0
+		admaterial.Type = 0
 	case context.IMAGE:
-		ad.Material_type = 1
+		admaterial.Type = 1
 	case context.TEXT_ICON:
-		ad.Material_type = 2
+		admaterial.Type = 2
 	default:
-		ad.Material_type = 0
+		admaterial.Type = 0
 	}
-	admaterial := &ad.Native_material
 	admaterial.Id = strconv.Itoa(int(inner_ad.Adid))
 	admaterial.Title = inner_ad.Title
 	admaterial.Image_url = inner_ad.ImageUrl
@@ -79,16 +79,17 @@ func (this *PackJesgooResponseJsonModule) Run(inner_data *context.Context) (err 
 	utils.DebugLog.Write("pack_num is %d, need_ad %d, ad_num %d", pack_num, need_ad, ad_num)
 	var i int32
 	for i = 0; i < pack_num; i++ {
+		var temp_ad Ad
+		temp_ad.Adslot_id = inner_data.Req.AdSlot.Slotid
 		switch inner_data.Req.AdSlot.AdSlotType {
 		case context.AdSlotType_BANNER:
-			var temp_ad Ad
 			temp_ad.Html_snippet = inner_data.Resp.Ads[i].HtmlSnippet.String()
-			temp_resp.Ads = append(temp_resp.Ads, temp_ad)
+			temp_ad.Material_type = 0
 		case context.AdSlotType_INITIALIZATION:
-			var temp_ad Ad
-			err = this.pack_kaiping_ad(&temp_ad, &inner_data.Resp.Ads[i])
-			temp_resp.Ads = append(temp_resp.Ads, temp_ad)
+			err = this.pack_native_ad(&temp_ad, &inner_data.Resp.Ads[i])
+			temp_ad.Material_type = 1
 		}
+		temp_resp.Ads = append(temp_resp.Ads, temp_ad)
 	}
 	inner_data.RespBody, err = json.Marshal(temp_resp)
 	return

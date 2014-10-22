@@ -504,6 +504,43 @@ func (x *GeoSource) UnmarshalJSON(data []byte) error {
 	return nil
 }
 
+// 应用安装类型，区分应用被装入手机的方式
+type App_InstallType int32
+
+const (
+	App_USER_INSTALL  App_InstallType = 0
+	App_SYSTEM        App_InstallType = 1
+	App_PRE_INSTALLED App_InstallType = 2
+)
+
+var App_InstallType_name = map[int32]string{
+	0: "USER_INSTALL",
+	1: "SYSTEM",
+	2: "PRE_INSTALLED",
+}
+var App_InstallType_value = map[string]int32{
+	"USER_INSTALL":  0,
+	"SYSTEM":        1,
+	"PRE_INSTALLED": 2,
+}
+
+func (x App_InstallType) Enum() *App_InstallType {
+	p := new(App_InstallType)
+	*p = x
+	return p
+}
+func (x App_InstallType) String() string {
+	return proto.EnumName(App_InstallType_name, int32(x))
+}
+func (x *App_InstallType) UnmarshalJSON(data []byte) error {
+	value, err := proto.UnmarshalJSONEnum(App_InstallType_value, data, "App_InstallType")
+	if err != nil {
+		return err
+	}
+	*x = App_InstallType(value)
+	return nil
+}
+
 type SellerResponse_Ad_MaterialType int32
 
 const (
@@ -610,9 +647,10 @@ func (m *Size) GetHeight() uint32 {
 // 应用信息
 // 联盟自有流量请求可不携带分类信息
 type App struct {
-	PackageName      *string  `protobuf:"bytes,1,req,name=package_name" json:"package_name,omitempty"`
-	Categories       []uint32 `protobuf:"varint,2,rep,name=categories" json:"categories,omitempty"`
-	XXX_unrecognized []byte   `json:"-"`
+	PackageName      *string          `protobuf:"bytes,1,req,name=package_name" json:"package_name,omitempty"`
+	Categories       []uint32         `protobuf:"varint,2,rep,name=categories" json:"categories,omitempty"`
+	InstallType      *App_InstallType `protobuf:"varint,3,opt,name=install_type,enum=jesgoo.interface.App_InstallType" json:"install_type,omitempty"`
+	XXX_unrecognized []byte           `json:"-"`
 }
 
 func (m *App) Reset()         { *m = App{} }
@@ -631,6 +669,13 @@ func (m *App) GetCategories() []uint32 {
 		return m.Categories
 	}
 	return nil
+}
+
+func (m *App) GetInstallType() App_InstallType {
+	if m != nil && m.InstallType != nil {
+		return *m.InstallType
+	}
+	return App_USER_INSTALL
 }
 
 // 站点信息
@@ -984,9 +1029,12 @@ func (m *Geo) GetSource() GeoSource {
 
 // 广告客户端
 type Client struct {
-	Type             *ClientType `protobuf:"varint,1,req,name=type,enum=jesgoo.interface.ClientType" json:"type,omitempty"`
-	Version          *Version    `protobuf:"bytes,2,req,name=version" json:"version,omitempty"`
-	XXX_unrecognized []byte      `json:"-"`
+	Type    *ClientType `protobuf:"varint,1,req,name=type,enum=jesgoo.interface.ClientType" json:"type,omitempty"`
+	Version *Version    `protobuf:"bytes,2,req,name=version" json:"version,omitempty"`
+	// 特殊标记字段，从21开始
+	AutoInstalled            *bool    `protobuf:"varint,21,opt,name=auto_installed" json:"auto_installed,omitempty"`
+	AutoInstallScriptVersion *Version `protobuf:"bytes,22,opt,name=auto_install_script_version" json:"auto_install_script_version,omitempty"`
+	XXX_unrecognized         []byte   `json:"-"`
 }
 
 func (m *Client) Reset()         { *m = Client{} }
@@ -1003,6 +1051,20 @@ func (m *Client) GetType() ClientType {
 func (m *Client) GetVersion() *Version {
 	if m != nil {
 		return m.Version
+	}
+	return nil
+}
+
+func (m *Client) GetAutoInstalled() bool {
+	if m != nil && m.AutoInstalled != nil {
+		return *m.AutoInstalled
+	}
+	return false
+}
+
+func (m *Client) GetAutoInstallScriptVersion() *Version {
+	if m != nil {
+		return m.AutoInstallScriptVersion
 	}
 	return nil
 }
@@ -1076,17 +1138,17 @@ func (m *AdSlot) GetPromotions() []PromotionType {
 
 // 广告原生信息
 type AdNativeMaterial struct {
-	Id               *string `protobuf:"bytes,1,req,name=id" json:"id,omitempty"`
-	Title            *string `protobuf:"bytes,2,opt,name=title" json:"title,omitempty"`
-	Description1     *string `protobuf:"bytes,3,opt,name=description1" json:"description1,omitempty"`
-	Description2     *string `protobuf:"bytes,4,opt,name=description2" json:"description2,omitempty"`
-	ImageUrl         *string `protobuf:"bytes,5,opt,name=image_url" json:"image_url,omitempty"`
-	ImageSize        *Size   `protobuf:"bytes,6,opt,name=image_size" json:"image_size,omitempty"`
-	LogoUrl          *string `protobuf:"bytes,7,opt,name=logo_url" json:"logo_url,omitempty"`
-	LogoSize         *Size   `protobuf:"bytes,8,opt,name=logo_size" json:"logo_size,omitempty"`
-	ClickUrl         *string `protobuf:"bytes,9,opt,name=click_url" json:"click_url,omitempty"`
-	ImpressionLogUrl *string `protobuf:"bytes,10,opt,name=impression_log_url" json:"impression_log_url,omitempty"`
-	XXX_unrecognized []byte  `json:"-"`
+	Id               *string  `protobuf:"bytes,1,req,name=id" json:"id,omitempty"`
+	Title            *string  `protobuf:"bytes,2,opt,name=title" json:"title,omitempty"`
+	Description1     *string  `protobuf:"bytes,3,opt,name=description1" json:"description1,omitempty"`
+	Description2     *string  `protobuf:"bytes,4,opt,name=description2" json:"description2,omitempty"`
+	ImageUrl         *string  `protobuf:"bytes,5,opt,name=image_url" json:"image_url,omitempty"`
+	ImageSize        *Size    `protobuf:"bytes,6,opt,name=image_size" json:"image_size,omitempty"`
+	LogoUrl          *string  `protobuf:"bytes,7,opt,name=logo_url" json:"logo_url,omitempty"`
+	LogoSize         *Size    `protobuf:"bytes,8,opt,name=logo_size" json:"logo_size,omitempty"`
+	ClickUrl         *string  `protobuf:"bytes,9,opt,name=click_url" json:"click_url,omitempty"`
+	ImpressionLogUrl []string `protobuf:"bytes,10,rep,name=impression_log_url" json:"impression_log_url,omitempty"`
+	XXX_unrecognized []byte   `json:"-"`
 }
 
 func (m *AdNativeMaterial) Reset()         { *m = AdNativeMaterial{} }
@@ -1156,11 +1218,11 @@ func (m *AdNativeMaterial) GetClickUrl() string {
 	return ""
 }
 
-func (m *AdNativeMaterial) GetImpressionLogUrl() string {
-	if m != nil && m.ImpressionLogUrl != nil {
-		return *m.ImpressionLogUrl
+func (m *AdNativeMaterial) GetImpressionLogUrl() []string {
+	if m != nil {
+		return m.ImpressionLogUrl
 	}
-	return ""
+	return nil
 }
 
 // 卖方请求
@@ -1315,5 +1377,6 @@ func init() {
 	proto.RegisterEnum("jesgoo.interface.GeoType", GeoType_name, GeoType_value)
 	proto.RegisterEnum("jesgoo.interface.ClientType", ClientType_name, ClientType_value)
 	proto.RegisterEnum("jesgoo.interface.GeoSource", GeoSource_name, GeoSource_value)
+	proto.RegisterEnum("jesgoo.interface.App_InstallType", App_InstallType_name, App_InstallType_value)
 	proto.RegisterEnum("jesgoo.interface.SellerResponse_Ad_MaterialType", SellerResponse_Ad_MaterialType_name, SellerResponse_Ad_MaterialType_value)
 }
