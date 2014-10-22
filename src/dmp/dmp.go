@@ -55,5 +55,6 @@ func (this *DMPModule) Run(inner_data *context.Context) (err error) {
 		loc.Country, loc.Province, loc.City = this.ipdict.Search(ipint)
 	}
 	utils.DebugLog.Write("find location country[%d] pro[%d] city[%d]", loc.Country, loc.Province, loc.City)
+	err = nil
 	return
 }
