@@ -174,6 +174,8 @@ func (this *ParseJesgooJsonRequestModule) parse(inner_data *context.Context) (er
 				inner_adslot.AdSlotType = context.AdSlotType_OFFERWALL
 			case 3:
 				inner_adslot.AdSlotType = context.AdSlotType_RECOMMEND
+			case 4:
+				inner_adslot.AdSlotType = context.AdSlotType_INITIALIZATION
 			default:
 				inner_adslot.AdSlotType = context.AdSlotType_BANNER
 			}

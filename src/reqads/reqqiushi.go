@@ -22,7 +22,7 @@ type ReqQiushiModule struct {
 	qiushi_url string
 }
 
-func (this *ReqQiushiModule) packreq(request *mobads_api.BidRequest, inner_data *context.Context) (err error) {
+func (this *ReqQiushiModule) packreq(request *mobads_api.BidRequest, inner_data *context.Context, bd_appsid string, bd_adslotid string) (err error) {
 	request.RequestId = new(string)
 	*request.RequestId = inner_data.Searchid
 
@@ -44,7 +44,8 @@ func (this *ReqQiushiModule) packreq(request *mobads_api.BidRequest, inner_data 
 	app_static_info.BundleId = new(string)
 	*app_static_info.BundleId = "com.jesgoo.app"
 	app_tmp.Id = new(string)
-	*app_tmp.Id = "10042c1f"
+	//	*app_tmp.Id = "10042c1f"
+	*app_tmp.Id = bd_appsid
 
 	//device parament
 	request.Device = new(mobads_api.Device)
@@ -101,7 +102,8 @@ func (this *ReqQiushiModule) packreq(request *mobads_api.BidRequest, inner_data 
 	//adslot
 	var adslot_tmp mobads_api.AdSlot
 	adslot_tmp.Id = new(string)
-	*adslot_tmp.Id = "L0000041"
+	//	*adslot_tmp.Id = "L0000041"
+	*adslot_tmp.Id = bd_adslotid
 	var size_tmp mobads_api.Size
 	size_tmp.Width = new(uint32)
 	size_tmp.Height = new(uint32)
@@ -211,7 +213,20 @@ func (this *ReqQiushiModule) parse_resp(response *mobads_api.BidResponse, inner_
 func (this *ReqQiushiModule) Run(inner_data *context.Context) (err error) {
 	//	client := &http.Client{}
 	var request_body = mobads_api.BidRequest{}
-	err = this.packreq(&request_body, inner_data)
+	var bd_appsid string
+	var bd_adslotid string
+	switch inner_data.Req.AdSlot.AdSlotType {
+	case context.AdSlotType_BANNER:
+		bd_appsid = "10042c1f"
+		bd_adslotid = "L0000041"
+	case context.AdSlotType_INITIALIZATION:
+		bd_appsid = "10042c1f"
+		bd_adslotid = "L0000041"
+	default:
+		bd_appsid = "10042c1f"
+		bd_adslotid = "L0000041"
+	}
+	err = this.packreq(&request_body, inner_data, bd_appsid, bd_adslotid)
 	utils.DebugLog.Write("baidu_request [%s]", request_body.String())
 	var request_byte []byte
 	request_byte = make([]byte, 0)

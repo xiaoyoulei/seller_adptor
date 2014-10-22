@@ -29,9 +29,10 @@ type SizeInfo struct {
 type AdSlotType int64
 
 const (
-	AdSlotType_BANNER    AdSlotType = 1
-	AdSlotType_OFFERWALL AdSlotType = 2
-	AdSlotType_RECOMMEND AdSlotType = 3
+	AdSlotType_BANNER         AdSlotType = 1
+	AdSlotType_OFFERWALL      AdSlotType = 2
+	AdSlotType_RECOMMEND      AdSlotType = 3
+	AdSlotType_INITIALIZATION AdSlotType = 4 //开屏
 )
 
 type AdSlotInfo struct {
