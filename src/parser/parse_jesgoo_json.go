@@ -78,6 +78,7 @@ func (this *ParseJesgooJsonRequestModule) parse(inner_data *context.Context) (er
 		utils.WarningLog.Write("deserialized jesgoo json fail [%s]", err.Error())
 		return
 	}
+	utils.DebugLog.Write("json request [%s]", temp_req)
 
 	// media
 	inner_media := &inner_data.Req.Media
@@ -176,6 +177,8 @@ func (this *ParseJesgooJsonRequestModule) parse(inner_data *context.Context) (er
 				inner_adslot.AdSlotType = context.AdSlotType_RECOMMEND
 			case 4:
 				inner_adslot.AdSlotType = context.AdSlotType_INITIALIZATION
+			case 5:
+				inner_adslot.AdSlotType = context.AdSlotType_INSERT
 			default:
 				inner_adslot.AdSlotType = context.AdSlotType_BANNER
 			}

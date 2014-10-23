@@ -220,8 +220,11 @@ func (this *ReqQiushiModule) Run(inner_data *context.Context) (err error) {
 		bd_appsid = "10042c1f"
 		bd_adslotid = "L0000041"
 	case context.AdSlotType_INITIALIZATION:
-		bd_appsid = "10042c1f"
+		bd_appsid = "10044934"
 		bd_adslotid = "L0000041"
+	case context.AdSlotType_INSERT:
+		bd_appsid = "10044933"
+		bd_adslotid = "L000000a"
 	default:
 		bd_appsid = "10042c1f"
 		bd_adslotid = "L0000041"
@@ -249,11 +252,15 @@ func (this *ReqQiushiModule) Run(inner_data *context.Context) (err error) {
 	response, err = this.client.Do(request)
 	if err != nil {
 		utils.WarningLog.Write("request qiushi server fail [%s]", err.Error())
+		// do not return err
+		err = nil
 		return
 	}
 	if response.StatusCode != 200 {
 		err = errors.New("qiushi respose code is " + string(response.StatusCode))
 		utils.WarningLog.Write("qiushi response code is %d", response.StatusCode)
+		// just warning log . do not return err
+		err = nil
 		return
 	}
 	var response_body = mobads_api.BidResponse{}
@@ -261,15 +268,20 @@ func (this *ReqQiushiModule) Run(inner_data *context.Context) (err error) {
 	response_byte, err = ioutil.ReadAll(response.Body)
 	if err != nil {
 		utils.WarningLog.Write("error occured [%s]", err.Error())
+		// just warning log . do not return err
+		err = nil
 		return
 	}
 	err = proto.Unmarshal(response_byte, &response_body)
 	if err != nil {
 		utils.WarningLog.Write("error occur [%s]", err.Error())
+		// just warning log . do not return err
+		err = nil
 		return
 	}
 	err = this.parse_resp(&response_body, inner_data)
 
+	err = nil
 	return
 }
 

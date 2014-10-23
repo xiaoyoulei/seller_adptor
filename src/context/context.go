@@ -33,6 +33,7 @@ const (
 	AdSlotType_OFFERWALL      AdSlotType = 2
 	AdSlotType_RECOMMEND      AdSlotType = 3
 	AdSlotType_INITIALIZATION AdSlotType = 4 //开屏
+	AdSlotType_INSERT         AdSlotType = 5 //插屏
 )
 
 type AdSlotInfo struct {

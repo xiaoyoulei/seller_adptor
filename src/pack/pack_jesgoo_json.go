@@ -20,6 +20,7 @@ type Ad struct {
 type NativeMaterial struct {
 	Id                 string
 	Type               int
+	Interaction_type   int
 	Title              string
 	Description1       string
 	Description2       string
@@ -50,6 +51,20 @@ func (this *PackJesgooResponseJsonModule) pack_native_ad(ad *Ad, inner_ad *conte
 		admaterial.Type = 2
 	default:
 		admaterial.Type = 0
+	}
+	switch inner_ad.InteractionType {
+	case context.NO_INTERACT:
+		admaterial.Interaction_type = 0
+	case context.SURFING:
+		admaterial.Interaction_type = 1
+	case context.DOWNLOAD:
+		admaterial.Interaction_type = 2
+	case context.DIALING:
+		admaterial.Interaction_type = 3
+	case context.MESSAGE:
+		admaterial.Interaction_type = 4
+	case context.MAIL:
+		admaterial.Interaction_type = 5
 	}
 	admaterial.Id = strconv.Itoa(int(inner_ad.Adid))
 	admaterial.Title = inner_ad.Title
@@ -88,9 +103,13 @@ func (this *PackJesgooResponseJsonModule) Run(inner_data *context.Context) (err 
 		case context.AdSlotType_INITIALIZATION:
 			err = this.pack_native_ad(&temp_ad, &inner_data.Resp.Ads[i])
 			temp_ad.Material_type = 1
+		case context.AdSlotType_INSERT:
+			err = this.pack_native_ad(&temp_ad, &inner_data.Resp.Ads[i])
+			temp_ad.Material_type = 1
 		}
 		temp_resp.Ads = append(temp_resp.Ads, temp_ad)
 	}
+	utils.DebugLog.Write("json resp [%s]", temp_resp)
 	inner_data.RespBody, err = json.Marshal(temp_resp)
 	return
 }

@@ -34,9 +34,9 @@ func CallBack(resp http.ResponseWriter, req *http.Request) {
 	material.InteractionType = new(mobads_api.InteractionType)
 	*material.InteractionType = mobads_api.InteractionType_SURFING
 	material.WinNoticeUrl = make([]string, 0)
-	material.WinNoticeUrl = append(material.WinNoticeUrl, "http://aaa.com/a.gif")
+	material.WinNoticeUrl = append(material.WinNoticeUrl, "http://192.168.1.5:8123/a.gif")
 	material.MediaUrl = new(string)
-	*material.MediaUrl = "http://192.168.1.110:8090/splash.png"
+	*material.MediaUrl = "http://192.168.1.5:8123/image/splash.png"
 	material.ClickUrl = new(string)
 	*material.ClickUrl = "http://www.jesgoo.com"
 	temp_ans.Ads = append(temp_ans.Ads, ad)
