@@ -106,6 +106,9 @@ func (this *PackJesgooResponseJsonModule) Run(inner_data *context.Context) (err 
 		case context.AdSlotType_INSERT:
 			err = this.pack_native_ad(&temp_ad, &inner_data.Resp.Ads[i])
 			temp_ad.Material_type = 1
+		default:
+			temp_ad.Html_snippet = inner_data.Resp.Ads[i].HtmlSnippet.String()
+			temp_ad.Material_type = 0
 		}
 		temp_resp.Ads = append(temp_resp.Ads, temp_ad)
 	}

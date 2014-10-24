@@ -17,6 +17,15 @@ import (
 	"utils"
 )
 
+type AdType int
+
+const (
+	Banner       AdType = 0
+	Initlization AdType = 1
+	Insert       AdType = 2
+	MaxAdType    AdType = 3
+)
+
 type ReqQiushiModule struct {
 	client     *http.Client
 	qiushi_url string
@@ -199,7 +208,7 @@ func (this *ReqQiushiModule) convert_ad(inad *context.AdInfo, bsad *mobads_api.A
 	return
 }
 
-func (this *ReqQiushiModule) parse_resp(response *mobads_api.BidResponse, inner_data *context.Context) (err error) {
+func (this *ReqQiushiModule) parse_resp(response *mobads_api.BidResponse, inner_ads *[]context.AdInfo) (err error) {
 	utils.DebugLog.Write("baidu_response [%s]", response.String())
 	if response.ErrorCode != nil {
 		utils.WarningLog.Write("request qiushi fail . error_code is %u", *response.ErrorCode)
@@ -213,24 +222,29 @@ func (this *ReqQiushiModule) parse_resp(response *mobads_api.BidResponse, inner_
 		if err != nil {
 			continue
 		}
-		inner_data.BaiduAds = append(inner_data.BaiduAds, inner_ad)
+		*inner_ads = append(*inner_ads, inner_ad)
 	}
 	return
 }
 
-func (this *ReqQiushiModule) request(inner_data *context.Context) (err error) {
+func (this *ReqQiushiModule) request(inner_data *context.Context, adtype AdType, inner_ads *[]context.AdInfo, ch *chan bool) {
 	//	client := &http.Client{}
+	defer func() {
+		//		this.req_chan[int(adtype)] <- true
+		*ch <- true
+		utils.DebugLog.Write("true set into chan[%d]", int(adtype))
+	}()
 	var request_body = mobads_api.BidRequest{}
 	var bd_appsid string
 	var bd_adslotid string
-	switch inner_data.Req.AdSlot.AdSlotType {
-	case context.AdSlotType_BANNER:
+	switch adtype {
+	case Banner:
 		bd_appsid = "10042c1f"
 		bd_adslotid = "L0000041"
-	case context.AdSlotType_INITIALIZATION:
+	case Initlization:
 		bd_appsid = "10044934"
 		bd_adslotid = "L000000d"
-	case context.AdSlotType_INSERT:
+	case Insert:
 		bd_appsid = "10044933"
 		bd_adslotid = "L000000a"
 	default:
@@ -279,14 +293,55 @@ func (this *ReqQiushiModule) request(inner_data *context.Context) (err error) {
 		utils.WarningLog.Write("error occur [%s]", err.Error())
 		return
 	}
-	err = this.parse_resp(&response_body, inner_data)
+	err = this.parse_resp(&response_body, inner_ads)
 
 	return
 }
+
+func (this *ReqQiushiModule) timeout_func(ch *chan bool) {
+	time.Sleep(time.Second * 1)
+	*ch <- true
+}
 func (this *ReqQiushiModule) Run(inner_data *context.Context) (err error) {
-	err = this.request(inner_data)
-	if err != nil {
-		utils.WarningLog.Write("request qiushi fail . err[%s]", err.Error())
+	var req_flag [int(MaxAdType)]bool
+	var req_chan [int(MaxAdType)](chan bool)
+	var ret_ads [int(MaxAdType)][]context.AdInfo
+	for i := 0; i < int(MaxAdType); i++ {
+		req_flag[i] = false
+	}
+	switch inner_data.Req.AdSlot.AdSlotType {
+	case context.AdSlotType_BANNER:
+		req_chan[int(Banner)] = make(chan bool)
+		go this.request(inner_data, Banner, &ret_ads[int(Banner)], &req_chan[int(Banner)])
+		req_flag[int(Banner)] = true
+	case context.AdSlotType_INITIALIZATION:
+		req_chan[int(Initlization)] = make(chan bool)
+		go this.request(inner_data, Initlization, &ret_ads[int(Initlization)], &req_chan[int(Initlization)])
+		req_flag[int(Initlization)] = true
+		req_chan[int(Insert)] = make(chan bool)
+		go this.request(inner_data, Insert, &ret_ads[int(Insert)], &req_chan[Insert])
+		req_flag[int(Insert)] = true
+	case context.AdSlotType_INSERT:
+		req_chan[int(Insert)] = make(chan bool)
+		go this.request(inner_data, Insert, &ret_ads[int(Insert)], &req_chan[Insert])
+		req_flag[int(Insert)] = true
+	}
+	timeoutch := make(chan bool)
+	go this.timeout_func(&timeoutch)
+	for i := 0; i < int(MaxAdType); i++ {
+		if req_flag[i] == true {
+			select {
+			case <-req_chan[i]:
+				//			close(this.req_chan[i])
+				// 填入队列
+				utils.DebugLog.Write("get ret_ads . adtype[%d] ads_ret[%d]", i, len(ret_ads[i]))
+				for j := 0; j < len(ret_ads[i]); j++ {
+					inner_data.BaiduAds = append(inner_data.BaiduAds, ret_ads[i][j])
+				}
+			case <-timeoutch:
+				utils.WarningLog.Write("req qiushi reqtype[%d] timeout", i)
+			}
+		}
 	}
 	err = nil
 	return
