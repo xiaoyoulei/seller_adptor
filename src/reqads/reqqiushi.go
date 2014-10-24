@@ -174,7 +174,14 @@ func (this *ReqQiushiModule) convert_ad(inad *context.AdInfo, bsad *mobads_api.A
 			inad.Description2 = *admeta.Description2
 		}
 		if admeta.MediaUrl != nil {
-			inad.ImageUrl = *admeta.MediaUrl
+			switch inad.AdType {
+			case context.TEXT_ICON:
+				inad.LogoUrl = *admeta.MediaUrl
+			case context.IMAGE:
+				inad.ImageUrl = *admeta.MediaUrl
+			default:
+				inad.ImageUrl = *admeta.MediaUrl
+			}
 		}
 		for i := 0; i < len(admeta.WinNoticeUrl); i++ {
 			inad.ImpressionUrl = append(inad.ImpressionUrl, admeta.WinNoticeUrl[i])
@@ -210,7 +217,8 @@ func (this *ReqQiushiModule) parse_resp(response *mobads_api.BidResponse, inner_
 	}
 	return
 }
-func (this *ReqQiushiModule) Run(inner_data *context.Context) (err error) {
+
+func (this *ReqQiushiModule) request(inner_data *context.Context) (err error) {
 	//	client := &http.Client{}
 	var request_body = mobads_api.BidRequest{}
 	var bd_appsid string
@@ -221,7 +229,7 @@ func (this *ReqQiushiModule) Run(inner_data *context.Context) (err error) {
 		bd_adslotid = "L0000041"
 	case context.AdSlotType_INITIALIZATION:
 		bd_appsid = "10044934"
-		bd_adslotid = "L0000041"
+		bd_adslotid = "L000000d"
 	case context.AdSlotType_INSERT:
 		bd_appsid = "10044933"
 		bd_adslotid = "L000000a"
@@ -252,15 +260,11 @@ func (this *ReqQiushiModule) Run(inner_data *context.Context) (err error) {
 	response, err = this.client.Do(request)
 	if err != nil {
 		utils.WarningLog.Write("request qiushi server fail [%s]", err.Error())
-		// do not return err
-		err = nil
 		return
 	}
 	if response.StatusCode != 200 {
 		err = errors.New("qiushi respose code is " + string(response.StatusCode))
 		utils.WarningLog.Write("qiushi response code is %d", response.StatusCode)
-		// just warning log . do not return err
-		err = nil
 		return
 	}
 	var response_body = mobads_api.BidResponse{}
@@ -268,19 +272,22 @@ func (this *ReqQiushiModule) Run(inner_data *context.Context) (err error) {
 	response_byte, err = ioutil.ReadAll(response.Body)
 	if err != nil {
 		utils.WarningLog.Write("error occured [%s]", err.Error())
-		// just warning log . do not return err
-		err = nil
 		return
 	}
 	err = proto.Unmarshal(response_byte, &response_body)
 	if err != nil {
 		utils.WarningLog.Write("error occur [%s]", err.Error())
-		// just warning log . do not return err
-		err = nil
 		return
 	}
 	err = this.parse_resp(&response_body, inner_data)
 
+	return
+}
+func (this *ReqQiushiModule) Run(inner_data *context.Context) (err error) {
+	err = this.request(inner_data)
+	if err != nil {
+		utils.WarningLog.Write("request qiushi fail . err[%s]", err.Error())
+	}
 	err = nil
 	return
 }
