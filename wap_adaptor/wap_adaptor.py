@@ -91,10 +91,10 @@ def application(env, start_response):
 			param[k] = v
 		appsid = param["appsid"]
 		channelid = param["channelid"]
-#		ip = env["RemoteAddr"]
+		ip = env["HTTP_REMOTEADDR"]
 	except:
 		start_response('404 Not Found', [('Content-Type','text/html')])
-		return ['404 error . except']
+		return ['']
 
 	ua = env['HTTP_USER_AGENT']
 	os = ""
@@ -102,19 +102,21 @@ def application(env, start_response):
 		os = "android"
 	if ua.lower().find("ios") != -1 :
 		os = "ios"
+	if ua.lower().find("iphone") != -1 :
+		os = "ios"
 	if env['PATH_INFO'] == '/wap/ad.html'  and os != "":
 		try :
 			html = request_se(appsid, channelid,os, ip)
 		except:
 			start_response('404 Not Found', [('Content-Type','text/html')])
-			return ['404 error , path is not right']
-		start_response('200 OK', [('Content-Type', 'text/html')])
+			return ['']
+		start_response('200 OK', [('Content-Type', 'text/html;charset=utf-8')])
 		res = []
 		res.append(html.encode('UTF-8'))
 		return res
 	else:
 		start_response('404 Not Found', [('Content-Type','text/html')])
-		return ['404 error , path is not right']
+		return ['']
 
 
 if __name__ == '__main__':
