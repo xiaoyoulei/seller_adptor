@@ -29,6 +29,7 @@ const (
 type ReqQiushiModule struct {
 	client     *http.Client
 	qiushi_url string
+	timeout    int // reqqiushi timeout (ms)
 }
 
 func (this *ReqQiushiModule) packreq(request *mobads_api.BidRequest, inner_data *context.Context, bd_appsid string, bd_adslotid string) (err error) {
@@ -130,7 +131,7 @@ func (this *ReqQiushiModule) packreq(request *mobads_api.BidRequest, inner_data 
 	return
 }
 
-func (this *ReqQiushiModule) convert_ad(inad *context.AdInfo, bsad *mobads_api.Ad) (err error) {
+func (this *ReqQiushiModule) convert_ad(inad *context.AdInfo, adtype AdType, bsad *mobads_api.Ad) (err error) {
 	if bsad.AdId != nil {
 		inad.Adid = int64(*bsad.AdId)
 	}
@@ -173,6 +174,18 @@ func (this *ReqQiushiModule) convert_ad(inad *context.AdInfo, bsad *mobads_api.A
 
 			}
 		}
+
+		switch adtype {
+		case Banner:
+			inad.AdSlotType = context.AdSlotType_BANNER
+		case Insert:
+			inad.AdSlotType = context.AdSlotType_INSERT
+		case Initlization:
+			inad.AdSlotType = context.AdSlotType_INITIALIZATION
+		default:
+			inad.AdSlotType = context.AdSlotType_BANNER
+		}
+
 		if admeta.Title != nil {
 			inad.Title = *admeta.Title
 		}
@@ -208,7 +221,7 @@ func (this *ReqQiushiModule) convert_ad(inad *context.AdInfo, bsad *mobads_api.A
 	return
 }
 
-func (this *ReqQiushiModule) parse_resp(response *mobads_api.BidResponse, inner_ads *[]context.AdInfo) (err error) {
+func (this *ReqQiushiModule) parse_resp(response *mobads_api.BidResponse, adtype AdType, inner_ads *[]context.AdInfo) (err error) {
 	utils.DebugLog.Write("baidu_response [%s]", response.String())
 	if response.ErrorCode != nil {
 		utils.WarningLog.Write("request qiushi fail . error_code is %u", *response.ErrorCode)
@@ -218,7 +231,7 @@ func (this *ReqQiushiModule) parse_resp(response *mobads_api.BidResponse, inner_
 	}
 	for i := 0; i < len(response.Ads); i++ {
 		var inner_ad context.AdInfo
-		err = this.convert_ad(&inner_ad, response.Ads[i])
+		err = this.convert_ad(&inner_ad, adtype, response.Ads[i])
 		if err != nil {
 			continue
 		}
@@ -293,13 +306,13 @@ func (this *ReqQiushiModule) request(inner_data *context.Context, adtype AdType,
 		utils.WarningLog.Write("error occur [%s]", err.Error())
 		return
 	}
-	err = this.parse_resp(&response_body, inner_ads)
+	err = this.parse_resp(&response_body, adtype, inner_ads)
 
 	return
 }
 
 func (this *ReqQiushiModule) timeout_func(ch *chan bool) {
-	time.Sleep(time.Second * 1)
+	time.Sleep(time.Millisecond * time.Duration(this.timeout))
 	*ch <- true
 }
 func (this *ReqQiushiModule) Run(inner_data *context.Context) (err error) {
@@ -348,10 +361,12 @@ func (this *ReqQiushiModule) Run(inner_data *context.Context) (err error) {
 }
 
 func (this *ReqQiushiModule) Init(global_conf *context.GlobalContext) (err error) {
+	this.qiushi_url = global_conf.Qiushi.Location
+	this.timeout = global_conf.Qiushi.Timeout
 	/*********设置传输层参数****************/
 	transport := &http.Transport{}
 	transport.Dial = func(netw, addr string) (net.Conn, error) {
-		c, err := net.DialTimeout(netw, addr, time.Millisecond*time.Duration(global_conf.Qiushi.Timeout))
+		c, err := net.DialTimeout(netw, addr, time.Millisecond*time.Duration(this.timeout))
 		if err != nil {
 			utils.WarningLog.Write("dail timeout [%s]", err.Error())
 			return nil, err
@@ -359,7 +374,7 @@ func (this *ReqQiushiModule) Init(global_conf *context.GlobalContext) (err error
 		return c, nil
 	}
 	transport.MaxIdleConnsPerHost = 10
-	transport.ResponseHeaderTimeout = time.Millisecond * time.Duration(global_conf.Qiushi.Timeout)
+	transport.ResponseHeaderTimeout = time.Millisecond * time.Duration(this.timeout)
 	if global_conf.Proxy.Open {
 		url_i := url.URL{}
 		url_proxy, _ := url_i.Parse(global_conf.Proxy.Location)
@@ -369,7 +384,6 @@ func (this *ReqQiushiModule) Init(global_conf *context.GlobalContext) (err error
 	/**********************************/
 	this.client = &http.Client{}
 	this.client.Transport = transport
-	this.qiushi_url = global_conf.Qiushi.Location
 	utils.DebugLog.Write("req qiushi url [%s]", this.qiushi_url)
 
 	return

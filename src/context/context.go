@@ -146,6 +146,7 @@ type AdInfo struct {
 	AdType          AdType
 	AdSrc           AdSrc
 	InteractionType InteractionType
+	AdSlotType      AdSlotType
 	Adid            int64
 	Groupid         int64
 	Planid          int64
@@ -165,6 +166,7 @@ type AdInfo struct {
 	ClickUrl        string
 	ImpressionUrl   []string
 	HtmlSnippet     bytes.Buffer
+	MatchAdSlotType uint32 //请求位置和广告类型的匹配度。 0 是完全匹配
 }
 type InnerResp struct {
 	Ads []AdInfo
