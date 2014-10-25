@@ -6,25 +6,78 @@ import json
 import urllib2,urllib
 import random
 
-def get_imei() :
+import time
+import md5
+import socket
+import struct
+import random
+
+
+class JesgooUUIDStartResponse(object):
+	def __init__(self, jesgooid, start_response):
+		self._jesgooid = jesgooid
+		self._start_response = start_response
+
+	def __call__(self, *args):
+		if len(args) == 1:
+			args = tuple(list(args) + [('Set-Cookie', 'JESGOOID=%s' % (jesgooid,))])
+		else:
+			args[1].append(('Set-Cookie', 'JESGOOID=%s' % (self._jesgooid,)))
+		self._start_response(*args)
+
+
+def create_jesgooid(env):
+	now = int(time.time())
+	ip = socket.inet_aton(env['REMOTE_ADDR'])
+	random_value = random.randint(0, 2 ** 32 - 1)
+	sign = md5.md5()
+#	print now, random_value
+	temp = ip + struct.pack('!II', now, random_value)
+	sign.update(temp + 'JESGOOID_SECRET_PADDING')
+	sign = sign.hexdigest()[-10:-2].upper()
+	ip = struct.unpack('!I', ip)[0]
+	return '%s%08X%08X%08X' % (sign, ip, now, random_value)
+
+
+def JesgooUUID(func):
+	def _func(*args, **kwargs):
+		do_set = False
+		env, start_response = args[-2:]
+		if 'HTTP_COOKIE' in env:
+			cookie = dict(c.split('=', 1) for c in env['HTTP_COOKIE'].split(';') if '=' in c)
+			jesgooid = cookie.get('JESGOOID', None)
+			if jesgooid is None:
+				do_set = True
+				jesgooid = create_jesgooid(env)
+		else:
+			do_set = True
+			jesgooid = create_jesgooid(env)
+		env['JESGOOID'] = jesgooid
+		if do_set:
+			start_response = JesgooUUIDStartResponse(jesgooid, start_response)
+		args = tuple(list(args[:-2]) + [env, start_response])
+		return func(*args, **kwargs)
+	return _func
+
+def get_imei(jesgooid) :
 	arr = ""
 	i=0
 	ans = 0
+	arr = str(int(jesgooid, 16))[0:14]
 	while i<14 :
-		rand = random.randint(0,9)
-		arr += str(rand)
+		rand = int(arr[i])
 		if i%2 == 0:
 			ans += rand
 		else:
 			ans += (rand*2)%10 + (rand*2)/10
 		i+=1
 	if ans%10 == 0:
-		arr += "0"
+		arr = arr + "0"
 	else:
-		arr += str(10-(ans%10)) 
+		arr = arr + str(10-(ans%10)) 
 	return  arr
 
-def request_se(appsid, channelid, os, ip) :
+def request_se(appsid, channelid, os, ip, jesgooid) :
 	request = {}
 
 	media = {}
@@ -37,7 +90,7 @@ def request_se(appsid, channelid, os, ip) :
 	device["type"] = 2
 	imei = {}
 	imei["type"] = 1
-	imei["id"] = get_imei()
+	imei["id"] = get_imei(jesgooid)
 	device["ids"] = []
 	device["ids"].append(imei)
 	if os == "android" :
@@ -66,6 +119,7 @@ def request_se(appsid, channelid, os, ip) :
 	request["adslots"] = []
 	request["adslots"].append(adslot)
 
+	print(request)
 
 	reqbody = json.dumps(request)
 
@@ -78,10 +132,12 @@ def request_se(appsid, channelid, os, ip) :
 	else:
 		return ""
 
+@JesgooUUID
 def application(env, start_response):
 	appsid = ""
 	channelid = ""
 	ip = ""
+	jesgooid = ""
 	try:
 		qstr = env['QUERY_STRING']
 		arr = qstr.split("&")
@@ -91,8 +147,10 @@ def application(env, start_response):
 			param[k] = v
 		appsid = param["appsid"]
 		channelid = param["channelid"]
-		ip = env["HTTP_REMOTEADDR"]
-	except:
+		jesgooid = env['JESGOOID']
+		if env.has_key('HTTP_REMOTEADDR') :
+			ip = env["HTTP_REMOTEADDR"]
+	except :
 		start_response('404 Not Found', [('Content-Type','text/html')])
 		return ['']
 
@@ -106,8 +164,8 @@ def application(env, start_response):
 		os = "ios"
 	if env['PATH_INFO'] == '/wap/ad.html'  and os != "":
 		try :
-			html = request_se(appsid, channelid,os, ip)
-		except:
+			html = request_se(appsid, channelid,os, ip, jesgooid)
+		except :
 			start_response('404 Not Found', [('Content-Type','text/html')])
 			return ['']
 		start_response('200 OK', [('Content-Type', 'text/html;charset=utf-8')])
