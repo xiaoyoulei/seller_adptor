@@ -22,6 +22,7 @@ It has these top-level messages:
 	Geo
 	Client
 	AdSlot
+	DspInfo
 	Event
 */
 package jesgoo_protocol
@@ -648,6 +649,39 @@ func (x *Event_Body_EventType) UnmarshalJSON(data []byte) error {
 	return nil
 }
 
+type Event_Body_RedirectType int32
+
+const (
+	Event_Body_HTTP_FOUND  Event_Body_RedirectType = 0
+	Event_Body_HTML_IFRAME Event_Body_RedirectType = 1
+)
+
+var Event_Body_RedirectType_name = map[int32]string{
+	0: "HTTP_FOUND",
+	1: "HTML_IFRAME",
+}
+var Event_Body_RedirectType_value = map[string]int32{
+	"HTTP_FOUND":  0,
+	"HTML_IFRAME": 1,
+}
+
+func (x Event_Body_RedirectType) Enum() *Event_Body_RedirectType {
+	p := new(Event_Body_RedirectType)
+	*p = x
+	return p
+}
+func (x Event_Body_RedirectType) String() string {
+	return proto.EnumName(Event_Body_RedirectType_name, int32(x))
+}
+func (x *Event_Body_RedirectType) UnmarshalJSON(data []byte) error {
+	value, err := proto.UnmarshalJSONEnum(Event_Body_RedirectType_value, data, "Event_Body_RedirectType")
+	if err != nil {
+		return err
+	}
+	*x = Event_Body_RedirectType(value)
+	return nil
+}
+
 // 通用版本类型
 type Version struct {
 	Major            *uint32 `protobuf:"varint,1,req,name=major" json:"major,omitempty"`
@@ -1185,6 +1219,39 @@ func (m *AdSlot) GetPromotions() []PromotionType {
 	return nil
 }
 
+// DSP计费相关字段
+type DspInfo struct {
+	Dsp              *Dsp    `protobuf:"varint,1,req,name=dsp,enum=jesgoo.protocol.Dsp" json:"dsp,omitempty"`
+	MediaId          *string `protobuf:"bytes,2,opt,name=media_id" json:"media_id,omitempty"`
+	ChannelId        *string `protobuf:"bytes,3,opt,name=channel_id" json:"channel_id,omitempty"`
+	XXX_unrecognized []byte  `json:"-"`
+}
+
+func (m *DspInfo) Reset()         { *m = DspInfo{} }
+func (m *DspInfo) String() string { return proto.CompactTextString(m) }
+func (*DspInfo) ProtoMessage()    {}
+
+func (m *DspInfo) GetDsp() Dsp {
+	if m != nil && m.Dsp != nil {
+		return *m.Dsp
+	}
+	return Dsp_JESGOO_DSP
+}
+
+func (m *DspInfo) GetMediaId() string {
+	if m != nil && m.MediaId != nil {
+		return *m.MediaId
+	}
+	return ""
+}
+
+func (m *DspInfo) GetChannelId() string {
+	if m != nil && m.ChannelId != nil {
+		return *m.ChannelId
+	}
+	return ""
+}
+
 type Event struct {
 	Head             *Event_Head `protobuf:"bytes,1,req,name=head" json:"head,omitempty"`
 	Body             *Event_Body `protobuf:"bytes,2,req,name=body" json:"body,omitempty"`
@@ -1235,8 +1302,8 @@ func (m *Event_Head) GetCryptoParam() uint32 {
 
 type Event_Body struct {
 	Type            *Event_Body_EventType `protobuf:"varint,1,req,name=type,enum=jesgoo.protocol.Event_Body_EventType" json:"type,omitempty"`
-	SearchId        *string               `protobuf:"bytes,2,req,name=search_id" json:"search_id,omitempty"`
-	SearchTimestamp *uint32               `protobuf:"varint,3,req,name=search_timestamp" json:"search_timestamp,omitempty"`
+	SearchId        *string               `protobuf:"bytes,2,opt,name=search_id" json:"search_id,omitempty"`
+	SearchTimestamp *uint32               `protobuf:"varint,3,opt,name=search_timestamp" json:"search_timestamp,omitempty"`
 	SearchIp        *uint32               `protobuf:"varint,4,opt,name=search_ip" json:"search_ip,omitempty"`
 	EventTimestamp  *uint32               `protobuf:"varint,5,opt,name=event_timestamp" json:"event_timestamp,omitempty"`
 	EventIp         *uint32               `protobuf:"varint,6,opt,name=event_ip" json:"event_ip,omitempty"`
@@ -1247,6 +1314,7 @@ type Event_Body struct {
 	Dsp             *Dsp                  `protobuf:"varint,11,opt,name=dsp,enum=jesgoo.protocol.Dsp" json:"dsp,omitempty"`
 	Action          *Event_Body_Action    `protobuf:"bytes,12,opt,name=action" json:"action,omitempty"`
 	Apps            []*Event_Body_App     `protobuf:"bytes,13,rep,name=apps" json:"apps,omitempty"`
+	DspInfo         *DspInfo              `protobuf:"bytes,14,opt,name=dsp_info" json:"dsp_info,omitempty"`
 	// 特殊标记位范围 100 ~ 999
 	Debug            *bool  `protobuf:"varint,100,opt,name=debug,def=0" json:"debug,omitempty"`
 	XXX_unrecognized []byte `json:"-"`
@@ -1345,6 +1413,13 @@ func (m *Event_Body) GetAction() *Event_Body_Action {
 func (m *Event_Body) GetApps() []*Event_Body_App {
 	if m != nil {
 		return m.Apps
+	}
+	return nil
+}
+
+func (m *Event_Body) GetDspInfo() *DspInfo {
+	if m != nil {
+		return m.DspInfo
 	}
 	return nil
 }
@@ -1493,8 +1568,9 @@ func (m *Event_Body_Charge) GetPrice() uint32 {
 }
 
 type Event_Body_Action struct {
-	TargetUrl        *string `protobuf:"bytes,1,opt,name=target_url" json:"target_url,omitempty"`
-	XXX_unrecognized []byte  `json:"-"`
+	TargetUrl        *string                  `protobuf:"bytes,1,opt,name=target_url" json:"target_url,omitempty"`
+	RedirectType     *Event_Body_RedirectType `protobuf:"varint,2,opt,name=redirect_type,enum=jesgoo.protocol.Event_Body_RedirectType" json:"redirect_type,omitempty"`
+	XXX_unrecognized []byte                   `json:"-"`
 }
 
 func (m *Event_Body_Action) Reset()         { *m = Event_Body_Action{} }
@@ -1506,6 +1582,13 @@ func (m *Event_Body_Action) GetTargetUrl() string {
 		return *m.TargetUrl
 	}
 	return ""
+}
+
+func (m *Event_Body_Action) GetRedirectType() Event_Body_RedirectType {
+	if m != nil && m.RedirectType != nil {
+		return *m.RedirectType
+	}
+	return Event_Body_HTTP_FOUND
 }
 
 type Event_Body_App struct {
@@ -1572,4 +1655,5 @@ func init() {
 	proto.RegisterEnum("jesgoo.protocol.Dsp", Dsp_name, Dsp_value)
 	proto.RegisterEnum("jesgoo.protocol.Event_Head_CryptoType", Event_Head_CryptoType_name, Event_Head_CryptoType_value)
 	proto.RegisterEnum("jesgoo.protocol.Event_Body_EventType", Event_Body_EventType_name, Event_Body_EventType_value)
+	proto.RegisterEnum("jesgoo.protocol.Event_Body_RedirectType", Event_Body_RedirectType_name, Event_Body_RedirectType_value)
 }

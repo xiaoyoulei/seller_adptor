@@ -131,7 +131,7 @@ func (this *ReqQiushiModule) packreq(request *mobads_api.BidRequest, inner_data 
 	return
 }
 
-func (this *ReqQiushiModule) convert_ad(inad *context.AdInfo, adtype AdType, bsad *mobads_api.Ad) (err error) {
+func (this *ReqQiushiModule) convert_ad(inad *context.AdInfo, adtype AdType, bsad *mobads_api.Ad, bd_appsid string) (err error) {
 	if bsad.AdId != nil {
 		inad.Adid = int64(*bsad.AdId)
 	}
@@ -212,6 +212,8 @@ func (this *ReqQiushiModule) convert_ad(inad *context.AdInfo, adtype AdType, bsa
 			inad.ClickUrl = *admeta.ClickUrl
 		}
 	}
+	inad.DspMediaid = bd_appsid
+	inad.DspChannelid = ""
 	inad.Bid = 0
 	inad.Price = 0
 	inad.Ctr = 0
@@ -221,7 +223,7 @@ func (this *ReqQiushiModule) convert_ad(inad *context.AdInfo, adtype AdType, bsa
 	return
 }
 
-func (this *ReqQiushiModule) parse_resp(response *mobads_api.BidResponse, adtype AdType, inner_ads *[]context.AdInfo) (err error) {
+func (this *ReqQiushiModule) parse_resp(response *mobads_api.BidResponse, adtype AdType, inner_ads *[]context.AdInfo, bd_appsid string) (err error) {
 	utils.DebugLog.Write("baidu_response [%s]", response.String())
 	if response.ErrorCode != nil {
 		utils.WarningLog.Write("request qiushi fail . error_code is %u", *response.ErrorCode)
@@ -231,7 +233,7 @@ func (this *ReqQiushiModule) parse_resp(response *mobads_api.BidResponse, adtype
 	}
 	for i := 0; i < len(response.Ads); i++ {
 		var inner_ad context.AdInfo
-		err = this.convert_ad(&inner_ad, adtype, response.Ads[i])
+		err = this.convert_ad(&inner_ad, adtype, response.Ads[i], bd_appsid)
 		if err != nil {
 			continue
 		}
@@ -306,7 +308,7 @@ func (this *ReqQiushiModule) request(inner_data *context.Context, adtype AdType,
 		utils.WarningLog.Write("error occur [%s]", err.Error())
 		return
 	}
-	err = this.parse_resp(&response_body, adtype, inner_ads)
+	err = this.parse_resp(&response_body, adtype, inner_ads, bd_appsid)
 
 	return
 }

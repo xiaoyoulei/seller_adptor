@@ -88,14 +88,21 @@ func (this *PrePackModule) gencurl(ad *context.AdInfo, inner_data *context.Conte
 	event_body.Charge.Price = new(uint32)
 	*event_body.Charge.Price = uint32(ad.Price)
 	event_body.Dsp = new(jesgoo_protocol.Dsp)
+	event_body.DspInfo = new(jesgoo_protocol.DspInfo)
+	dspinfo := event_body.DspInfo
+	dspinfo.Dsp = new(jesgoo_protocol.Dsp)
+	dsp := dspinfo.Dsp
 	switch ad.AdSrc {
 	case context.AdSrc_JESGOO:
-		*event_body.Dsp = jesgoo_protocol.Dsp_JESGOO_DSP
+		*dsp = jesgoo_protocol.Dsp_JESGOO_DSP
 	case context.AdSrc_BAIDU:
-		*event_body.Dsp = jesgoo_protocol.Dsp_BAIDU_DSP
+		*dsp = jesgoo_protocol.Dsp_BAIDU_DSP
 	default:
-		*event_body.Dsp = jesgoo_protocol.Dsp_JESGOO_DSP
+		*dsp = jesgoo_protocol.Dsp_JESGOO_DSP
 	}
+	dspinfo.MediaId = new(string)
+	*dspinfo.MediaId = ad.DspMediaid
+
 	event_body.Action = new(jesgoo_protocol.Event_Body_Action)
 	event_body.Action.TargetUrl = new(string)
 	*event_body.Action.TargetUrl = ad.ClickUrl

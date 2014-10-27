@@ -53,7 +53,7 @@ func CallBack(resp http.ResponseWriter, req *http.Request) {
 	//	*material.CreativeType = mobads_api.CreativeType_IMAGE
 	*material.CreativeType = mobads_api.CreativeType_TEXT
 	material.InteractionType = new(mobads_api.InteractionType)
-	*material.InteractionType = mobads_api.InteractionType_SURFING
+	*material.InteractionType = mobads_api.InteractionType_DOWNLOAD
 	material.Title = new(string)
 	*material.Title = title
 	material.Description1 = new(string)
@@ -63,7 +63,7 @@ func CallBack(resp http.ResponseWriter, req *http.Request) {
 	material.MediaUrl = new(string)
 	*material.MediaUrl = "http://192.168.1.5:8123/image/splash.png"
 	material.ClickUrl = new(string)
-	*material.ClickUrl = "http://www.jesgoo.com"
+	*material.ClickUrl = "http://192.168.1.5:8123/pkg/ditiepaoku_64.apk"
 	temp_ans.Ads = append(temp_ans.Ads, ad)
 
 	buf, err := proto.Marshal(&temp_ans)
