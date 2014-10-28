@@ -2,6 +2,7 @@ package rank
 
 import (
 	"context"
+	"math/rand"
 	"sort"
 	"utils"
 )
@@ -52,6 +53,7 @@ func (this *RankModule) Run(inner_data *context.Context) (err error) {
 	}
 	for i := 0; i < len(inner_resp.Ads); i++ {
 		inner_resp.Ads[i].MatchAdSlotType = uint32(this.abs(int(inner_data.Req.AdSlot.AdSlotType) - int(inner_resp.Ads[i].AdSlotType)))
+		inner_resp.Ads[i].Cpm = rand.Int63()
 	}
 	sort.Sort(sortad(inner_resp.Ads))
 

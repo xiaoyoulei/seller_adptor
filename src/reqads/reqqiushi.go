@@ -244,6 +244,7 @@ func (this *ReqQiushiModule) parse_resp(response *mobads_api.BidResponse, adtype
 
 func (this *ReqQiushiModule) request(inner_data *context.Context, adtype AdType, inner_ads *[]context.AdInfo, ch *chan bool) {
 	//	client := &http.Client{}
+	var err error
 	defer func() {
 		//		this.req_chan[int(adtype)] <- true
 		*ch <- true
@@ -317,7 +318,11 @@ func (this *ReqQiushiModule) timeout_func(ch *chan bool) {
 	time.Sleep(time.Millisecond * time.Duration(this.timeout))
 	*ch <- true
 }
-func (this *ReqQiushiModule) Run(inner_data *context.Context) (err error) {
+func (this *ReqQiushiModule) Run(inner_data *context.Context, bschan *chan bool) {
+	defer func() {
+		*bschan <- true
+		utils.DebugLog.Write("reqqiushi set chan")
+	}()
 	var req_flag [int(MaxAdType)]bool
 	var req_chan [int(MaxAdType)](chan bool)
 	var ret_ads [int(MaxAdType)][]context.AdInfo
@@ -358,7 +363,6 @@ func (this *ReqQiushiModule) Run(inner_data *context.Context) (err error) {
 			}
 		}
 	}
-	err = nil
 	return
 }
 

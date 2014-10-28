@@ -198,9 +198,17 @@ type GlobalContext struct {
 		Open     bool
 		Location string
 	}
+	Dsp struct {
+		Timeout int // 单位是毫秒
+	}
 	Qiushi struct {
 		Location string
 		Timeout  int //单位毫秒
+	}
+	JesgooBs struct {
+		Host    string
+		Port    string
+		Timeout int
 	}
 	Prepack struct {
 		ClickHeader string

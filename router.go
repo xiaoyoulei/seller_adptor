@@ -17,6 +17,8 @@ import (
 	"utils"
 )
 
+// 每个Module中不能存放全局可变数据
+// 一个module对象可被多个协程调用
 type IModule interface {
 	Run(inner_data *context.Context) (err error)
 	Init(inner_data *context.GlobalContext) (err error)
@@ -80,7 +82,7 @@ func InitServer(global_context *context.GlobalContext, conf_path string) (err er
 	/************ init module ************/
 	jesgoo_modules = append(jesgoo_modules, &parser.ParseJesgooRequestModule{})
 	jesgoo_modules = append(jesgoo_modules, &dmp.DMPModule{})
-	jesgoo_modules = append(jesgoo_modules, &reqads.ReqQiushiModule{})
+	jesgoo_modules = append(jesgoo_modules, &reqads.ReqBsModule{})
 	jesgoo_modules = append(jesgoo_modules, &rank.RankModule{})
 	jesgoo_modules = append(jesgoo_modules, &prepack.PrePackModule{})
 	jesgoo_modules = append(jesgoo_modules, &pack.PackJesgooResponseModule{})
@@ -91,7 +93,7 @@ func InitServer(global_context *context.GlobalContext, conf_path string) (err er
 	}
 	jesgoo_json_modules = append(jesgoo_json_modules, &parser.ParseJesgooJsonRequestModule{})
 	jesgoo_json_modules = append(jesgoo_json_modules, &dmp.DMPModule{})
-	jesgoo_json_modules = append(jesgoo_json_modules, &reqads.ReqQiushiModule{})
+	jesgoo_json_modules = append(jesgoo_json_modules, &reqads.ReqBsModule{})
 	jesgoo_json_modules = append(jesgoo_json_modules, &rank.RankModule{})
 	jesgoo_json_modules = append(jesgoo_json_modules, &prepack.PrePackModule{})
 	jesgoo_json_modules = append(jesgoo_json_modules, &pack.PackJesgooResponseJsonModule{})
