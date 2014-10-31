@@ -5,6 +5,17 @@ import (
 	"utils"
 )
 
+type AdType int
+
+const (
+	Banner       AdType = 0
+	Initlization AdType = 1
+	Insert       AdType = 2
+	OfferWall    AdType = 3
+	Recommed     AdType = 4
+	MaxAdType    AdType = 5
+)
+
 type IBsModule interface {
 	Init(golal_conf *context.GlobalContext) (err error)
 	Run(inner_data *context.Context, bschan *chan bool)
@@ -34,7 +45,7 @@ func (this *ReqBsModule) Init(global_conf *context.GlobalContext) (err error) {
 func (this *ReqBsModule) strategy(inner_data *context.Context, bsflag *[]bool) (err error) {
 
 	(*bsflag)[0] = true
-	(*bsflag)[1] = true
+	//	(*bsflag)[1] = true
 
 	return
 }

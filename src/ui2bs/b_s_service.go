@@ -5,7 +5,7 @@ package ui2bs
 
 import (
 	"fmt"
-	"github.com/apache/thrift/lib/go/thrift"
+	"git.apache.org/thrift.git/lib/go/thrift"
 	"math"
 )
 

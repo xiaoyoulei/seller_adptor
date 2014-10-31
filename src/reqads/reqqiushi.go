@@ -17,15 +17,6 @@ import (
 	"utils"
 )
 
-type AdType int
-
-const (
-	Banner       AdType = 0
-	Initlization AdType = 1
-	Insert       AdType = 2
-	MaxAdType    AdType = 3
-)
-
 type ReqQiushiModule struct {
 	client     *http.Client
 	qiushi_url string
@@ -288,6 +279,7 @@ func (this *ReqQiushiModule) request(inner_data *context.Context, adtype AdType,
 	request.Header.Set("Connection", "Keep-alive")
 	var response *http.Response
 	response, err = this.client.Do(request)
+	defer response.Body.Close()
 	if err != nil {
 		utils.WarningLog.Write("request qiushi server fail [%s]", err.Error())
 		return
