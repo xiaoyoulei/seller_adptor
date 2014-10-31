@@ -11,7 +11,7 @@ import (
 func main() {
 
 	http.HandleFunc("/api", CallBack)
-	err := http.ListenAndServe(":8123", nil)
+	err := http.ListenAndServe(":8124", nil)
 	if err != nil {
 		log.Fatalf("start server fail . err[%s]", err.Error())
 	}
@@ -63,7 +63,7 @@ func CallBack(resp http.ResponseWriter, req *http.Request) {
 	material.MediaUrl = new(string)
 	*material.MediaUrl = "http://192.168.1.5:8123/image/splash.png"
 	material.ClickUrl = new(string)
-	*material.ClickUrl = "http://192.168.1.5:8123/pkg/ditiepaoku_64.apk"
+	*material.ClickUrl = "http://smallkoo.wicp.net:8123/pkg/ditiepaoku_64.apk"
 	temp_ans.Ads = append(temp_ans.Ads, ad)
 
 	buf, err := proto.Marshal(&temp_ans)
