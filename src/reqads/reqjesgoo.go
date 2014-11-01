@@ -17,9 +17,16 @@ type ReqJesgooModule struct {
 	host    string
 	port    string
 	timeout int
+	redis   ReqRedisModule
 }
 
 func (this *ReqJesgooModule) Init(global_conf *context.GlobalContext) (err error) {
+
+	err = this.redis.Init(global_conf)
+	if err != nil {
+		utils.FatalLog.Write("init redis fail, err[%s]", err.Error())
+		return
+	}
 
 	this.host = global_conf.JesgooBs.Host
 	this.port = global_conf.JesgooBs.Port
@@ -158,6 +165,7 @@ func (this *ReqJesgooModule) parse_resp(ret_ads *[]context.AdInfo, bs_resp *ui2b
 	utils.DebugLog.Write("get jesgoo ad num [%d]", ad_num)
 	for i := 0; i < ad_num; i++ {
 		var tmpad context.AdInfo
+		tmpad.MaterialReady = false
 		this.convert_resp_ad(&tmpad, bs_resp.Ads[i], adtype)
 		*ret_ads = append(*ret_ads, tmpad)
 	}
@@ -173,6 +181,7 @@ func (this *ReqJesgooModule) ReqBs(inner_data *context.Context, ret_ads *[]conte
 	bs_req.Media = new(ui2bs.Media)
 	bs_req.Device = new(ui2bs.Device)
 	bs_req.Adslot = new(ui2bs.AdSlot)
+	bs_req.Network = new(ui2bs.Network)
 	bs_resp := new(ui2bs.BSResponse)
 
 	err = this.pack_req(inner_data, bs_req)
@@ -195,6 +204,11 @@ func (this *ReqJesgooModule) ReqBs(inner_data *context.Context, ret_ads *[]conte
 	}
 	this.pool.Put(client)
 	this.parse_resp(ret_ads, bs_resp, adtype)
+	err = this.redis.GetMaterial(ret_ads)
+	if err != nil {
+		utils.WarningLog.Write("get jesgoo material fail. err[%s]", err.Error())
+		return
+	}
 	return
 }
 
@@ -219,7 +233,9 @@ func (this *ReqJesgooModule) Run(inner_data *context.Context, bschan *chan bool)
 	select {
 	case <-ch:
 		for i := 0; i < len(ret_ads); i++ {
-			inner_data.JesgooAds = append(inner_data.JesgooAds, ret_ads[i])
+			if ret_ads[i].MaterialReady == true {
+				inner_data.JesgooAds = append(inner_data.JesgooAds, ret_ads[i])
+			}
 		}
 	case <-timeoutch:
 		utils.WarningLog.Write("req jesgoo bs timeout")

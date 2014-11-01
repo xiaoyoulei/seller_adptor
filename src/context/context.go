@@ -171,6 +171,7 @@ type AdInfo struct {
 	MatchAdSlotType uint32 //请求位置和广告类型的匹配度。 0 是完全匹配
 	DspMediaid      string
 	DspChannelid    string
+	MaterialReady   bool
 }
 type InnerResp struct {
 	Ads []AdInfo
@@ -216,5 +217,9 @@ type GlobalContext struct {
 	}
 	Dict struct {
 		IPDictPath string
+	}
+	RedisMaterial struct {
+		Location string
+		Timeout  int
 	}
 }

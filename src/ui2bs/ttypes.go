@@ -1390,10 +1390,11 @@ func (p *Network) String() string {
 }
 
 type BSRequest struct {
-	Searchid string  `thrift:"searchid,1,required"`
-	Media    *Media  `thrift:"media,2,required"`
-	Adslot   *AdSlot `thrift:"adslot,3,required"`
-	Device   *Device `thrift:"device,4,required"`
+	Searchid string   `thrift:"searchid,1,required"`
+	Media    *Media   `thrift:"media,2,required"`
+	Adslot   *AdSlot  `thrift:"adslot,3,required"`
+	Device   *Device  `thrift:"device,4,required"`
+	Network  *Network `thrift:"network,5,required"`
 }
 
 func NewBSRequest() *BSRequest {
@@ -1427,6 +1428,10 @@ func (p *BSRequest) Read(iprot thrift.TProtocol) error {
 			}
 		case 4:
 			if err := p.readField4(iprot); err != nil {
+				return err
+			}
+		case 5:
+			if err := p.readField5(iprot); err != nil {
 				return err
 			}
 		default:
@@ -1477,6 +1482,14 @@ func (p *BSRequest) readField4(iprot thrift.TProtocol) error {
 	return nil
 }
 
+func (p *BSRequest) readField5(iprot thrift.TProtocol) error {
+	p.Network = NewNetwork()
+	if err := p.Network.Read(iprot); err != nil {
+		return fmt.Errorf("%T error reading struct: %s", p.Network)
+	}
+	return nil
+}
+
 func (p *BSRequest) Write(oprot thrift.TProtocol) error {
 	if err := oprot.WriteStructBegin("BSRequest"); err != nil {
 		return fmt.Errorf("%T write struct begin error: %s", p, err)
@@ -1491,6 +1504,9 @@ func (p *BSRequest) Write(oprot thrift.TProtocol) error {
 		return err
 	}
 	if err := p.writeField4(oprot); err != nil {
+		return err
+	}
+	if err := p.writeField5(oprot); err != nil {
 		return err
 	}
 	if err := oprot.WriteFieldStop(); err != nil {
@@ -1555,6 +1571,21 @@ func (p *BSRequest) writeField4(oprot thrift.TProtocol) (err error) {
 		}
 		if err := oprot.WriteFieldEnd(); err != nil {
 			return fmt.Errorf("%T write field end error 4:device: %s", p, err)
+		}
+	}
+	return err
+}
+
+func (p *BSRequest) writeField5(oprot thrift.TProtocol) (err error) {
+	if p.Network != nil {
+		if err := oprot.WriteFieldBegin("network", thrift.STRUCT, 5); err != nil {
+			return fmt.Errorf("%T write field begin error 5:network: %s", p, err)
+		}
+		if err := p.Network.Write(oprot); err != nil {
+			return fmt.Errorf("%T error writing struct: %s", p.Network)
+		}
+		if err := oprot.WriteFieldEnd(); err != nil {
+			return fmt.Errorf("%T write field end error 5:network: %s", p, err)
 		}
 	}
 	return err

@@ -24,6 +24,7 @@ It has these top-level messages:
 	AdSlot
 	DspInfo
 	Event
+	Material
 */
 package jesgoo_protocol
 
@@ -679,6 +680,42 @@ func (x *Event_Body_RedirectType) UnmarshalJSON(data []byte) error {
 		return err
 	}
 	*x = Event_Body_RedirectType(value)
+	return nil
+}
+
+type Material_Type int32
+
+const (
+	Material_TEXT      Material_Type = 0
+	Material_ICON_TEXT Material_Type = 1
+	Material_IMAGE     Material_Type = 2
+)
+
+var Material_Type_name = map[int32]string{
+	0: "TEXT",
+	1: "ICON_TEXT",
+	2: "IMAGE",
+}
+var Material_Type_value = map[string]int32{
+	"TEXT":      0,
+	"ICON_TEXT": 1,
+	"IMAGE":     2,
+}
+
+func (x Material_Type) Enum() *Material_Type {
+	p := new(Material_Type)
+	*p = x
+	return p
+}
+func (x Material_Type) String() string {
+	return proto.EnumName(Material_Type_name, int32(x))
+}
+func (x *Material_Type) UnmarshalJSON(data []byte) error {
+	value, err := proto.UnmarshalJSONEnum(Material_Type_value, data, "Material_Type")
+	if err != nil {
+		return err
+	}
+	*x = Material_Type(value)
 	return nil
 }
 
@@ -1639,6 +1676,166 @@ func (m *Event_Body_App) GetVersion() *Version {
 	return nil
 }
 
+type Material struct {
+	Id               *uint32         `protobuf:"varint,1,req,name=id" json:"id,omitempty"`
+	Type             *Material_Type  `protobuf:"varint,2,req,name=type,enum=jesgoo.protocol.Material_Type" json:"type,omitempty"`
+	Title            *string         `protobuf:"bytes,3,opt,name=title" json:"title,omitempty"`
+	Description      *string         `protobuf:"bytes,4,opt,name=description" json:"description,omitempty"`
+	Image            *Material_Image `protobuf:"bytes,5,opt,name=image" json:"image,omitempty"`
+	TargetUrl        *string         `protobuf:"bytes,6,opt,name=target_url" json:"target_url,omitempty"`
+	ShowUrl          *string         `protobuf:"bytes,7,opt,name=show_url" json:"show_url,omitempty"`
+	App              *Material_App   `protobuf:"bytes,8,opt,name=app" json:"app,omitempty"`
+	LongDescription  *string         `protobuf:"bytes,9,opt,name=long_description" json:"long_description,omitempty"`
+	XXX_unrecognized []byte          `json:"-"`
+}
+
+func (m *Material) Reset()         { *m = Material{} }
+func (m *Material) String() string { return proto.CompactTextString(m) }
+func (*Material) ProtoMessage()    {}
+
+func (m *Material) GetId() uint32 {
+	if m != nil && m.Id != nil {
+		return *m.Id
+	}
+	return 0
+}
+
+func (m *Material) GetType() Material_Type {
+	if m != nil && m.Type != nil {
+		return *m.Type
+	}
+	return Material_TEXT
+}
+
+func (m *Material) GetTitle() string {
+	if m != nil && m.Title != nil {
+		return *m.Title
+	}
+	return ""
+}
+
+func (m *Material) GetDescription() string {
+	if m != nil && m.Description != nil {
+		return *m.Description
+	}
+	return ""
+}
+
+func (m *Material) GetImage() *Material_Image {
+	if m != nil {
+		return m.Image
+	}
+	return nil
+}
+
+func (m *Material) GetTargetUrl() string {
+	if m != nil && m.TargetUrl != nil {
+		return *m.TargetUrl
+	}
+	return ""
+}
+
+func (m *Material) GetShowUrl() string {
+	if m != nil && m.ShowUrl != nil {
+		return *m.ShowUrl
+	}
+	return ""
+}
+
+func (m *Material) GetApp() *Material_App {
+	if m != nil {
+		return m.App
+	}
+	return nil
+}
+
+func (m *Material) GetLongDescription() string {
+	if m != nil && m.LongDescription != nil {
+		return *m.LongDescription
+	}
+	return ""
+}
+
+type Material_Image struct {
+	Url              *string `protobuf:"bytes,1,req,name=url" json:"url,omitempty"`
+	Width            *uint32 `protobuf:"varint,2,opt,name=width" json:"width,omitempty"`
+	Height           *uint32 `protobuf:"varint,3,opt,name=height" json:"height,omitempty"`
+	XXX_unrecognized []byte  `json:"-"`
+}
+
+func (m *Material_Image) Reset()         { *m = Material_Image{} }
+func (m *Material_Image) String() string { return proto.CompactTextString(m) }
+func (*Material_Image) ProtoMessage()    {}
+
+func (m *Material_Image) GetUrl() string {
+	if m != nil && m.Url != nil {
+		return *m.Url
+	}
+	return ""
+}
+
+func (m *Material_Image) GetWidth() uint32 {
+	if m != nil && m.Width != nil {
+		return *m.Width
+	}
+	return 0
+}
+
+func (m *Material_Image) GetHeight() uint32 {
+	if m != nil && m.Height != nil {
+		return *m.Height
+	}
+	return 0
+}
+
+type Material_App struct {
+	Name             *string         `protobuf:"bytes,1,req,name=name" json:"name,omitempty"`
+	PackageName      *string         `protobuf:"bytes,2,req,name=package_name" json:"package_name,omitempty"`
+	Logo             *Material_Image `protobuf:"bytes,3,req,name=logo" json:"logo,omitempty"`
+	PackageSize      *uint32         `protobuf:"varint,4,opt,name=package_size" json:"package_size,omitempty"`
+	Version          *string         `protobuf:"bytes,5,opt,name=version" json:"version,omitempty"`
+	XXX_unrecognized []byte          `json:"-"`
+}
+
+func (m *Material_App) Reset()         { *m = Material_App{} }
+func (m *Material_App) String() string { return proto.CompactTextString(m) }
+func (*Material_App) ProtoMessage()    {}
+
+func (m *Material_App) GetName() string {
+	if m != nil && m.Name != nil {
+		return *m.Name
+	}
+	return ""
+}
+
+func (m *Material_App) GetPackageName() string {
+	if m != nil && m.PackageName != nil {
+		return *m.PackageName
+	}
+	return ""
+}
+
+func (m *Material_App) GetLogo() *Material_Image {
+	if m != nil {
+		return m.Logo
+	}
+	return nil
+}
+
+func (m *Material_App) GetPackageSize() uint32 {
+	if m != nil && m.PackageSize != nil {
+		return *m.PackageSize
+	}
+	return 0
+}
+
+func (m *Material_App) GetVersion() string {
+	if m != nil && m.Version != nil {
+		return *m.Version
+	}
+	return ""
+}
+
 func init() {
 	proto.RegisterEnum("jesgoo.protocol.DeviceType", DeviceType_name, DeviceType_value)
 	proto.RegisterEnum("jesgoo.protocol.MediaType", MediaType_name, MediaType_value)
@@ -1656,4 +1853,5 @@ func init() {
 	proto.RegisterEnum("jesgoo.protocol.Event_Head_CryptoType", Event_Head_CryptoType_name, Event_Head_CryptoType_value)
 	proto.RegisterEnum("jesgoo.protocol.Event_Body_EventType", Event_Body_EventType_name, Event_Body_EventType_value)
 	proto.RegisterEnum("jesgoo.protocol.Event_Body_RedirectType", Event_Body_RedirectType_name, Event_Body_RedirectType_value)
+	proto.RegisterEnum("jesgoo.protocol.Material_Type", Material_Type_name, Material_Type_value)
 }

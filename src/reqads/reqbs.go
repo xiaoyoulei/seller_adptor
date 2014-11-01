@@ -44,8 +44,20 @@ func (this *ReqBsModule) Init(global_conf *context.GlobalContext) (err error) {
 
 func (this *ReqBsModule) strategy(inner_data *context.Context, bsflag *[]bool) (err error) {
 
-	(*bsflag)[0] = true
-	//	(*bsflag)[1] = true
+	switch inner_data.Req.AdSlot.AdSlotType {
+	case context.AdSlotType_BANNER:
+		(*bsflag)[0] = true
+	case context.AdSlotType_INITIALIZATION:
+		(*bsflag)[0] = true
+	case context.AdSlotType_INSERT:
+		(*bsflag)[0] = true
+	case context.AdSlotType_RECOMMEND:
+		(*bsflag)[1] = true
+	case context.AdSlotType_OFFERWALL:
+		(*bsflag)[1] = true
+	}
+	//(*bsflag)[0] = true
+	(*bsflag)[1] = true
 
 	return
 }

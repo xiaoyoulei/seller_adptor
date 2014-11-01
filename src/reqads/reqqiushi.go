@@ -224,6 +224,7 @@ func (this *ReqQiushiModule) parse_resp(response *mobads_api.BidResponse, adtype
 	}
 	for i := 0; i < len(response.Ads); i++ {
 		var inner_ad context.AdInfo
+		inner_ad.MaterialReady = true
 		err = this.convert_ad(&inner_ad, adtype, response.Ads[i], bd_appsid)
 		if err != nil {
 			continue
