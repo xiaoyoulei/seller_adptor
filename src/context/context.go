@@ -222,4 +222,9 @@ type GlobalContext struct {
 		Location string
 		Timeout  int
 	}
+	Template struct {
+		Recommendtpl string
+		Imagetpl     string
+		Texttpl      string
+	}
 }

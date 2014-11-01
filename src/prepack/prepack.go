@@ -13,12 +13,13 @@ import (
 )
 
 type PrePackModule struct {
-	click_head string
-	win_head   string
-	coder      [64]*base64.Encoding
-	basecoder  *base64.Encoding
-	texttpl    *template.Template
-	imgtpl     *template.Template
+	click_head   string
+	win_head     string
+	coder        [64]*base64.Encoding
+	basecoder    *base64.Encoding
+	texttpl      *template.Template
+	imgtpl       *template.Template
+	recommendtpl *template.Template
 }
 
 func (this *PrePackModule) gentexthtml(ad *context.AdInfo, inner_data *context.Context) (err error) {
@@ -259,13 +260,14 @@ func (this *PrePackModule) Init(golbal_conf *context.GlobalContext) (err error) 
 	}
 	code_char := "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789-_"
 	this.basecoder = base64.NewEncoding(code_char)
-	this.texttpl, err = template.ParseFiles("template/ads_text.html")
+	this.texttpl, err = template.ParseFiles(global_conf.Template.Texttpl)
 	if err != nil || this.texttpl == nil {
 		return
 	}
-	this.imgtpl, err = template.ParseFiles("template/ads_img.html")
+	this.imgtpl, err = template.ParseFiles(golbal_conf.Template.Imagetpl)
 	if err != nil || this.imgtpl == nil {
 		return
 	}
+	this.recommendtpl, err = template.ParseFiles(global_conf.Template.Recommendtpl)
 	return
 }
