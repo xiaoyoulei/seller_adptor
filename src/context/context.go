@@ -226,5 +226,6 @@ type GlobalContext struct {
 		Recommendtpl string
 		Imagetpl     string
 		Texttpl      string
+		Icontexttpl  string
 	}
 }

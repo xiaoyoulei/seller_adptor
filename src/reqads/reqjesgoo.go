@@ -59,18 +59,25 @@ func (this *ReqJesgooModule) Init(global_conf *context.GlobalContext) (err error
 }
 
 func (this *ReqJesgooModule) pack_req(inner_data *context.Context, bs_req *ui2bs.BSRequest) (err error) {
-	if bs_req == nil || bs_req.Media == nil || bs_req.Device == nil || bs_req.Adslot == nil {
+	if bs_req == nil {
 		utils.FatalLog.Write("bs_req is null")
 		err = errors.New("bs_req is null")
 		return
 	}
+
 	bs_req.Searchid = inner_data.Searchid
+
+	bs_req.Media = new(ui2bs.Media)
 	bs_req.Media.Appsid = inner_data.Req.Media.Appsid
 	bs_req.Media.ChannelId = inner_data.Req.Media.ChannelId
+
+	bs_req.Adslot = new(ui2bs.AdSlot)
 	bs_req.Adslot.Id = inner_data.Req.AdSlot.Slotid
 	bs_req.Adslot.Size = new(ui2bs.Size)
 	bs_req.Adslot.Size.Width = inner_data.Req.AdSlot.Size.Width
 	bs_req.Adslot.Size.Height = inner_data.Req.AdSlot.Size.Height
+
+	bs_req.Device = new(ui2bs.Device)
 	switch inner_data.Req.Device.OSType {
 	case context.OSType_ANDROID:
 		bs_req.Device.Os = ui2bs.OSType_ANDROID
@@ -100,6 +107,13 @@ func (this *ReqJesgooModule) pack_req(inner_data *context.Context, bs_req *ui2bs
 	}
 	bs_req.Device.DevId = make([]*ui2bs.DeviceID, 0)
 	bs_req.Device.DevId = append(bs_req.Device.DevId, temp_device_id)
+
+	bs_req.Network = new(ui2bs.Network)
+	bs_req.Location = new(ui2bs.Location)
+	bs_req.Location.Province = int32(inner_data.Req.Location.Province)
+	bs_req.Location.City = int32(inner_data.Req.Location.City)
+	bs_req.Location.Country = int32(inner_data.Req.Location.Country)
+
 	return
 
 }
@@ -178,10 +192,7 @@ func (this *ReqJesgooModule) ReqBs(inner_data *context.Context, ret_ads *[]conte
 	}()
 	var err error
 	bs_req := new(ui2bs.BSRequest)
-	bs_req.Media = new(ui2bs.Media)
-	bs_req.Device = new(ui2bs.Device)
-	bs_req.Adslot = new(ui2bs.AdSlot)
-	bs_req.Network = new(ui2bs.Network)
+
 	bs_resp := new(ui2bs.BSResponse)
 
 	err = this.pack_req(inner_data, bs_req)

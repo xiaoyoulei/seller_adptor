@@ -1389,16 +1389,184 @@ func (p *Network) String() string {
 	return fmt.Sprintf("Network(%+v)", *p)
 }
 
+type Location struct {
+	Province int32 `thrift:"province,1"`
+	City     int32 `thrift:"city,2"`
+	Country  int32 `thrift:"country,3"`
+}
+
+func NewLocation() *Location {
+	return &Location{}
+}
+
+func (p *Location) IsSetProvince() bool {
+	return p.Province != 0
+}
+
+func (p *Location) IsSetCity() bool {
+	return p.City != 0
+}
+
+func (p *Location) IsSetCountry() bool {
+	return p.Country != 0
+}
+
+func (p *Location) Read(iprot thrift.TProtocol) error {
+	if _, err := iprot.ReadStructBegin(); err != nil {
+		return fmt.Errorf("%T read error", p)
+	}
+	for {
+		_, fieldTypeId, fieldId, err := iprot.ReadFieldBegin()
+		if err != nil {
+			return fmt.Errorf("%T field %d read error: %s", p, fieldId, err)
+		}
+		if fieldTypeId == thrift.STOP {
+			break
+		}
+		switch fieldId {
+		case 1:
+			if err := p.readField1(iprot); err != nil {
+				return err
+			}
+		case 2:
+			if err := p.readField2(iprot); err != nil {
+				return err
+			}
+		case 3:
+			if err := p.readField3(iprot); err != nil {
+				return err
+			}
+		default:
+			if err := iprot.Skip(fieldTypeId); err != nil {
+				return err
+			}
+		}
+		if err := iprot.ReadFieldEnd(); err != nil {
+			return err
+		}
+	}
+	if err := iprot.ReadStructEnd(); err != nil {
+		return fmt.Errorf("%T read struct end error: %s", p, err)
+	}
+	return nil
+}
+
+func (p *Location) readField1(iprot thrift.TProtocol) error {
+	if v, err := iprot.ReadI32(); err != nil {
+		return fmt.Errorf("error reading field 1: %s")
+	} else {
+		p.Province = v
+	}
+	return nil
+}
+
+func (p *Location) readField2(iprot thrift.TProtocol) error {
+	if v, err := iprot.ReadI32(); err != nil {
+		return fmt.Errorf("error reading field 2: %s")
+	} else {
+		p.City = v
+	}
+	return nil
+}
+
+func (p *Location) readField3(iprot thrift.TProtocol) error {
+	if v, err := iprot.ReadI32(); err != nil {
+		return fmt.Errorf("error reading field 3: %s")
+	} else {
+		p.Country = v
+	}
+	return nil
+}
+
+func (p *Location) Write(oprot thrift.TProtocol) error {
+	if err := oprot.WriteStructBegin("Location"); err != nil {
+		return fmt.Errorf("%T write struct begin error: %s", p, err)
+	}
+	if err := p.writeField1(oprot); err != nil {
+		return err
+	}
+	if err := p.writeField2(oprot); err != nil {
+		return err
+	}
+	if err := p.writeField3(oprot); err != nil {
+		return err
+	}
+	if err := oprot.WriteFieldStop(); err != nil {
+		return fmt.Errorf("%T write field stop error: %s", err)
+	}
+	if err := oprot.WriteStructEnd(); err != nil {
+		return fmt.Errorf("%T write struct stop error: %s", err)
+	}
+	return nil
+}
+
+func (p *Location) writeField1(oprot thrift.TProtocol) (err error) {
+	if p.IsSetProvince() {
+		if err := oprot.WriteFieldBegin("province", thrift.I32, 1); err != nil {
+			return fmt.Errorf("%T write field begin error 1:province: %s", p, err)
+		}
+		if err := oprot.WriteI32(int32(p.Province)); err != nil {
+			return fmt.Errorf("%T.province (1) field write error: %s", p)
+		}
+		if err := oprot.WriteFieldEnd(); err != nil {
+			return fmt.Errorf("%T write field end error 1:province: %s", p, err)
+		}
+	}
+	return err
+}
+
+func (p *Location) writeField2(oprot thrift.TProtocol) (err error) {
+	if p.IsSetCity() {
+		if err := oprot.WriteFieldBegin("city", thrift.I32, 2); err != nil {
+			return fmt.Errorf("%T write field begin error 2:city: %s", p, err)
+		}
+		if err := oprot.WriteI32(int32(p.City)); err != nil {
+			return fmt.Errorf("%T.city (2) field write error: %s", p)
+		}
+		if err := oprot.WriteFieldEnd(); err != nil {
+			return fmt.Errorf("%T write field end error 2:city: %s", p, err)
+		}
+	}
+	return err
+}
+
+func (p *Location) writeField3(oprot thrift.TProtocol) (err error) {
+	if p.IsSetCountry() {
+		if err := oprot.WriteFieldBegin("country", thrift.I32, 3); err != nil {
+			return fmt.Errorf("%T write field begin error 3:country: %s", p, err)
+		}
+		if err := oprot.WriteI32(int32(p.Country)); err != nil {
+			return fmt.Errorf("%T.country (3) field write error: %s", p)
+		}
+		if err := oprot.WriteFieldEnd(); err != nil {
+			return fmt.Errorf("%T write field end error 3:country: %s", p, err)
+		}
+	}
+	return err
+}
+
+func (p *Location) String() string {
+	if p == nil {
+		return "<nil>"
+	}
+	return fmt.Sprintf("Location(%+v)", *p)
+}
+
 type BSRequest struct {
-	Searchid string   `thrift:"searchid,1,required"`
-	Media    *Media   `thrift:"media,2,required"`
-	Adslot   *AdSlot  `thrift:"adslot,3,required"`
-	Device   *Device  `thrift:"device,4,required"`
-	Network  *Network `thrift:"network,5,required"`
+	Searchid string    `thrift:"searchid,1,required"`
+	Media    *Media    `thrift:"media,2,required"`
+	Adslot   *AdSlot   `thrift:"adslot,3,required"`
+	Device   *Device   `thrift:"device,4,required"`
+	Network  *Network  `thrift:"network,5,required"`
+	Location *Location `thrift:"location,6"`
 }
 
 func NewBSRequest() *BSRequest {
 	return &BSRequest{}
+}
+
+func (p *BSRequest) IsSetLocation() bool {
+	return p.Location != nil
 }
 
 func (p *BSRequest) Read(iprot thrift.TProtocol) error {
@@ -1432,6 +1600,10 @@ func (p *BSRequest) Read(iprot thrift.TProtocol) error {
 			}
 		case 5:
 			if err := p.readField5(iprot); err != nil {
+				return err
+			}
+		case 6:
+			if err := p.readField6(iprot); err != nil {
 				return err
 			}
 		default:
@@ -1490,6 +1662,14 @@ func (p *BSRequest) readField5(iprot thrift.TProtocol) error {
 	return nil
 }
 
+func (p *BSRequest) readField6(iprot thrift.TProtocol) error {
+	p.Location = NewLocation()
+	if err := p.Location.Read(iprot); err != nil {
+		return fmt.Errorf("%T error reading struct: %s", p.Location)
+	}
+	return nil
+}
+
 func (p *BSRequest) Write(oprot thrift.TProtocol) error {
 	if err := oprot.WriteStructBegin("BSRequest"); err != nil {
 		return fmt.Errorf("%T write struct begin error: %s", p, err)
@@ -1507,6 +1687,9 @@ func (p *BSRequest) Write(oprot thrift.TProtocol) error {
 		return err
 	}
 	if err := p.writeField5(oprot); err != nil {
+		return err
+	}
+	if err := p.writeField6(oprot); err != nil {
 		return err
 	}
 	if err := oprot.WriteFieldStop(); err != nil {
@@ -1586,6 +1769,23 @@ func (p *BSRequest) writeField5(oprot thrift.TProtocol) (err error) {
 		}
 		if err := oprot.WriteFieldEnd(); err != nil {
 			return fmt.Errorf("%T write field end error 5:network: %s", p, err)
+		}
+	}
+	return err
+}
+
+func (p *BSRequest) writeField6(oprot thrift.TProtocol) (err error) {
+	if p.Location != nil {
+		if p.IsSetLocation() {
+			if err := oprot.WriteFieldBegin("location", thrift.STRUCT, 6); err != nil {
+				return fmt.Errorf("%T write field begin error 6:location: %s", p, err)
+			}
+			if err := p.Location.Write(oprot); err != nil {
+				return fmt.Errorf("%T error writing struct: %s", p.Location)
+			}
+			if err := oprot.WriteFieldEnd(); err != nil {
+				return fmt.Errorf("%T write field end error 6:location: %s", p, err)
+			}
 		}
 	}
 	return err
