@@ -8,7 +8,7 @@ import (
 )
 
 type App struct {
-	package_name string
+	Package_name string
 }
 
 type Media struct {
@@ -99,7 +99,7 @@ func (this *ParseJesgooJsonRequestModule) parse(inner_data *context.Context) (er
 	default:
 		inner_media.MediaType = context.MediaType_WAP
 	}
-	inner_media.App.PackageName = temp_req.Media.App.package_name
+	inner_media.App.PackageName = temp_req.Media.App.Package_name
 
 	//device
 	inner_device := &inner_data.Req.Device
