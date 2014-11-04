@@ -72,7 +72,6 @@ type ParseJesgooJsonRequestModule struct {
 
 func (this *ParseJesgooJsonRequestModule) Init(inner_data *context.GlobalContext) (err error) {
 	return
-
 }
 
 func (this *ParseJesgooJsonRequestModule) parse(inner_data *context.Context) (err error) {
@@ -80,7 +79,7 @@ func (this *ParseJesgooJsonRequestModule) parse(inner_data *context.Context) (er
 	var temp_req SellerRequest
 	err = json.Unmarshal(inner_data.ReqBody, &temp_req)
 	if err != nil {
-		utils.WarningLog.Write("deserialized jesgoo json fail [%s]", err.Error())
+		utils.WarningLog.Write("deserialized jesgoo json fail [%s] [%s]", err.Error(), inner_data.ReqBody)
 		return
 	}
 	utils.DebugLog.Write("json request [%s]", temp_req)
