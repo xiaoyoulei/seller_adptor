@@ -17,6 +17,7 @@ func main() {
 	err := InitServer(&global_context, "conf/ui.conf")
 	if err != nil {
 		log.Fatalf("Init Server fail [%s]\n", err.Error())
+		return
 	}
 	http.HandleFunc("/v1/protobuf", CallbackJesgoo)
 	http.HandleFunc("/v1/json", CallbackJesgooJson)

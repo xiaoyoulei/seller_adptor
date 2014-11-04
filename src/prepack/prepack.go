@@ -4,6 +4,7 @@ import (
 	"code.google.com/p/goprotobuf/proto"
 	"context"
 	"encoding/base64"
+	"errors"
 	"html/template"
 	"jesgoo_protocol"
 	"math/rand"
@@ -26,6 +27,7 @@ type PrePackModule struct {
 func (this *PrePackModule) gentexthtml(ad *context.AdInfo, inner_data *context.Context) (err error) {
 	err = this.texttpl.Execute(&ad.HtmlSnippet, ad)
 	if err != nil {
+		utils.WarningLog.Write("render text tpl fail . err[%s]", err.Error())
 		return
 	}
 	return
@@ -34,14 +36,20 @@ func (this *PrePackModule) gentexthtml(ad *context.AdInfo, inner_data *context.C
 func (this *PrePackModule) genimghtml(ad *context.AdInfo, inner_data *context.Context) (err error) {
 	err = this.imgtpl.Execute(&ad.HtmlSnippet, ad)
 	if err != nil {
+		utils.WarningLog.Write("render image tpl fail . err[%s]", err.Error())
 		return
 	}
 	return
 }
 
 func (this *PrePackModule) geniconhtml(ad *context.AdInfo, inner_data *context.Context) (err error) {
+	if ad == nil {
+		err = errors.New("render icon tpl . ad is nil")
+		return
+	}
 	err = this.icontexttpl.Execute(&ad.HtmlSnippet, ad)
 	if err != nil {
+		utils.WarningLog.Write("render icontext tpl fail . err[%s]", err.Error())
 		return
 	}
 	return
@@ -67,6 +75,10 @@ func (this *PrePackModule) gencurl(ad *context.AdInfo, inner_data *context.Conte
 	event_body.Media.ChannelId = new(string)
 	*event_body.Media.MediaId = inner_data.Req.Media.Appsid
 	*event_body.Media.ChannelId = inner_data.Req.Media.ChannelId
+	event_body.Media.App = new(jesgoo_protocol.Event_Body_MediaApp)
+	event_body.Media.App.PackageName = new(string)
+	*event_body.Media.App.PackageName = inner_data.Req.Media.App.PackageName
+
 	event_body.Region = new(jesgoo_protocol.Event_Body_Region)
 	event_body.Region.Country = new(uint32)
 	event_body.Region.Province = new(uint32)
@@ -108,6 +120,7 @@ func (this *PrePackModule) gencurl(ad *context.AdInfo, inner_data *context.Conte
 	event_body.Action = new(jesgoo_protocol.Event_Body_Action)
 	event_body.Action.TargetUrl = new(string)
 	*event_body.Action.TargetUrl = ad.ClickUrl
+
 	event_body.Debug = new(bool)
 	*event_body.Debug = inner_data.Req.Debug
 
@@ -153,6 +166,10 @@ func (this *PrePackModule) genwinnotice(ad *context.AdInfo, inner_data *context.
 	event_body.Media.ChannelId = new(string)
 	*event_body.Media.MediaId = inner_data.Req.Media.Appsid
 	*event_body.Media.ChannelId = inner_data.Req.Media.ChannelId
+	event_body.Media.App = new(jesgoo_protocol.Event_Body_MediaApp)
+	event_body.Media.App.PackageName = new(string)
+	*event_body.Media.App.PackageName = inner_data.Req.Media.App.PackageName
+
 	event_body.Region = new(jesgoo_protocol.Event_Body_Region)
 	event_body.Region.Country = new(uint32)
 	event_body.Region.Province = new(uint32)
@@ -264,16 +281,19 @@ func (this *PrePackModule) Init(global_conf *context.GlobalContext) (err error) 
 	code_char := "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789-_"
 	this.basecoder = base64.NewEncoding(code_char)
 	this.texttpl, err = template.ParseFiles(global_conf.Template.Texttpl)
+	utils.DebugLog.Write("get texttpl [%s]", global_conf.Template.Texttpl)
 	if err != nil || this.texttpl == nil {
 		utils.FatalLog.Write("load texttpl fail, err[%s]", err.Error())
 		return
 	}
 	this.imgtpl, err = template.ParseFiles(global_conf.Template.Imagetpl)
+	utils.DebugLog.Write("get imagetpl [%s]", global_conf.Template.Imagetpl)
 	if err != nil || this.imgtpl == nil {
 		utils.FatalLog.Write("load imagetpl fail, err[%s]", err.Error())
 		return
 	}
 	this.icontexttpl, err = template.ParseFiles(global_conf.Template.Icontexttpl)
+	utils.DebugLog.Write("get icontpl [%s]", global_conf.Template.Icontexttpl)
 	if err != nil || this.icontexttpl == nil {
 		utils.FatalLog.Write("load icontexttpl fail, err[%s]", err.Error())
 		return

@@ -7,10 +7,15 @@ import (
 	"utils"
 )
 
+type App struct {
+	package_name string
+}
+
 type Media struct {
 	Id        string
 	ChannelId string
 	Type      int
+	App       App
 }
 type DeviceId struct {
 	Type    int
@@ -94,6 +99,7 @@ func (this *ParseJesgooJsonRequestModule) parse(inner_data *context.Context) (er
 	default:
 		inner_media.MediaType = context.MediaType_WAP
 	}
+	inner_media.App.PackageName = temp_req.Media.App.package_name
 
 	//device
 	inner_device := &inner_data.Req.Device

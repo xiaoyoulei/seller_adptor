@@ -168,6 +168,7 @@ type AdInfo struct {
 	HtmlSnippet     bytes.Buffer
 	Package         string
 	Appname         string
+	PackageSize     uint32
 	MatchAdSlotType uint32 //请求位置和广告类型的匹配度。 0 是完全匹配
 	DspMediaid      string
 	DspChannelid    string

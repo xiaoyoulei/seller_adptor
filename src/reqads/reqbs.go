@@ -55,10 +55,9 @@ func (this *ReqBsModule) strategy(inner_data *context.Context, bsflag *[]bool) (
 		(*bsflag)[1] = true
 	case context.AdSlotType_OFFERWALL:
 		(*bsflag)[1] = true
+	default:
+		(*bsflag)[0] = true
 	}
-	//(*bsflag)[0] = true
-	(*bsflag)[1] = true
-
 	return
 }
 
@@ -90,6 +89,5 @@ func (this *ReqBsModule) Run(inner_data *context.Context) (err error) {
 			<-bschan[i]
 		}
 	}
-
 	return
 }

@@ -43,6 +43,9 @@ func (this *SearchLogModule) fill_notice(noticelog *jesgoo_uilog.NoticeLogBody, 
 	*media.Appsid = inner_data.Req.Media.Appsid
 	media.Channelid = new(string)
 	*media.Channelid = inner_data.Req.Media.ChannelId
+	media.App = new(jesgoo_uilog.AppInfo)
+	media.App.Packagename = new(string)
+	*media.App.Packagename = inner_data.Req.Media.App.PackageName
 
 	//adslot
 	noticelog.Adslot = make([]*jesgoo_uilog.Adslot, 0)

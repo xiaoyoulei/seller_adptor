@@ -89,7 +89,11 @@ func InitServer(global_context *context.GlobalContext, conf_path string) (err er
 	jesgoo_modules = append(jesgoo_modules, &searchlog.SearchLogModule{})
 
 	for i := 0; i < len(jesgoo_modules); i++ {
-		jesgoo_modules[i].Init(global_context)
+		err = jesgoo_modules[i].Init(global_context)
+		if err != nil {
+			utils.FatalLog.Write("init module [%d] fail . err[%s]", i, err.Error())
+			return
+		}
 	}
 	jesgoo_json_modules = append(jesgoo_json_modules, &parser.ParseJesgooJsonRequestModule{})
 	jesgoo_json_modules = append(jesgoo_json_modules, &dmp.DMPModule{})

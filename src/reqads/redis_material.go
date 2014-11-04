@@ -4,7 +4,7 @@ import (
 	"code.google.com/p/goprotobuf/proto"
 	"context"
 	"errors"
-	"fmt"
+	//	"fmt"
 	"github.com/garyburd/redigo/redis"
 	"jesgoo_protocol"
 	"time"
@@ -63,30 +63,31 @@ func (this *ReqRedisModule) fill_material(ad *context.AdInfo, material *jesgoo_p
 		return
 	}
 
-	switch *material.Type {
-	case jesgoo_protocol.Material_TEXT:
-		if ad.AdType != context.TEXT {
-			str := fmt.Sprintf("adid[%lld] is not TEXT in bs", ad.Adid)
+	/*	switch *material.Type {
+		case jesgoo_protocol.Material_TEXT:
+			if ad.AdType != context.TEXT {
+				str := fmt.Sprintf("adid[%d] is not TEXT in bs", ad.Adid)
+				err = errors.New(str)
+				return
+			}
+		case jesgoo_protocol.Material_IMAGE:
+			if ad.AdType != context.IMAGE {
+				str := fmt.Sprintf("adid[%d] is not IMAGE in bs", ad.Adid)
+				err = errors.New(str)
+				return
+			}
+		case jesgoo_protocol.Material_ICON_TEXT:
+			if ad.AdType != context.TEXT_ICON {
+				str := fmt.Sprintf("adid[%d] is not ICON_TEXT in bs", ad.Adid)
+				err = errors.New(str)
+				return
+			}
+		default:
+			str := fmt.Sprintf("adid[%d] is UNKNOWN is bs", ad.Adid)
 			err = errors.New(str)
 			return
 		}
-	case jesgoo_protocol.Material_IMAGE:
-		if ad.AdType != context.IMAGE {
-			str := fmt.Sprintf("adid[%lld] is not IMAGE in bs", ad.Adid)
-			err = errors.New(str)
-			return
-		}
-	case jesgoo_protocol.Material_ICON_TEXT:
-		if ad.AdType != context.TEXT_ICON {
-			str := fmt.Sprintf("adid[%lld] is not ICON_TEXT in bs", ad.Adid)
-			err = errors.New(str)
-			return
-		}
-	default:
-		str := fmt.Sprintf("adid[%lld] is UNKNOWN is bs", ad.Adid)
-		err = errors.New(str)
-		return
-	}
+	*/
 	if material.Title != nil {
 		ad.Title = *material.Title
 	}
@@ -139,7 +140,7 @@ func (this *ReqRedisModule) GetMaterial(ads *[]context.AdInfo) (err error) {
 		}
 		err = this.fill_material(&(*ads)[i], &material_tmp)
 		if err != nil {
-			utils.FatalLog.Write("fill material fail . adid[%lld] err[%s]", (*ads)[i].Adid, err.Error())
+			utils.FatalLog.Write("fill material fail . adid[%d] err[%s]", (*ads)[i].Adid, err.Error())
 		}
 		//		utils.DebugLog.Write("get material . [%s]", tp)
 	}

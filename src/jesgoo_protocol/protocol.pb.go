@@ -25,6 +25,7 @@ It has these top-level messages:
 	DspInfo
 	Event
 	Material
+	OfferWallUserData
 */
 package jesgoo_protocol
 
@@ -716,6 +717,36 @@ func (x *Material_Type) UnmarshalJSON(data []byte) error {
 		return err
 	}
 	*x = Material_Type(value)
+	return nil
+}
+
+type OfferWallUserData_DoneJob_Type int32
+
+const (
+	OfferWallUserData_DoneJob_APP OfferWallUserData_DoneJob_Type = 1
+)
+
+var OfferWallUserData_DoneJob_Type_name = map[int32]string{
+	1: "APP",
+}
+var OfferWallUserData_DoneJob_Type_value = map[string]int32{
+	"APP": 1,
+}
+
+func (x OfferWallUserData_DoneJob_Type) Enum() *OfferWallUserData_DoneJob_Type {
+	p := new(OfferWallUserData_DoneJob_Type)
+	*p = x
+	return p
+}
+func (x OfferWallUserData_DoneJob_Type) String() string {
+	return proto.EnumName(OfferWallUserData_DoneJob_Type_name, int32(x))
+}
+func (x *OfferWallUserData_DoneJob_Type) UnmarshalJSON(data []byte) error {
+	value, err := proto.UnmarshalJSONEnum(OfferWallUserData_DoneJob_Type_value, data, "OfferWallUserData_DoneJob_Type")
+	if err != nil {
+		return err
+	}
+	*x = OfferWallUserData_DoneJob_Type(value)
 	return nil
 }
 
@@ -1500,10 +1531,35 @@ func (m *Event_Body_Region) GetCity() uint32 {
 	return 0
 }
 
+type Event_Body_MediaApp struct {
+	PackageName      *string  `protobuf:"bytes,1,req,name=package_name" json:"package_name,omitempty"`
+	Version          *Version `protobuf:"bytes,2,opt,name=version" json:"version,omitempty"`
+	XXX_unrecognized []byte   `json:"-"`
+}
+
+func (m *Event_Body_MediaApp) Reset()         { *m = Event_Body_MediaApp{} }
+func (m *Event_Body_MediaApp) String() string { return proto.CompactTextString(m) }
+func (*Event_Body_MediaApp) ProtoMessage()    {}
+
+func (m *Event_Body_MediaApp) GetPackageName() string {
+	if m != nil && m.PackageName != nil {
+		return *m.PackageName
+	}
+	return ""
+}
+
+func (m *Event_Body_MediaApp) GetVersion() *Version {
+	if m != nil {
+		return m.Version
+	}
+	return nil
+}
+
 type Event_Body_Media struct {
-	MediaId          *string `protobuf:"bytes,1,req,name=media_id" json:"media_id,omitempty"`
-	ChannelId        *string `protobuf:"bytes,2,opt,name=channel_id" json:"channel_id,omitempty"`
-	XXX_unrecognized []byte  `json:"-"`
+	MediaId          *string              `protobuf:"bytes,1,req,name=media_id" json:"media_id,omitempty"`
+	ChannelId        *string              `protobuf:"bytes,2,opt,name=channel_id" json:"channel_id,omitempty"`
+	App              *Event_Body_MediaApp `protobuf:"bytes,3,opt,name=app" json:"app,omitempty"`
+	XXX_unrecognized []byte               `json:"-"`
 }
 
 func (m *Event_Body_Media) Reset()         { *m = Event_Body_Media{} }
@@ -1522,6 +1578,13 @@ func (m *Event_Body_Media) GetChannelId() string {
 		return *m.ChannelId
 	}
 	return ""
+}
+
+func (m *Event_Body_Media) GetApp() *Event_Body_MediaApp {
+	if m != nil {
+		return m.App
+	}
+	return nil
 }
 
 type Event_Body_Ad struct {
@@ -1836,6 +1899,94 @@ func (m *Material_App) GetVersion() string {
 	return ""
 }
 
+type OfferWallUserData struct {
+	UserId           *string                         `protobuf:"bytes,1,req,name=user_id" json:"user_id,omitempty"`
+	Accounts         []*OfferWallUserData_AppAccount `protobuf:"bytes,2,rep,name=accounts" json:"accounts,omitempty"`
+	DoneJobs         []*OfferWallUserData_DoneJob    `protobuf:"bytes,3,rep,name=done_jobs" json:"done_jobs,omitempty"`
+	XXX_unrecognized []byte                          `json:"-"`
+}
+
+func (m *OfferWallUserData) Reset()         { *m = OfferWallUserData{} }
+func (m *OfferWallUserData) String() string { return proto.CompactTextString(m) }
+func (*OfferWallUserData) ProtoMessage()    {}
+
+func (m *OfferWallUserData) GetUserId() string {
+	if m != nil && m.UserId != nil {
+		return *m.UserId
+	}
+	return ""
+}
+
+func (m *OfferWallUserData) GetAccounts() []*OfferWallUserData_AppAccount {
+	if m != nil {
+		return m.Accounts
+	}
+	return nil
+}
+
+func (m *OfferWallUserData) GetDoneJobs() []*OfferWallUserData_DoneJob {
+	if m != nil {
+		return m.DoneJobs
+	}
+	return nil
+}
+
+type OfferWallUserData_AppAccount struct {
+	AppId            *string `protobuf:"bytes,1,req,name=app_id" json:"app_id,omitempty"`
+	Points           *uint32 `protobuf:"varint,2,req,name=points" json:"points,omitempty"`
+	XXX_unrecognized []byte  `json:"-"`
+}
+
+func (m *OfferWallUserData_AppAccount) Reset()         { *m = OfferWallUserData_AppAccount{} }
+func (m *OfferWallUserData_AppAccount) String() string { return proto.CompactTextString(m) }
+func (*OfferWallUserData_AppAccount) ProtoMessage()    {}
+
+func (m *OfferWallUserData_AppAccount) GetAppId() string {
+	if m != nil && m.AppId != nil {
+		return *m.AppId
+	}
+	return ""
+}
+
+func (m *OfferWallUserData_AppAccount) GetPoints() uint32 {
+	if m != nil && m.Points != nil {
+		return *m.Points
+	}
+	return 0
+}
+
+type OfferWallUserData_DoneJob struct {
+	Type             *uint32 `protobuf:"varint,1,req,name=type" json:"type,omitempty"`
+	Id               *uint64 `protobuf:"varint,2,req,name=id" json:"id,omitempty"`
+	Timestamp        *uint32 `protobuf:"varint,3,req,name=timestamp" json:"timestamp,omitempty"`
+	XXX_unrecognized []byte  `json:"-"`
+}
+
+func (m *OfferWallUserData_DoneJob) Reset()         { *m = OfferWallUserData_DoneJob{} }
+func (m *OfferWallUserData_DoneJob) String() string { return proto.CompactTextString(m) }
+func (*OfferWallUserData_DoneJob) ProtoMessage()    {}
+
+func (m *OfferWallUserData_DoneJob) GetType() uint32 {
+	if m != nil && m.Type != nil {
+		return *m.Type
+	}
+	return 0
+}
+
+func (m *OfferWallUserData_DoneJob) GetId() uint64 {
+	if m != nil && m.Id != nil {
+		return *m.Id
+	}
+	return 0
+}
+
+func (m *OfferWallUserData_DoneJob) GetTimestamp() uint32 {
+	if m != nil && m.Timestamp != nil {
+		return *m.Timestamp
+	}
+	return 0
+}
+
 func init() {
 	proto.RegisterEnum("jesgoo.protocol.DeviceType", DeviceType_name, DeviceType_value)
 	proto.RegisterEnum("jesgoo.protocol.MediaType", MediaType_name, MediaType_value)
@@ -1854,4 +2005,5 @@ func init() {
 	proto.RegisterEnum("jesgoo.protocol.Event_Body_EventType", Event_Body_EventType_name, Event_Body_EventType_value)
 	proto.RegisterEnum("jesgoo.protocol.Event_Body_RedirectType", Event_Body_RedirectType_name, Event_Body_RedirectType_value)
 	proto.RegisterEnum("jesgoo.protocol.Material_Type", Material_Type_name, Material_Type_value)
+	proto.RegisterEnum("jesgoo.protocol.OfferWallUserData_DoneJob_Type", OfferWallUserData_DoneJob_Type_name, OfferWallUserData_DoneJob_Type_value)
 }
