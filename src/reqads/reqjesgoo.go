@@ -51,7 +51,12 @@ func (this *ReqJesgooModule) Init(global_conf *context.GlobalContext) (err error
 			return err
 		},
 		Alive: func(c interface{}) bool {
-			return c.(*ui2bs.BSServiceClient).Transport.IsOpen()
+			_, err := c.(*ui2bs.BSServiceClient).Ping()
+			if err != nil {
+				utils.DebugLog.Write("transport is closed")
+				return false
+			}
+			return true
 		},
 		MaxIdle: 1024,
 	}

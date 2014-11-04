@@ -21,6 +21,7 @@ func Usage() {
 	flag.PrintDefaults()
 	fmt.Fprintln(os.Stderr, "\nFunctions:")
 	fmt.Fprintln(os.Stderr, "  BSResponse search(BSRequest req)")
+	fmt.Fprintln(os.Stderr, "  bool ping()")
 	fmt.Fprintln(os.Stderr)
 	os.Exit(0)
 }
@@ -120,24 +121,32 @@ func main() {
 			fmt.Fprintln(os.Stderr, "Search requires 1 args")
 			flag.Usage()
 		}
-		arg10 := flag.Arg(1)
-		mbTrans11 := thrift.NewTMemoryBufferLen(len(arg10))
-		defer mbTrans11.Close()
-		_, err12 := mbTrans11.WriteString(arg10)
-		if err12 != nil {
+		arg14 := flag.Arg(1)
+		mbTrans15 := thrift.NewTMemoryBufferLen(len(arg14))
+		defer mbTrans15.Close()
+		_, err16 := mbTrans15.WriteString(arg14)
+		if err16 != nil {
 			Usage()
 			return
 		}
-		factory13 := thrift.NewTSimpleJSONProtocolFactory()
-		jsProt14 := factory13.GetProtocol(mbTrans11)
+		factory17 := thrift.NewTSimpleJSONProtocolFactory()
+		jsProt18 := factory17.GetProtocol(mbTrans15)
 		argvalue0 := ui2bs.NewBSRequest()
-		err15 := argvalue0.Read(jsProt14)
-		if err15 != nil {
+		err19 := argvalue0.Read(jsProt18)
+		if err19 != nil {
 			Usage()
 			return
 		}
 		value0 := argvalue0
 		fmt.Print(client.Search(value0))
+		fmt.Print("\n")
+		break
+	case "ping":
+		if flag.NArg()-1 != 0 {
+			fmt.Fprintln(os.Stderr, "Ping requires 0 args")
+			flag.Usage()
+		}
+		fmt.Print(client.Ping())
 		fmt.Print("\n")
 		break
 	case "":
