@@ -245,6 +245,7 @@ func (this *ReqQiushiModule) request(inner_data *context.Context, adtype AdType,
 	var request_body = mobads_api.BidRequest{}
 	var bd_appsid string
 	var bd_adslotid string
+	// select baidu appsid
 	switch adtype {
 	case Banner:
 		bd_appsid = "10042c1f"
@@ -258,6 +259,11 @@ func (this *ReqQiushiModule) request(inner_data *context.Context, adtype AdType,
 	default:
 		bd_appsid = "10042c1f"
 		bd_adslotid = "L0000041"
+	}
+	utils.DebugLog.Write("CHANNELID is [%s]", inner_data.Req.Media.ChannelId)
+	if inner_data.Req.Media.ChannelId == "ac1f1b2a" {
+		bd_appsid = "10045907"
+		bd_adslotid = "L000001a"
 	}
 	err = this.packreq(&request_body, inner_data, bd_appsid, bd_adslotid)
 	utils.DebugLog.Write("baidu_request [%s]", request_body.String())

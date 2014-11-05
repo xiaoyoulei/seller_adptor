@@ -5,12 +5,16 @@ from gevent.pywsgi import WSGIServer
 import json
 import urllib2,urllib
 import random
+import jesgoo
 
 import time
 import md5
 import socket
 import struct
 import random
+import gevent.monkey
+
+gevent.monkey.patch_all()
 
 
 class JesgooUUIDStartResponse(object):
@@ -119,16 +123,17 @@ def request_se(appsid, channelid, os, ip, jesgooid) :
 	request["adslots"] = []
 	request["adslots"].append(adslot)
 
-	print(request)
+#	print(request)
 
 	reqbody = json.dumps(request)
 
-	req = urllib2.Request(url = "http://api.jesgoo.com/v1/json", data = reqbody)
+#	req = urllib2.Request(url = "http://api.jesgoo.com/v1/json", data = reqbody)
+	req = urllib2.Request(url = "http://192.168.0.101:6080/v1/json", data = reqbody)
 	res = urllib2.urlopen(req)
-
 	resbody = json.loads(res.read())
 	if resbody["Ads"] != None :
 		return resbody["Ads"][0]["Html_snippet"]
+		#return resbody["Ads"][0]["Html_snippet"].replace('target="_blank"', 'target="_top"')
 	else:
 		return ""
 
@@ -178,5 +183,7 @@ def application(env, start_response):
 
 
 if __name__ == '__main__':
-    print('Serving on 8088...')
-    WSGIServer(('', 8088), application).serve_forever()
+	print('Serving on 8088...')
+	rotater = jesgoo.logging.TimeRotater("./log/adaptor.log", 3600)
+	logger = jesgoo.logging.Logger(rotater)
+	WSGIServer(('', 8088), application, log=logger).serve_forever()

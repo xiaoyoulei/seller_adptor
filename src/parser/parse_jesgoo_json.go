@@ -12,9 +12,9 @@ type App struct {
 }
 
 type Media struct {
-	Id        string
-	ChannelId string
-	Type      int
+	Id         string
+	Channel_id string
+	Type       int
 	//	App       App
 }
 type DeviceId struct {
@@ -87,7 +87,7 @@ func (this *ParseJesgooJsonRequestModule) parse(inner_data *context.Context) (er
 	// media
 	inner_media := &inner_data.Req.Media
 	inner_media.Appsid = temp_req.Media.Id
-	inner_media.ChannelId = temp_req.Media.ChannelId
+	inner_media.ChannelId = temp_req.Media.Channel_id
 	switch temp_req.Media.Type {
 	case 1:
 		inner_media.MediaType = context.MediaType_APP

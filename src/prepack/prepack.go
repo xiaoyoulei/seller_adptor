@@ -75,9 +75,10 @@ func (this *PrePackModule) gencurl(ad *context.AdInfo, inner_data *context.Conte
 	event_body.Media.ChannelId = new(string)
 	*event_body.Media.MediaId = inner_data.Req.Media.Appsid
 	*event_body.Media.ChannelId = inner_data.Req.Media.ChannelId
-	event_body.Media.App = new(jesgoo_protocol.Event_Body_MediaApp)
-	event_body.Media.App.PackageName = new(string)
-	*event_body.Media.App.PackageName = inner_data.Req.Media.App.PackageName
+	event_body.Media.PackageName = new(string)
+	*event_body.Media.PackageName = inner_data.Req.Media.App.PackageName
+	event_body.Media.AdslotId = new(string)
+	*event_body.Media.AdslotId = inner_data.Req.AdSlot.Slotid
 
 	event_body.Region = new(jesgoo_protocol.Event_Body_Region)
 	event_body.Region.Country = new(uint32)
@@ -166,9 +167,10 @@ func (this *PrePackModule) genwinnotice(ad *context.AdInfo, inner_data *context.
 	event_body.Media.ChannelId = new(string)
 	*event_body.Media.MediaId = inner_data.Req.Media.Appsid
 	*event_body.Media.ChannelId = inner_data.Req.Media.ChannelId
-	event_body.Media.App = new(jesgoo_protocol.Event_Body_MediaApp)
-	event_body.Media.App.PackageName = new(string)
-	*event_body.Media.App.PackageName = inner_data.Req.Media.App.PackageName
+	event_body.Media.PackageName = new(string)
+	*event_body.Media.PackageName = inner_data.Req.Media.App.PackageName
+	event_body.Media.AdslotId = new(string)
+	*event_body.Media.AdslotId = inner_data.Req.AdSlot.Slotid
 
 	event_body.Region = new(jesgoo_protocol.Event_Body_Region)
 	event_body.Region.Country = new(uint32)
