@@ -314,6 +314,11 @@ func (this *ReqQiushiModule) request(inner_data *context.Context, adtype AdType,
 }
 
 func (this *ReqQiushiModule) timeout_func(ch *chan bool) {
+	defer func() {
+		if err := recover().(error); err != nil {
+			utils.WarningLog.Write("timeout_func err[%s]", err.Error())
+		}
+	}()
 	time.Sleep(time.Millisecond * time.Duration(this.timeout))
 	*ch <- true
 }
