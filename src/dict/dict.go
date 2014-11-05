@@ -44,7 +44,7 @@ func (this *IPDictModule) Init(conf *context.GlobalContext) (err error) {
 
 func (this *IPDictModule) ipbsearch(data []*jesgoo_protocol.IPTable_IPSection, ipint uint32) (sec jesgoo_protocol.IPTable_IPSection, err error) {
 	min := 0
-	max := len(data)
+	max := len(data) - 1
 	var mid int
 	for min <= max {
 		mid = (min + max) / 2
