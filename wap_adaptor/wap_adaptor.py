@@ -191,5 +191,5 @@ if __name__ == '__main__':
 	rotater = jesgoo.logging.TimeRotater("./log/adaptor.log.%Y%m%d%H%M", 3600)
 	logger = jesgoo.logging.Logger(rotater)
 	log_format = '%(remote_addr)s - - %(time_local)s "%(request)s" %(status)s %(body_bytes_sent)s %(request_time)s ' + \
-				'"%(http_referer)s"'
+				'"%(http_referer)s" "%(http_user-agent)s"'
 	WSGIServer(('', 8088), application = application, log=logger, handler_class=jesgoo.wsgi_handler.WSGIHandler(log_format=log_format)).serve_forever()
