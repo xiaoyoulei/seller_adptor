@@ -286,7 +286,11 @@ func (this *ReqQiushiModule) request(inner_data *context.Context, adtype AdType,
 	request.Header.Set("Connection", "Keep-alive")
 	var response *http.Response
 	response, err = this.client.Do(request)
-	defer response.Body.Close()
+	defer func() {
+		if response != nil && response.Body != nil {
+			response.Body.Close()
+		}
+	}()
 	if err != nil {
 		utils.WarningLog.Write("request qiushi server fail [%s]", err.Error())
 		return
@@ -314,11 +318,6 @@ func (this *ReqQiushiModule) request(inner_data *context.Context, adtype AdType,
 }
 
 func (this *ReqQiushiModule) timeout_func(ch *chan bool) {
-	defer func() {
-		if err := recover().(error); err != nil {
-			utils.WarningLog.Write("timeout_func err[%s]", err.Error())
-		}
-	}()
 	time.Sleep(time.Millisecond * time.Duration(this.timeout))
 	*ch <- true
 }
