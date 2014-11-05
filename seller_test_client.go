@@ -8,9 +8,17 @@ import (
 	"jesgoo_interface"
 	"log"
 	"net/http"
+	"time"
 )
 
 func main() {
+	for  {
+		time.Sleep(time.Millisecond * 1)
+		run()
+	}
+}
+
+func run() {
 
 	var req_body jesgoo_interface.SellerRequest
 	var resp_body jesgoo_interface.SellerResponse
@@ -23,7 +31,16 @@ func main() {
 	*media_tmp.Type = jesgoo_interface.MediaType_APP
 	req_body.Media = new(jesgoo_interface.Media)
 	*req_body.Media = media_tmp
+	var deviceid_tmp jesgoo_interface.DeviceID
+	deviceid_tmp.Type = new(jesgoo_interface.DeviceIDType)
+	*deviceid_tmp.Type = jesgoo_interface.DeviceIDType_IMEI
+	deviceid_tmp.Id = []byte("351806037915050")
+	//	deviceid_tmp.Id = make([]byte, 0)
+	//	*deviceid_tmp.Id = []byte("351806037915050")
+	//	deviceid_tmp.Id = append(deviceid_tmp.Id, []byte("351806037915050"))
 	var device_tmp jesgoo_interface.Device
+	device_tmp.Ids = make([]*jesgoo_interface.DeviceID, 0)
+	device_tmp.Ids = append(device_tmp.Ids, &deviceid_tmp)
 	device_tmp.Type = new(jesgoo_interface.DeviceType)
 	*device_tmp.Type = jesgoo_interface.DeviceType_DEV_PHONE
 	device_tmp.OsType = new(jesgoo_interface.OSType)
@@ -35,11 +52,19 @@ func main() {
 	*req_body.Device = device_tmp
 	req_body.Network = new(jesgoo_interface.Network)
 	req_body.Network.Ip = new(string)
-	*req_body.Network.Ip = "61.171.44.61" 
-	req_body.Adslots = make([]jesgoo_interface.AdSlot,0)
-	var adslot jesgoo_interface.AdSlot 
+	*req_body.Network.Ip = "61.171.44.61"
+	req_body.Adslots = make([]*jesgoo_interface.AdSlot, 0)
+	var adslot jesgoo_interface.AdSlot
 	adslot.Id = new(string)
 	*adslot.Id = "123"
+	adslot.Type = new(jesgoo_interface.AdSlotType)
+	*adslot.Type = jesgoo_interface.AdSlotType_BANNER
+	adslot.Size = new(jesgoo_interface.Size)
+	adslot.Size.Width = new(uint32)
+	*adslot.Size.Width = 0
+	adslot.Size.Height = new(uint32)
+	*adslot.Size.Height = 0
+	req_body.Adslots = append(req_body.Adslots, &adslot)
 
 	var client_tmp jesgoo_interface.Client
 	client_tmp.Type = new(jesgoo_interface.ClientType)

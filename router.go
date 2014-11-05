@@ -170,6 +170,5 @@ func CallbackJesgoo(resp http.ResponseWriter, req *http.Request) {
 		}
 	}
 	resp.Write(inner_data.RespBody)
-
 	return
 }

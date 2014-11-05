@@ -317,10 +317,6 @@ func (this *ReqQiushiModule) request(inner_data *context.Context, adtype AdType,
 	return
 }
 
-func (this *ReqQiushiModule) timeout_func(ch *chan bool) {
-	time.Sleep(time.Millisecond * time.Duration(this.timeout))
-	*ch <- true
-}
 func (this *ReqQiushiModule) Run(inner_data *context.Context, bschan *chan bool) {
 	defer func() {
 		*bschan <- true
@@ -349,8 +345,6 @@ func (this *ReqQiushiModule) Run(inner_data *context.Context, bschan *chan bool)
 		go this.request(inner_data, Insert, &ret_ads[int(Insert)], &req_chan[Insert])
 		req_flag[int(Insert)] = true
 	}
-	timeoutch := make(chan bool)
-	go this.timeout_func(&timeoutch)
 	for i := 0; i < int(MaxAdType); i++ {
 		if req_flag[i] == true {
 			select {
@@ -361,7 +355,7 @@ func (this *ReqQiushiModule) Run(inner_data *context.Context, bschan *chan bool)
 				for j := 0; j < len(ret_ads[i]); j++ {
 					inner_data.BaiduAds = append(inner_data.BaiduAds, ret_ads[i][j])
 				}
-			case <-timeoutch:
+			case <-time.After(time.Millisecond * time.Duration(this.timeout)):
 				utils.WarningLog.Write("req qiushi reqtype[%d] timeout", i)
 			}
 		}
