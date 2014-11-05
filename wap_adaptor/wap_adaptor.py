@@ -86,7 +86,7 @@ def request_se(appsid, channelid, os, ip, jesgooid) :
 
 	media = {}
 	media["id"] = appsid
-	media["channelid"] = channelid
+	media["channel_id"] = channelid
 	media["type"] = 3
 	request["media"]  = media
 
@@ -163,9 +163,13 @@ def application(env, start_response):
 	os = ""
 	if ua.lower().find("android") != -1 :
 		os = "android"
+	if ua.lower().find("adr") != -1 :
+		os = "android"
 	if ua.lower().find("ios") != -1 :
 		os = "ios"
 	if ua.lower().find("iphone") != -1 :
+		os = "ios"
+	if ua.lower().find("ipad") != -1 :
 		os = "ios"
 	if env['PATH_INFO'] == '/wap/ad.html'  and os != "":
 		try :
@@ -184,6 +188,8 @@ def application(env, start_response):
 
 if __name__ == '__main__':
 	print('Serving on 8088...')
-	rotater = jesgoo.logging.TimeRotater("./log/adaptor.log", 3600)
+	rotater = jesgoo.logging.TimeRotater("./log/adaptor.log.%Y%m%d%H%M", 3600)
 	logger = jesgoo.logging.Logger(rotater)
-	WSGIServer(('', 8088), application, log=logger).serve_forever()
+	log_format = '%(remote_addr)s - - %(time_local)s "%(request)s" %(status)s %(body_bytes_sent)s %(request_time)s ' + \
+				'"%(http_referer)s"'
+	WSGIServer(('', 8088), application = application, log=logger, handler_class=jesgoo.wsgi_handler.WSGIHandler(log_format=log_format)).serve_forever()
