@@ -109,7 +109,6 @@ def request_se(appsid, channelid, os, ip, jesgooid) :
 		os_version["major"] = 7
 		os_version["minor"] = 0
 		device["os_version"] = os_version
-	print(os_version)
 	request["device"] = device
 
 	network = {}
