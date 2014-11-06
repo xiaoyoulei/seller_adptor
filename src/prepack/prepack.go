@@ -253,19 +253,21 @@ func (this *PrePackModule) Run(inner_data *context.Context) (err error) {
 		}
 		inner_data.Resp.Ads[i].ClickUrl = temp_click
 		inner_data.Resp.Ads[i].ImpressionUrl = append(inner_data.Resp.Ads[i].ImpressionUrl, temp_winnotice)
-		switch inner_data.Resp.Ads[i].AdType {
-		case context.TEXT:
-			err = this.gentexthtml(&inner_data.Resp.Ads[i], inner_data)
-		case context.IMAGE:
-			err = this.genimghtml(&inner_data.Resp.Ads[i], inner_data)
-		case context.TEXT_ICON:
-			err = this.geniconhtml(&inner_data.Resp.Ads[i], inner_data)
-		default:
-			err = this.gentexthtml(&inner_data.Resp.Ads[i], inner_data)
-		}
-		if err != nil {
-			utils.WarningLog.Write("make html fail [%s]\n", err.Error())
-			return
+		if inner_data.Req.AdSlot.AdSlotType == context.AdSlotType_BANNER {
+			switch inner_data.Resp.Ads[i].AdType {
+			case context.TEXT:
+				err = this.gentexthtml(&inner_data.Resp.Ads[i], inner_data)
+			case context.IMAGE:
+				err = this.genimghtml(&inner_data.Resp.Ads[i], inner_data)
+			case context.TEXT_ICON:
+				err = this.geniconhtml(&inner_data.Resp.Ads[i], inner_data)
+			default:
+				err = this.gentexthtml(&inner_data.Resp.Ads[i], inner_data)
+			}
+			if err != nil {
+				utils.WarningLog.Write("make html fail [%s]\n", err.Error())
+				return
+			}
 		}
 	}
 	return

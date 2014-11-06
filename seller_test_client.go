@@ -8,15 +8,30 @@ import (
 	"jesgoo_interface"
 	"log"
 	"net/http"
+	"os"
+	"strconv"
+	"sync"
 	"time"
 )
 
+var w sync.WaitGroup
+
 func main() {
-	//	for {
-	time.Sleep(time.Millisecond * 1)
-	//	go run()
-	run()
-	//	}
+	arg_num := len(os.Args)
+	if arg_num != 2 {
+		fmt.Println("get args error . input num will be sent")
+		return
+	}
+	coutn, err := strconv.Atoi(os.Args[1])
+	if err != nil {
+		fmt.Printf("convert args fail . err[%s]\n", err.Error())
+	}
+	for i := 0; i < coutn; i++ {
+		time.Sleep(time.Millisecond * 1)
+		w.Add(1)
+		go run()
+	}
+	w.Wait()
 }
 
 func run() {
@@ -97,4 +112,5 @@ func run() {
 	}
 	err = proto.Unmarshal(result, &resp_body)
 	fmt.Println("response is: " + resp_body.String())
+	w.Done()
 }

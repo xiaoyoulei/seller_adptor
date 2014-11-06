@@ -120,6 +120,8 @@ func (this ParseJesgooRequestModule) Run(inner_data *context.Context) (err error
 			case jesgoo_interface.AdSlotType_RECOMMEND:
 				inner_adslot.AdSlotType = context.AdSlotType_RECOMMEND
 			case jesgoo_interface.AdSlotType_INTERSTITIAL:
+				inner_adslot.AdSlotType = context.AdSlotType_INSERT
+			case jesgoo_interface.AdSlotType_REALTIME_SPLASH:
 				inner_adslot.AdSlotType = context.AdSlotType_INITIALIZATION
 			default:
 				inner_adslot.AdSlotType = context.AdSlotType_BANNER
