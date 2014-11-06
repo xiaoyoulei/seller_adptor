@@ -63,23 +63,28 @@ def JesgooUUID(func):
 		return func(*args, **kwargs)
 	return _func
 
-def get_imei(jesgooid) :
-	arr = ""
-	i=0
-	ans = 0
-	arr = str(int(jesgooid, 16))[0:14]
-	while i<14 :
-		rand = int(arr[i])
-		if i%2 == 0:
-			ans += rand
+def get_imei(jesgooid, type) :
+	if type == 1:
+		arr = ""
+		i=0
+		ans = 0
+		arr = str(int(jesgooid, 16))[0:14]
+		while i<14 :
+			rand = int(arr[i])
+			if i%2 == 0:
+				ans += rand
+			else:
+				ans += (rand*2)%10 + (rand*2)/10
+			i+=1
+		if ans%10 == 0:
+			arr = arr + "0"
 		else:
-			ans += (rand*2)%10 + (rand*2)/10
-		i+=1
-	if ans%10 == 0:
-		arr = arr + "0"
-	else:
-		arr = arr + str(10-(ans%10)) 
-	return  arr
+			arr = arr + str(10-(ans%10)) 
+		return  arr
+	elif type == 3:
+		arr = jesgooid[0:8]+"-"+jesgooid[8:12]+"-"+jesgooid[12:16]+"-"+jesgooid[16:20]+"-"+jesgooid[20:32]
+		return arr
+
 
 def request_se(appsid, channelid, os, ip, jesgooid) :
 	request = {}
@@ -93,22 +98,24 @@ def request_se(appsid, channelid, os, ip, jesgooid) :
 	device = {}
 	device["type"] = 2
 	imei = {}
-	imei["type"] = 1
-	imei["id"] = get_imei(jesgooid)
-	device["ids"] = []
-	device["ids"].append(imei)
 	if os == "android" :
+		imei["type"] = 1
+		imei["id"] = get_imei(jesgooid, 1)
 		device["os_type"] = 1
 		os_version = {}
 		os_version["major"] = 4
 		os_version["minor"] = 0
 		device["os_version"] = os_version
 	else :
+		imei["type"] = 3
+		imei["id"] = get_imei(jesgooid, 3)
 		device["os_type"] = 2
 		os_version = {}
 		os_version["major"] = 7
 		os_version["minor"] = 0
 		device["os_version"] = os_version
+	device["ids"] = []
+	device["ids"].append(imei)
 	request["device"] = device
 
 	network = {}
@@ -141,6 +148,7 @@ def request_se(appsid, channelid, os, ip, jesgooid) :
 
 #	req = urllib2.Request(url = "http://api.jesgoo.com/v1/json", data = reqbody)
 	req = urllib2.Request(url = "http://192.168.0.101:6080/v1/json", data = reqbody)
+#	req = urllib2.Request(url = "http://127.0.0.1:8081/v1/json", data = reqbody)
 	res = urllib2.urlopen(req)
 	resbody = json.loads(res.read())
 	if resbody["Ads"] != None :
