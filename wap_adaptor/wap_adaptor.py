@@ -99,13 +99,26 @@ def request_se(appsid, channelid, os, ip, jesgooid) :
 	device["ids"].append(imei)
 	if os == "android" :
 		device["os_type"] = 1
+		os_version = {}
+		os_version["major"] = 4
+		os_version["minor"] = 0
+		device["os_version"] = os_version
 	else :
 		device["os_type"] = 2
+		os_version = {}
+		os_version["major"] = 7
+		os_version["minor"] = 0
+		device["os_version"] = os_version
+	print(os_version)
 	request["device"] = device
 
 	network = {}
 	network["ip"] =ip
-	network["type"] = 2
+	randx = random.randint(0,9)
+	if randx >= 8 :
+		network["type"] = 4
+	else :
+		network["type"] = 1
 	request["network"] = network
 
 	client = {}
@@ -128,7 +141,8 @@ def request_se(appsid, channelid, os, ip, jesgooid) :
 	reqbody = json.dumps(request)
 
 #	req = urllib2.Request(url = "http://api.jesgoo.com/v1/json", data = reqbody)
-	req = urllib2.Request(url = "http://192.168.0.101:6080/v1/json", data = reqbody)
+#	req = urllib2.Request(url = "http://192.168.0.101:6080/v1/json", data = reqbody)
+	req = urllib2.Request(url = "http://127.0.0.1:8081/v1/json", data = reqbody)
 	res = urllib2.urlopen(req)
 	resbody = json.loads(res.read())
 	if resbody["Ads"] != None :
@@ -155,8 +169,9 @@ def application(env, start_response):
 		jesgooid = env['JESGOOID']
 		if env.has_key('HTTP_REMOTEADDR') :
 			ip = env["HTTP_REMOTEADDR"]
-	except :
+	except Exception as e:
 		start_response('404 Not Found', [('Content-Type','text/html')])
+		print(e)
 		return ['']
 
 	ua = env['HTTP_USER_AGENT']
@@ -174,8 +189,9 @@ def application(env, start_response):
 	if env['PATH_INFO'] == '/wap/ad.html'  and os != "":
 		try :
 			html = request_se(appsid, channelid,os, ip, jesgooid)
-		except :
+		except Exception as e:
 			start_response('404 Not Found', [('Content-Type','text/html')])
+			print(e)
 			return ['']
 		start_response('200 OK', [('Content-Type', 'text/html;charset=utf-8')])
 		res = []

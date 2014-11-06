@@ -54,7 +54,14 @@ func (this *ReqQiushiModule) packreq(request *mobads_api.BidRequest, inner_data 
 	device_tmp.Type = new(mobads_api.Device_Type)
 	*device_tmp.Type = mobads_api.Device_PHONE
 	device_tmp.Os = new(mobads_api.Device_Os)
-	*device_tmp.Os = mobads_api.Device_ANDROID
+	switch inner_data.Req.Device.OSType {
+	case context.OSType_ANDROID:
+		*device_tmp.Os = mobads_api.Device_ANDROID
+	case context.OSType_IOS:
+		*device_tmp.Os = mobads_api.Device_IOS
+	default:
+		*device_tmp.Os = mobads_api.Device_ANDROID
+	}
 	*version_tmp.Major = inner_data.Req.Device.OSVersion.Major
 	*version_tmp.Minor = inner_data.Req.Device.OSVersion.Minor
 	*version_tmp.Micro = inner_data.Req.Device.OSVersion.Micro
@@ -98,6 +105,15 @@ func (this *ReqQiushiModule) packreq(request *mobads_api.BidRequest, inner_data 
 	network_tmp := request.Network
 	network_tmp.Ipv4 = new(string)
 	*network_tmp.Ipv4 = inner_data.Req.Network.Ip
+	network_tmp.Type = new(mobads_api.Network_Type)
+	switch inner_data.Req.Network.NetworkType {
+	case context.NetworkType_WIFI:
+		*network_tmp.Type = mobads_api.Network_WIFI
+	default:
+		*network_tmp.Type = mobads_api.Network_MOBILE
+		network_tmp.Subtype = new(mobads_api.Network_SubType)
+		*network_tmp.Subtype = mobads_api.Network_HSPA
+	}
 	utils.DebugLog.Write("req qiushi inner_ip [%s]", inner_data.Req.Network.Ip)
 
 	//adslot
