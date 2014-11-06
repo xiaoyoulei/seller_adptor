@@ -224,9 +224,13 @@ type GlobalContext struct {
 		Timeout  int
 	}
 	Template struct {
-		Recommendtpl string
-		Imagetpl     string
-		Texttpl      string
-		Icontexttpl  string
+		//		Recommendtpl string
+		Imagetpl    string
+		Texttpl     string
+		Icontexttpl string
+
+		Texttplrec  string
+		Imagetplrec string
+		Icontplrec  string
 	}
 }

@@ -4,7 +4,6 @@ import (
 	"code.google.com/p/goprotobuf/proto"
 	"context"
 	"encoding/base64"
-	"errors"
 	"html/template"
 	"jesgoo_protocol"
 	"math/rand"
@@ -21,7 +20,21 @@ type PrePackModule struct {
 	texttpl     *template.Template
 	imgtpl      *template.Template
 	icontexttpl *template.Template
+
+	//recomend wall
+	texttpl_rec *template.Template
+	imgtpl_rec  *template.Template
+	icontpl_rec *template.Template
 	//	recommendtpl *template.Template
+}
+
+func (this *PrePackModule) genhtml(ad *context.AdInfo, inner_data *context.Context, htmltpl *template.Template) (err error) {
+	err = htmltpl.Execute(&ad.HtmlSnippet, ad)
+	if err != nil {
+		utils.WarningLog.Write("render top fail.ad_id[%d] err[%s]", ad.Adid, err.Error())
+		return
+	}
+	return
 }
 
 func (this *PrePackModule) gentexthtml(ad *context.AdInfo, inner_data *context.Context) (err error) {
@@ -43,10 +56,6 @@ func (this *PrePackModule) genimghtml(ad *context.AdInfo, inner_data *context.Co
 }
 
 func (this *PrePackModule) geniconhtml(ad *context.AdInfo, inner_data *context.Context) (err error) {
-	if ad == nil {
-		err = errors.New("render icon tpl . ad is nil")
-		return
-	}
 	err = this.icontexttpl.Execute(&ad.HtmlSnippet, ad)
 	if err != nil {
 		utils.WarningLog.Write("render icontext tpl fail . err[%s]", err.Error())
@@ -265,7 +274,21 @@ func (this *PrePackModule) Run(inner_data *context.Context) (err error) {
 				err = this.gentexthtml(&inner_data.Resp.Ads[i], inner_data)
 			}
 			if err != nil {
-				utils.WarningLog.Write("make html fail [%s]\n", err.Error())
+				utils.WarningLog.Write("make html fail [%s]", err.Error())
+				return
+			}
+		}
+		if inner_data.Req.AdSlot.AdSlotType == context.AdSlotType_RECOMMEND {
+			switch inner_data.Resp.Ads[i].AdType {
+			case context.TEXT:
+				err = this.genhtml(&inner_data.Resp.Ads[i], inner_data, this.texttpl_rec)
+			case context.IMAGE:
+				err = this.genhtml(&inner_data.Resp.Ads[i], inner_data, this.imgtpl_rec)
+			case context.TEXT_ICON:
+				err = this.genhtml(&inner_data.Resp.Ads[i], inner_data, this.icontpl_rec)
+			}
+			if err != nil {
+				utils.WarningLog.Write("make html fail [%s]", err.Error())
 				return
 			}
 		}
@@ -300,6 +323,24 @@ func (this *PrePackModule) Init(global_conf *context.GlobalContext) (err error) 
 	utils.DebugLog.Write("get icontpl [%s]", global_conf.Template.Icontexttpl)
 	if err != nil || this.icontexttpl == nil {
 		utils.FatalLog.Write("load icontexttpl fail, err[%s]", err.Error())
+		return
+	}
+	this.texttpl_rec, err = template.ParseFiles(global_conf.Template.Texttplrec)
+	utils.DebugLog.Write("get texttpl_rec [%s]", global_conf.Template.Texttplrec)
+	if err != nil || this.texttpl_rec == nil {
+		utils.FatalLog.Write("load txttpl_rec fail . err[%s]", err.Error())
+		return
+	}
+	this.imgtpl_rec, err = template.ParseFiles(global_conf.Template.Imagetplrec)
+	utils.DebugLog.Write("get texttpl_rec [%s]", global_conf.Template.Imagetplrec)
+	if err != nil || this.imgtpl_rec == nil {
+		utils.FatalLog.Write("load imagetpl_rec fail . err[%s]", err.Error())
+		return
+	}
+	this.icontpl_rec, err = template.ParseFiles(global_conf.Template.Icontplrec)
+	utils.DebugLog.Write("get icontpl_rec [%s]", global_conf.Template.Icontplrec)
+	if err != nil || this.icontpl_rec == nil {
+		utils.FatalLog.Write("load icontpl_rec fail . err[%s]", err.Error())
 		return
 	}
 	/*	this.recommendtpl, err = template.ParseFiles(global_conf.Template.Recommendtpl)
