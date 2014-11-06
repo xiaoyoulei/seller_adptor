@@ -42,6 +42,9 @@ func (this ParseJesgooRequestModule) Run(inner_data *context.Context) (err error
 	default:
 		inner_media.MediaType = context.MediaType_APP
 	}
+	if temp_req.Media.App != nil {
+		inner_req.Media.App.PackageName = *temp_req.Media.App.PackageName
+	}
 
 	//device
 	inner_device := &inner_req.Device
@@ -116,6 +119,8 @@ func (this ParseJesgooRequestModule) Run(inner_data *context.Context) (err error
 				inner_adslot.AdSlotType = context.AdSlotType_OFFERWALL
 			case jesgoo_interface.AdSlotType_RECOMMEND:
 				inner_adslot.AdSlotType = context.AdSlotType_RECOMMEND
+			case jesgoo_interface.AdSlotType_INTERSTITIAL:
+				inner_adslot.AdSlotType = context.AdSlotType_INITIALIZATION
 			default:
 				inner_adslot.AdSlotType = context.AdSlotType_BANNER
 			}

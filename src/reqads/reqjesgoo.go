@@ -228,22 +228,14 @@ func (this *ReqJesgooModule) ReqBs(inner_data *context.Context, ret_ads *[]conte
 	return
 }
 
-func (this *ReqJesgooModule) timeout_func(ch *chan bool) {
-	time.Sleep(time.Millisecond * time.Duration(this.timeout))
-	*ch <- true
-	return
-}
-
 func (this *ReqJesgooModule) Run(inner_data *context.Context, bschan *chan bool) {
 	defer func() {
 		*bschan <- true
 	}()
 
-	timeoutch := make(chan bool)
 	ch := make(chan bool)
 	ret_ads := make([]context.AdInfo, 0)
 	go this.ReqBs(inner_data, &ret_ads, &ch, Banner)
-	go this.timeout_func(&timeoutch)
 
 	inner_data.JesgooAds = make([]context.AdInfo, 0)
 	select {
@@ -253,7 +245,7 @@ func (this *ReqJesgooModule) Run(inner_data *context.Context, bschan *chan bool)
 				inner_data.JesgooAds = append(inner_data.JesgooAds, ret_ads[i])
 			}
 		}
-	case <-timeoutch:
+	case <-time.After(time.Millisecond * time.Duration(this.timeout)):
 		utils.WarningLog.Write("req jesgoo bs timeout")
 	}
 	return
