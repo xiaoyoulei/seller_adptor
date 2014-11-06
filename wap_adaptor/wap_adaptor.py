@@ -141,8 +141,7 @@ def request_se(appsid, channelid, os, ip, jesgooid) :
 	reqbody = json.dumps(request)
 
 #	req = urllib2.Request(url = "http://api.jesgoo.com/v1/json", data = reqbody)
-#	req = urllib2.Request(url = "http://192.168.0.101:6080/v1/json", data = reqbody)
-	req = urllib2.Request(url = "http://127.0.0.1:8081/v1/json", data = reqbody)
+	req = urllib2.Request(url = "http://192.168.0.101:6080/v1/json", data = reqbody)
 	res = urllib2.urlopen(req)
 	resbody = json.loads(res.read())
 	if resbody["Ads"] != None :
