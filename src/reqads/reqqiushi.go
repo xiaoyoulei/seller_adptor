@@ -350,9 +350,9 @@ func (this *ReqQiushiModule) Run(inner_data *context.Context, bschan *chan bool)
 		go this.request(inner_data, Banner, &ret_ads[int(Banner)], &req_chan[int(Banner)])
 		req_flag[int(Banner)] = true
 	case context.AdSlotType_INITIALIZATION:
-		req_chan[int(Initlization)] = make(chan bool)
-		go this.request(inner_data, Initlization, &ret_ads[int(Initlization)], &req_chan[int(Initlization)])
-		req_flag[int(Initlization)] = true
+		//		req_chan[int(Initlization)] = make(chan bool)
+		//		go this.request(inner_data, Initlization, &ret_ads[int(Initlization)], &req_chan[int(Initlization)])
+		//		req_flag[int(Initlization)] = true
 		req_chan[int(Insert)] = make(chan bool)
 		go this.request(inner_data, Insert, &ret_ads[int(Insert)], &req_chan[Insert])
 		req_flag[int(Insert)] = true
