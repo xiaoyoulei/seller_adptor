@@ -108,6 +108,9 @@ func (this *ReqRedisModule) fill_material(ad *context.AdInfo, material *jesgoo_p
 	if material.LongDescription != nil {
 		ad.Description2 = *material.LongDescription
 	}
+	if material.App != nil && material.App.PackageSize != nil {
+		ad.PackageSize = (*material.App.PackageSize) >> 20
+	}
 	ad.MaterialReady = true
 	return
 }

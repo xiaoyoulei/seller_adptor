@@ -1,10 +1,13 @@
 <link rel="stylesheet" type="text/css" href="http://bs.baidu.com/pa-web-static/04a38d0c8f4aca27fae233cf5d20586c.css" >
-<li id="unique-id-container"  class="pcm-ad-9996-item">
-    <div class="pcm-ad-9996-img" style="position:relative;top:-6px"><img src="{{.LogoUrl}}" style="width:72px;height:72px;"/></div>
-    <div class="pcm-ad-9996-info">
-<!--        <span class="pcm-ad-9996-size">"{{.PackageSize}}"</span> -->
-        <p class="pcm-ad-9996-base"><span class="pcm-ad-9996-name">{{.Title}}</span></p>
-        <a class="pcm-ad-9996-download-btn" href="{{.ClickUrl}}" target="_blank">下载安装</a>
-    </div>
-    <div class="pcm-ad-9996-desc"><p>{{.Description1}}</p></div>
-</li>
+<a id="unique-id-container"  class="pcm-ad-9996-item" href="{{.ClickUrl}}" extra="{'act':{{.InteractionType}},'pkg':'{{.Package}}','title':'{{.Appname}}','adid':'{{.Adid}}'}">
+  <div class="pcm-ad-9996-img" style="position:relative;top:-6px"><img src="{{.LogoUrl}}" style="width:72px;height:72px;"/></div>
+  <div class="pcm-ad-9996-info">
+      <span class="pcm-ad-9996-size">{{.PackageSize}} MB</span> 
+    <p class="pcm-ad-9996-base"><span class="pcm-ad-9996-name">{{.Title}}</span></p>
+    <span class="pcm-ad-9996-download-btn" >下载安装</span>
+    <p class="pcm-ad-9996-trade">
+        <span class="pcm-ad-9996-star pcm-ad-9996-star-full star-50"></span>
+  </p>
+</div>
+<div class="pcm-ad-9996-desc"><p>{{.Description1}}</p></div>
+</a>
