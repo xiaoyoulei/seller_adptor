@@ -19,10 +19,10 @@ var GoUnusedProtection__ int
 type AdSlotType int64
 
 const (
-	AdSlotType_BANNER       AdSlotType = 1
-	AdSlotType_OFFERWALL    AdSlotType = 2
-	AdSlotType_RECOMMEND    AdSlotType = 3
-	AdSlotType_INTERSTITIAL AdSlotType = 4
+	AdSlotType_BANNER         AdSlotType = 1
+	AdSlotType_OFFERWALL      AdSlotType = 2
+	AdSlotType_RECOMMEND      AdSlotType = 3
+	AdSlotType_INITIALIZATION AdSlotType = 4
 )
 
 func (p AdSlotType) String() string {
@@ -33,8 +33,8 @@ func (p AdSlotType) String() string {
 		return "AdSlotType_OFFERWALL"
 	case AdSlotType_RECOMMEND:
 		return "AdSlotType_RECOMMEND"
-	case AdSlotType_INTERSTITIAL:
-		return "AdSlotType_INTERSTITIAL"
+	case AdSlotType_INITIALIZATION:
+		return "AdSlotType_INITIALIZATION"
 	}
 	return "<UNSET>"
 }
@@ -47,8 +47,8 @@ func AdSlotTypeFromString(s string) (AdSlotType, error) {
 		return AdSlotType_OFFERWALL, nil
 	case "AdSlotType_RECOMMEND":
 		return AdSlotType_RECOMMEND, nil
-	case "AdSlotType_INTERSTITIAL":
-		return AdSlotType_INTERSTITIAL, nil
+	case "AdSlotType_INITIALIZATION":
+		return AdSlotType_INITIALIZATION, nil
 	}
 	return AdSlotType(math.MinInt32 - 1), fmt.Errorf("not a valid AdSlotType string")
 }

@@ -81,6 +81,19 @@ func (this *ReqJesgooModule) pack_req(inner_data *context.Context, bs_req *ui2bs
 	bs_req.Adslot.Size = new(ui2bs.Size)
 	bs_req.Adslot.Size.Width = inner_data.Req.AdSlot.Size.Width
 	bs_req.Adslot.Size.Height = inner_data.Req.AdSlot.Size.Height
+	//	bs_req.Adslot.TypeA1 = new(ui2bs.Adslot.AdSlotType)
+	switch inner_data.Req.AdSlot.AdSlotType {
+	case context.AdSlotType_BANNER:
+		bs_req.Adslot.TypeA1 = ui2bs.AdSlotType_BANNER
+	case context.AdSlotType_OFFERWALL:
+		bs_req.Adslot.TypeA1 = ui2bs.AdSlotType_OFFERWALL
+	case context.AdSlotType_RECOMMEND:
+		bs_req.Adslot.TypeA1 = ui2bs.AdSlotType_RECOMMEND
+	case context.AdSlotType_INITIALIZATION:
+		bs_req.Adslot.TypeA1 = ui2bs.AdSlotType_INITIALIZATION
+	default:
+		bs_req.Adslot.TypeA1 = ui2bs.AdSlotType_BANNER
+	}
 
 	bs_req.Device = new(ui2bs.Device)
 	switch inner_data.Req.Device.OSType {
