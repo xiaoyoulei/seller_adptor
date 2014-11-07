@@ -72,20 +72,23 @@ func (x *MediaType) UnmarshalJSON(data []byte) error {
 type AdslotType int32
 
 const (
-	AdslotType_BANNER    AdslotType = 0
-	AdslotType_OFFERWALL AdslotType = 1
-	AdslotType_RECOMMEND AdslotType = 2
+	AdslotType_BANNER         AdslotType = 1
+	AdslotType_OFFERWALL      AdslotType = 2
+	AdslotType_RECOMMEND      AdslotType = 3
+	AdslotType_INITIALIZATION AdslotType = 4
 )
 
 var AdslotType_name = map[int32]string{
-	0: "BANNER",
-	1: "OFFERWALL",
-	2: "RECOMMEND",
+	1: "BANNER",
+	2: "OFFERWALL",
+	3: "RECOMMEND",
+	4: "INITIALIZATION",
 }
 var AdslotType_value = map[string]int32{
-	"BANNER":    0,
-	"OFFERWALL": 1,
-	"RECOMMEND": 2,
+	"BANNER":         1,
+	"OFFERWALL":      2,
+	"RECOMMEND":      3,
+	"INITIALIZATION": 4,
 }
 
 func (x AdslotType) Enum() *AdslotType {

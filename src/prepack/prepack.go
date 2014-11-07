@@ -88,6 +88,19 @@ func (this *PrePackModule) gencurl(ad *context.AdInfo, inner_data *context.Conte
 	*event_body.Media.PackageName = inner_data.Req.Media.App.PackageName
 	event_body.Media.AdslotId = new(string)
 	*event_body.Media.AdslotId = inner_data.Req.AdSlot.Slotid
+	event_body.Media.AdslotType = new(jesgoo_protocol.Event_Body_AdslotType)
+	switch inner_data.Req.AdSlot.AdSlotType {
+	case context.AdSlotType_BANNER:
+		*event_body.Media.AdslotType = jesgoo_protocol.Event_Body_BANNER
+	case context.AdSlotType_OFFERWALL:
+		*event_body.Media.AdslotType = jesgoo_protocol.Event_Body_OFFERWALL
+	case context.AdSlotType_RECOMMEND:
+		*event_body.Media.AdslotType = jesgoo_protocol.Event_Body_RECOMMEND
+	case context.AdSlotType_INITIALIZATION:
+		*event_body.Media.AdslotType = jesgoo_protocol.Event_Body_INITIALIZATION
+	default:
+		*event_body.Media.AdslotType = jesgoo_protocol.Event_Body_BANNER
+	}
 
 	event_body.Region = new(jesgoo_protocol.Event_Body_Region)
 	event_body.Region.Country = new(uint32)
@@ -180,6 +193,19 @@ func (this *PrePackModule) genwinnotice(ad *context.AdInfo, inner_data *context.
 	*event_body.Media.PackageName = inner_data.Req.Media.App.PackageName
 	event_body.Media.AdslotId = new(string)
 	*event_body.Media.AdslotId = inner_data.Req.AdSlot.Slotid
+	event_body.Media.AdslotType = new(jesgoo_protocol.Event_Body_AdslotType)
+	switch inner_data.Req.AdSlot.AdSlotType {
+	case context.AdSlotType_BANNER:
+		*event_body.Media.AdslotType = jesgoo_protocol.Event_Body_BANNER
+	case context.AdSlotType_OFFERWALL:
+		*event_body.Media.AdslotType = jesgoo_protocol.Event_Body_OFFERWALL
+	case context.AdSlotType_RECOMMEND:
+		*event_body.Media.AdslotType = jesgoo_protocol.Event_Body_RECOMMEND
+	case context.AdSlotType_INITIALIZATION:
+		*event_body.Media.AdslotType = jesgoo_protocol.Event_Body_INITIALIZATION
+	default:
+		*event_body.Media.AdslotType = jesgoo_protocol.Event_Body_BANNER
+	}
 
 	event_body.Region = new(jesgoo_protocol.Event_Body_Region)
 	event_body.Region.Country = new(uint32)

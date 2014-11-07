@@ -62,6 +62,8 @@ func (this *SearchLogModule) fill_notice(noticelog *jesgoo_uilog.NoticeLogBody, 
 		*adslot.Type = jesgoo_uilog.AdslotType_OFFERWALL
 	case context.AdSlotType_RECOMMEND:
 		*adslot.Type = jesgoo_uilog.AdslotType_RECOMMEND
+	case context.AdSlotType_INITIALIZATION:
+		*adslot.Type = jesgoo_uilog.AdslotType_INITIALIZATION
 	default:
 		*adslot.Type = jesgoo_uilog.AdslotType_BANNER
 	}

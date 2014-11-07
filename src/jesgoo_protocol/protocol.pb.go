@@ -684,23 +684,68 @@ func (x *Event_Body_RedirectType) UnmarshalJSON(data []byte) error {
 	return nil
 }
 
+type Event_Body_AdslotType int32
+
+const (
+	Event_Body_BANNER         Event_Body_AdslotType = 1
+	Event_Body_OFFERWALL      Event_Body_AdslotType = 2
+	Event_Body_RECOMMEND      Event_Body_AdslotType = 3
+	Event_Body_INITIALIZATION Event_Body_AdslotType = 4
+)
+
+var Event_Body_AdslotType_name = map[int32]string{
+	1: "BANNER",
+	2: "OFFERWALL",
+	3: "RECOMMEND",
+	4: "INITIALIZATION",
+}
+var Event_Body_AdslotType_value = map[string]int32{
+	"BANNER":         1,
+	"OFFERWALL":      2,
+	"RECOMMEND":      3,
+	"INITIALIZATION": 4,
+}
+
+func (x Event_Body_AdslotType) Enum() *Event_Body_AdslotType {
+	p := new(Event_Body_AdslotType)
+	*p = x
+	return p
+}
+func (x Event_Body_AdslotType) String() string {
+	return proto.EnumName(Event_Body_AdslotType_name, int32(x))
+}
+func (x *Event_Body_AdslotType) UnmarshalJSON(data []byte) error {
+	value, err := proto.UnmarshalJSONEnum(Event_Body_AdslotType_value, data, "Event_Body_AdslotType")
+	if err != nil {
+		return err
+	}
+	*x = Event_Body_AdslotType(value)
+	return nil
+}
+
 type Material_Type int32
 
 const (
-	Material_TEXT      Material_Type = 0
-	Material_ICON_TEXT Material_Type = 1
-	Material_IMAGE     Material_Type = 2
+	Material_TEXT      Material_Type = 1
+	Material_ICON_TEXT Material_Type = 2
+	Material_IMAGE     Material_Type = 3
+	Material_SMART_AD  Material_Type = 4
+	Material_VIDEO     Material_Type = 5
 )
 
 var Material_Type_name = map[int32]string{
-	0: "TEXT",
-	1: "ICON_TEXT",
-	2: "IMAGE",
+	1: "TEXT",
+	2: "ICON_TEXT",
+	3: "IMAGE",
+	4: "SMART_AD",
+	5: "VIDEO",
 }
 var Material_Type_value = map[string]int32{
-	"TEXT":      0,
-	"ICON_TEXT": 1,
-	"IMAGE":     2,
+	"TEXT":      1,
+	"ICON_TEXT": 2,
+	"IMAGE":     3,
+	"SMART_AD":  4,
+	"VIDEO":     5,
 }
 
 func (x Material_Type) Enum() *Material_Type {
@@ -1502,12 +1547,13 @@ func (m *Event_Body_Region) GetCity() uint32 {
 }
 
 type Event_Body_Media struct {
-	MediaId          *string  `protobuf:"bytes,1,req,name=media_id" json:"media_id,omitempty"`
-	ChannelId        *string  `protobuf:"bytes,2,opt,name=channel_id" json:"channel_id,omitempty"`
-	PackageName      *string  `protobuf:"bytes,3,opt,name=package_name" json:"package_name,omitempty"`
-	Version          *Version `protobuf:"bytes,4,opt,name=version" json:"version,omitempty"`
-	AdslotId         *string  `protobuf:"bytes,5,opt,name=adslot_id" json:"adslot_id,omitempty"`
-	XXX_unrecognized []byte   `json:"-"`
+	MediaId          *string                `protobuf:"bytes,1,req,name=media_id" json:"media_id,omitempty"`
+	ChannelId        *string                `protobuf:"bytes,2,opt,name=channel_id" json:"channel_id,omitempty"`
+	PackageName      *string                `protobuf:"bytes,3,opt,name=package_name" json:"package_name,omitempty"`
+	Version          *Version               `protobuf:"bytes,4,opt,name=version" json:"version,omitempty"`
+	AdslotId         *string                `protobuf:"bytes,5,opt,name=adslot_id" json:"adslot_id,omitempty"`
+	AdslotType       *Event_Body_AdslotType `protobuf:"varint,6,opt,name=adslot_type,enum=jesgoo.protocol.Event_Body_AdslotType" json:"adslot_type,omitempty"`
+	XXX_unrecognized []byte                 `json:"-"`
 }
 
 func (m *Event_Body_Media) Reset()         { *m = Event_Body_Media{} }
@@ -1547,6 +1593,13 @@ func (m *Event_Body_Media) GetAdslotId() string {
 		return *m.AdslotId
 	}
 	return ""
+}
+
+func (m *Event_Body_Media) GetAdslotType() Event_Body_AdslotType {
+	if m != nil && m.AdslotType != nil {
+		return *m.AdslotType
+	}
+	return Event_Body_BANNER
 }
 
 type Event_Body_Ad struct {
@@ -1958,5 +2011,6 @@ func init() {
 	proto.RegisterEnum("jesgoo.protocol.Event_Head_CryptoType", Event_Head_CryptoType_name, Event_Head_CryptoType_value)
 	proto.RegisterEnum("jesgoo.protocol.Event_Body_EventType", Event_Body_EventType_name, Event_Body_EventType_value)
 	proto.RegisterEnum("jesgoo.protocol.Event_Body_RedirectType", Event_Body_RedirectType_name, Event_Body_RedirectType_value)
+	proto.RegisterEnum("jesgoo.protocol.Event_Body_AdslotType", Event_Body_AdslotType_name, Event_Body_AdslotType_value)
 	proto.RegisterEnum("jesgoo.protocol.Material_Type", Material_Type_name, Material_Type_value)
 }
