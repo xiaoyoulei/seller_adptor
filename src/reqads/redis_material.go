@@ -42,6 +42,7 @@ func (this *ReqRedisModule) Init(golbal_conf *context.GlobalContext) (err error)
 func (this *ReqRedisModule) query(v []int64) (ans []interface{}, err error) {
 	var c redis.Conn
 	c = this.pool.Get()
+	defer c.Close()
 	var tv []interface{}
 	for i := 0; i < len(v); i++ {
 		tv = append(tv, interface{}(v[i]))
