@@ -2,6 +2,7 @@ package reqads
 
 import (
 	"context"
+	"math/rand"
 	"utils"
 )
 
@@ -46,7 +47,12 @@ func (this *ReqBsModule) strategy(inner_data *context.Context, bsflag *[]bool) (
 
 	switch inner_data.Req.AdSlot.AdSlotType {
 	case context.AdSlotType_BANNER:
-		(*bsflag)[0] = true
+		randx := rand.Int31n(100)
+		if randx < 10 {
+			(*bsflag)[1] = true
+		} else {
+			(*bsflag)[0] = true
+		}
 	case context.AdSlotType_INITIALIZATION:
 		(*bsflag)[0] = true
 	case context.AdSlotType_INSERT:
@@ -63,9 +69,12 @@ func (this *ReqBsModule) strategy(inner_data *context.Context, bsflag *[]bool) (
 
 func (this *ReqBsModule) Run(inner_data *context.Context) (err error) {
 	var bsflag []bool
+	var bsans []bool
 	bsflag = make([]bool, len(this.bsmodule))
+	bsans = make([]bool, len(this.bsmodule))
 	for i := 0; i < len(bsflag); i++ {
 		bsflag[i] = false
+		bsans[i] = true
 	}
 	var bschan []chan bool
 	bschan = make([]chan bool, len(this.bsmodule))
@@ -81,12 +90,39 @@ func (this *ReqBsModule) Run(inner_data *context.Context) (err error) {
 	for i := 0; i < len(bsflag); i++ {
 		if bsflag[i] == true {
 			go this.bsmodule[i].Run(inner_data, &bschan[i])
+			utils.DebugLog.Write("req bs[%d]", i)
 		}
 	}
 	for i := 0; i < len(bsflag); i++ {
 		if bsflag[i] == true {
 			utils.DebugLog.Write("waiting index[%d] chan", i)
-			<-bschan[i]
+			bsans[i] = <-bschan[i]
+		}
+	}
+	// 补余逻辑, 如果有bsans 为false的时候，说明有请求没有返回，则把所有bsflag 取反，用剩余的去补余
+	// 前提条件，所有的下游都支持相同的请求
+	var need_buyu bool
+	need_buyu = false
+	for i := 0; i < len(bsans); i++ {
+		if bsans[i] == false {
+			need_buyu = true
+		}
+	}
+	if need_buyu == true {
+		for i := 0; i < len(bsflag); i++ {
+			bsflag[i] = !bsflag[i]
+		}
+		for i := 0; i < len(bsflag); i++ {
+			if bsflag[i] == true {
+				go this.bsmodule[i].Run(inner_data, &bschan[i])
+				utils.DebugLog.Write("buyu req bs[%d]", i)
+			}
+		}
+		for i := 0; i < len(bsflag); i++ {
+			if bsflag[i] == true {
+				utils.DebugLog.Write("waiting index[%d] chan", i)
+				<-bschan[i]
+			}
 		}
 	}
 	return

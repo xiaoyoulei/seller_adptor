@@ -335,7 +335,11 @@ func (this *ReqQiushiModule) request(inner_data *context.Context, adtype AdType,
 
 func (this *ReqQiushiModule) Run(inner_data *context.Context, bschan *chan bool) {
 	defer func() {
-		*bschan <- true
+		if len(inner_data.BaiduAds) == 0 {
+			*bschan <- false
+		} else {
+			*bschan <- true
+		}
 		utils.DebugLog.Write("reqqiushi set chan")
 	}()
 	var req_flag [int(MaxAdType)]bool

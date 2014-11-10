@@ -74,7 +74,7 @@ func run() {
 	adslot.Id = new(string)
 	*adslot.Id = "123"
 	adslot.Type = new(jesgoo_interface.AdSlotType)
-	*adslot.Type = jesgoo_interface.AdSlotType_INTERSTITIAL
+	*adslot.Type = jesgoo_interface.AdSlotType_BANNER
 	adslot.Size = new(jesgoo_interface.Size)
 	adslot.Size.Width = new(uint32)
 	*adslot.Size.Width = 0

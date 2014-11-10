@@ -243,7 +243,11 @@ func (this *ReqJesgooModule) ReqBs(inner_data *context.Context, ret_ads *[]conte
 
 func (this *ReqJesgooModule) Run(inner_data *context.Context, bschan *chan bool) {
 	defer func() {
-		*bschan <- true
+		if len(inner_data.JesgooAds) == 0 {
+			*bschan <- false
+		} else {
+			*bschan <- true
+		}
 	}()
 
 	ch := make(chan bool)
