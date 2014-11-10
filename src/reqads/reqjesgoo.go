@@ -233,10 +233,14 @@ func (this *ReqJesgooModule) ReqBs(inner_data *context.Context, ret_ads *[]conte
 	}
 	this.pool.Put(client)
 	this.parse_resp(ret_ads, bs_resp, adtype)
-	err = this.redis.GetMaterial(ret_ads)
-	if err != nil {
-		utils.WarningLog.Write("get jesgoo material fail. err[%s]", err.Error())
-		return
+	if len(*ret_ads) > 0 {
+		err = this.redis.GetMaterial(ret_ads)
+		if err != nil {
+			utils.WarningLog.Write("get jesgoo material fail. err[%s]", err.Error())
+			return
+		}
+	} else {
+		utils.WarningLog.Write("jesgoo bs return ad num is 0")
 	}
 	return
 }
