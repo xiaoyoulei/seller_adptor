@@ -63,6 +63,11 @@ func (this *PrePackModule) geniconhtml(ad *context.AdInfo, inner_data *context.C
 	}
 	return
 }
+
+func (this *PrePackModule) gendownloadurl(ad *context.AdInfo, inner_data *context.Context) (durl string, err error) {
+
+	return
+}
 func (this *PrePackModule) gencurl(ad *context.AdInfo, inner_data *context.Context) (curl string, err error) {
 	var event_head jesgoo_protocol.Event_Head
 	event_head.CryptoType = new(jesgoo_protocol.Event_Head_CryptoType)
