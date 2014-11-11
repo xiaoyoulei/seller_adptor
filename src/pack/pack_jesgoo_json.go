@@ -28,7 +28,7 @@ type NativeMaterial struct {
 	Logo_url           string
 	Click_url          string
 	Impression_log_url []string
-	Appname            string
+	AppName            string
 	Package            string
 }
 
@@ -77,7 +77,7 @@ func (this *PackJesgooResponseJsonModule) pack_native_ad(ad *Ad, inner_ad *conte
 	for i := 0; i < len(inner_ad.ImpressionUrl); i++ {
 		admaterial.Impression_log_url = append(admaterial.Impression_log_url, inner_ad.ImpressionUrl[i])
 	}
-	admaterial.Appname = inner_ad.Appname
+	admaterial.AppName = inner_ad.Appname
 	admaterial.Package = inner_ad.Package
 	utils.DebugLog.Write("fill kaiping ad success")
 	return
