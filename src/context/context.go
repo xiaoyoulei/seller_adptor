@@ -173,7 +173,13 @@ type AdInfo struct {
 	DspMediaid      string
 	DspChannelid    string
 	MaterialReady   bool
+
+	// just for app
+	DownloadUrl string
+	ActionUrl   string
+	InstallUrl  string
 }
+
 type InnerResp struct {
 	Ads []AdInfo
 }
@@ -213,8 +219,9 @@ type GlobalContext struct {
 		Timeout int
 	}
 	Prepack struct {
-		ClickHeader string
-		WinHeader   string
+		ClickHeader  string
+		WinHeader    string
+		CommonHeader string
 	}
 	Dict struct {
 		IPDictPath string

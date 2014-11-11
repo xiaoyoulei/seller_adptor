@@ -617,6 +617,8 @@ const (
 	Event_Body_CLICK      Event_Body_EventType = 0
 	Event_Body_IMPRESSION Event_Body_EventType = 1
 	Event_Body_ACTIVATION Event_Body_EventType = 2
+	Event_Body_DOWNLOAD   Event_Body_EventType = 3
+	Event_Body_INSTALL    Event_Body_EventType = 4
 	// SDK监控事件范围 10 ~ 29
 	Event_Body_INSTALL_PACKAGES Event_Body_EventType = 10
 )
@@ -625,12 +627,16 @@ var Event_Body_EventType_name = map[int32]string{
 	0:  "CLICK",
 	1:  "IMPRESSION",
 	2:  "ACTIVATION",
+	3:  "DOWNLOAD",
+	4:  "INSTALL",
 	10: "INSTALL_PACKAGES",
 }
 var Event_Body_EventType_value = map[string]int32{
 	"CLICK":            0,
 	"IMPRESSION":       1,
 	"ACTIVATION":       2,
+	"DOWNLOAD":         3,
+	"INSTALL":          4,
 	"INSTALL_PACKAGES": 10,
 }
 
@@ -720,48 +726,6 @@ func (x *Event_Body_AdslotType) UnmarshalJSON(data []byte) error {
 		return err
 	}
 	*x = Event_Body_AdslotType(value)
-	return nil
-}
-
-type Material_Type int32
-
-const (
-	Material_TEXT      Material_Type = 1
-	Material_ICON_TEXT Material_Type = 2
-	Material_IMAGE     Material_Type = 3
-	Material_SMART_AD  Material_Type = 4
-	Material_VIDEO     Material_Type = 5
-)
-
-var Material_Type_name = map[int32]string{
-	1: "TEXT",
-	2: "ICON_TEXT",
-	3: "IMAGE",
-	4: "SMART_AD",
-	5: "VIDEO",
-}
-var Material_Type_value = map[string]int32{
-	"TEXT":      1,
-	"ICON_TEXT": 2,
-	"IMAGE":     3,
-	"SMART_AD":  4,
-	"VIDEO":     5,
-}
-
-func (x Material_Type) Enum() *Material_Type {
-	p := new(Material_Type)
-	*p = x
-	return p
-}
-func (x Material_Type) String() string {
-	return proto.EnumName(Material_Type_name, int32(x))
-}
-func (x *Material_Type) UnmarshalJSON(data []byte) error {
-	value, err := proto.UnmarshalJSONEnum(Material_Type_value, data, "Material_Type")
-	if err != nil {
-		return err
-	}
-	*x = Material_Type(value)
 	return nil
 }
 
@@ -1756,7 +1720,7 @@ func (m *Event_Body_App) GetVersion() *Version {
 
 type Material struct {
 	Id               *uint32         `protobuf:"varint,1,req,name=id" json:"id,omitempty"`
-	Type             *Material_Type  `protobuf:"varint,2,req,name=type,enum=jesgoo.protocol.Material_Type" json:"type,omitempty"`
+	Type             *AdStyle        `protobuf:"varint,2,req,name=type,enum=jesgoo.protocol.AdStyle" json:"type,omitempty"`
 	Title            *string         `protobuf:"bytes,3,opt,name=title" json:"title,omitempty"`
 	Description      *string         `protobuf:"bytes,4,opt,name=description" json:"description,omitempty"`
 	Image            *Material_Image `protobuf:"bytes,5,opt,name=image" json:"image,omitempty"`
@@ -1764,6 +1728,7 @@ type Material struct {
 	ShowUrl          *string         `protobuf:"bytes,7,opt,name=show_url" json:"show_url,omitempty"`
 	App              *Material_App   `protobuf:"bytes,8,opt,name=app" json:"app,omitempty"`
 	LongDescription  *string         `protobuf:"bytes,9,opt,name=long_description" json:"long_description,omitempty"`
+	PromotionType    *PromotionType  `protobuf:"varint,10,opt,name=promotion_type,enum=jesgoo.protocol.PromotionType" json:"promotion_type,omitempty"`
 	XXX_unrecognized []byte          `json:"-"`
 }
 
@@ -1778,11 +1743,11 @@ func (m *Material) GetId() uint32 {
 	return 0
 }
 
-func (m *Material) GetType() Material_Type {
+func (m *Material) GetType() AdStyle {
 	if m != nil && m.Type != nil {
 		return *m.Type
 	}
-	return Material_TEXT
+	return AdStyle_TEXT
 }
 
 func (m *Material) GetTitle() string {
@@ -1832,6 +1797,13 @@ func (m *Material) GetLongDescription() string {
 		return *m.LongDescription
 	}
 	return ""
+}
+
+func (m *Material) GetPromotionType() PromotionType {
+	if m != nil && m.PromotionType != nil {
+		return *m.PromotionType
+	}
+	return PromotionType_NOACTION
 }
 
 type Material_Image struct {
@@ -2012,5 +1984,4 @@ func init() {
 	proto.RegisterEnum("jesgoo.protocol.Event_Body_EventType", Event_Body_EventType_name, Event_Body_EventType_value)
 	proto.RegisterEnum("jesgoo.protocol.Event_Body_RedirectType", Event_Body_RedirectType_name, Event_Body_RedirectType_value)
 	proto.RegisterEnum("jesgoo.protocol.Event_Body_AdslotType", Event_Body_AdslotType_name, Event_Body_AdslotType_value)
-	proto.RegisterEnum("jesgoo.protocol.Material_Type", Material_Type_name, Material_Type_value)
 }
