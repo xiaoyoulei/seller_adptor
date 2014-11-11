@@ -1,0 +1,134 @@
+<style>
+       div,body {
+            padding: 0;
+            margin: 0;
+            border: 0;
+        }
+        /* 广告容器 */
+        .mobads-ad-container {
+            font-size: 20px;
+            /*width: 300px;
+              height: 250px;*/
+
+            width: 100%;
+            height: 100%;
+            overflow: hidden;
+            text-shadow: none;
+        }
+
+        .mobads-ad-wrapper {
+            width: 100%;
+            height: 100%;
+            position: absolute;
+            overflow: hidden;
+        }
+        /* 正常广告样式 */
+        .mobads-ad {
+            position: absolute;
+            width: 100%;
+            height: 100%;
+            background: dimgray;
+            background: -webkit-gradient(linear, left top, left bottom, from(#7f7f7f), to(#424242));
+            border: 0.1em solid #c4c4c4;
+            -moz-box-sizing: border-box;
+            -webkit-box-sizing: border-box;
+            -o-box-sizing: border-box;
+            -ms-box-sizing: border-box;
+            box-sizing: border-box;
+            cursor: pointer;
+            bottom: 0;
+        }
+
+        .mobads-ad-icon {
+            position: absolute;
+            border: none;
+            width: 3.8em;
+            height: 3.8em;
+            left: 1em;
+            top: 0.4em;
+            -webkit-border-radius: 0.5em;
+            border-radius: 0.5em;
+            display: block;
+        }
+
+        .mobads-ad-content {
+            position: absolute;
+            color: white;
+            text-align: left;
+            width: 100%;
+            padding: 0.2em 0.8em;
+            font-size: 120%;
+            -moz-box-sizing: border-box;
+            -webkit-box-sizing: border-box;
+            -o-box-sizing: border-box;
+            -ms-box-sizing: border-box;
+            box-sizing: border-box;
+            text-decoration: none;
+        }
+
+        .mobads-ad-content .highlight {
+            color: #FFD326;
+        }
+
+        .mobads-ad-title,
+        .mobads-ad-desc {
+            white-space: nowrap;
+            overflow: hidden;
+        }
+
+        .mobads-ad-title {
+            font-size: 110%;
+            line-height: 1.364em;
+            height: 1.364em;
+            color: white;
+            text-decoration: underline;
+        }
+
+        .mobads-ad.text .mobads-ad-title {
+            font-size: 150%;
+        }
+
+        .mobads-ad-desc {
+            line-height: 1.5em;
+            height: 1.5em;
+            color: #dedede;
+        }
+    </style>
+    <div id="unique-id-container" class="mobads-ad-container">
+        <div class="mobads-ad-wrapper">
+            <div class="mobads-ad text"  style="box-sizing:border-box; padding-left:4.8em;">
+            <div class="mobads-ad-icon"><img src={{.LogoUrl}} style="width:100%;height:100%;"/></div>
+            <a target="_top" class="mobads-ad-content" style="text-decoration: none;" href={{.ClickUrl}} extra="{'act':{{.InteractionType}},'pkg':'{{.Package}}','title':'{{.Appname}}','adid':'{{.Adid}}'}"> 
+                    <div class="mobads-ad-title"><span class="highlight">{{.Title}}</span></div>
+                    <div class="mobads-ad-desc">{{.Description1}}</div>
+                </a>
+            </div>
+            {{range .ImpressionUrl}}
+            <img src={{.}} style="display:none">
+            {{end}}
+        </div>
+    </div>
+    <script>
+        var containerId = 'unique-id-container';
+        var resetSize = function () {
+            var containerEle = document.getElementById(containerId);
+            var win = window;
+            var winW = win.innerWidth;
+            var winH = win.innerHeight;
+            var fzW, fzH;
+            if (winW / winH < 5 / 2) {
+                fzW = winW / 300 * 20;
+                // fzH = winH / 250 * 20;
+                fzH = 1000;
+            }
+            else {
+                // fzW = winW / 640 * 20;
+                fzW = 1000;
+                fzH = winH / 96 * 20;
+            }
+            var fz = fzW > fzH ? fzH : fzW;
+
+            containerEle.style.fontSize = fz + 'px';
+        };
+        resetSize();
+    </script>
