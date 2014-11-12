@@ -46,7 +46,8 @@ type Network struct {
 	CellularId       int
 }
 type Client struct {
-	Type int
+	Type    int
+	Version Version
 }
 
 type Size struct {
@@ -99,6 +100,30 @@ func (this *ParseJesgooJsonRequestModule) parse(inner_data *context.Context) (er
 		inner_media.MediaType = context.MediaType_WAP
 	}
 	//	inner_media.App.PackageName = temp_req.Media.App.Package_name
+
+	//client
+	inner_client := &inner_data.Req.Client
+	temp_req_client := &temp_req.Client
+	if temp_req_client == nil {
+		utils.DebugLog.Write("request has no client info")
+		inner_client.Type = context.ClientType_OPENAPI
+	} else {
+		switch temp_req_client.Type {
+		case 1:
+			inner_client.Type = context.ClientType_NATIVESDK
+		case 2:
+			inner_client.Type = context.ClientType_JSSDK
+		case 3:
+			inner_client.Type = context.ClientType_OPENAPI
+		default:
+			inner_client.Type = context.ClientType_OPENAPI
+		}
+		inner_client.Version.Major = temp_req_client.Version.Major
+		inner_client.Version.Minor = temp_req_client.Version.Minor
+		inner_client.Version.Micro = temp_req_client.Version.Micro
+		inner_client.Version.Build = temp_req_client.Version.Build
+		utils.DebugLog.Write("Major is %d", inner_client.Version.Major)
+	}
 
 	//device
 	inner_device := &inner_data.Req.Device

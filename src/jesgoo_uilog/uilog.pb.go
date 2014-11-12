@@ -17,6 +17,7 @@ It has these top-level messages:
 	Version
 	DeviceId
 	Device
+	Client
 	AdInfo
 	AdDspRet
 	NoticeLogBody
@@ -348,6 +349,42 @@ func (x *InteractionType) UnmarshalJSON(data []byte) error {
 	return nil
 }
 
+type ClientType int32
+
+const (
+	ClientType_NATIVESDK ClientType = 1
+	ClientType_JSSDK     ClientType = 2
+	ClientType_OPENAPI   ClientType = 3
+)
+
+var ClientType_name = map[int32]string{
+	1: "NATIVESDK",
+	2: "JSSDK",
+	3: "OPENAPI",
+}
+var ClientType_value = map[string]int32{
+	"NATIVESDK": 1,
+	"JSSDK":     2,
+	"OPENAPI":   3,
+}
+
+func (x ClientType) Enum() *ClientType {
+	p := new(ClientType)
+	*p = x
+	return p
+}
+func (x ClientType) String() string {
+	return proto.EnumName(ClientType_name, int32(x))
+}
+func (x *ClientType) UnmarshalJSON(data []byte) error {
+	value, err := proto.UnmarshalJSONEnum(ClientType_value, data, "ClientType")
+	if err != nil {
+		return err
+	}
+	*x = ClientType(value)
+	return nil
+}
+
 type AppInfo struct {
 	Packagename      *string `protobuf:"bytes,1,opt,name=packagename" json:"packagename,omitempty"`
 	XXX_unrecognized []byte  `json:"-"`
@@ -604,6 +641,30 @@ func (m *Device) GetModel() string {
 	return ""
 }
 
+type Client struct {
+	Type             *ClientType `protobuf:"varint,1,req,name=type,enum=jesgoo.uilog.ClientType" json:"type,omitempty"`
+	Version          *Version    `protobuf:"bytes,2,opt,name=version" json:"version,omitempty"`
+	XXX_unrecognized []byte      `json:"-"`
+}
+
+func (m *Client) Reset()         { *m = Client{} }
+func (m *Client) String() string { return proto.CompactTextString(m) }
+func (*Client) ProtoMessage()    {}
+
+func (m *Client) GetType() ClientType {
+	if m != nil && m.Type != nil {
+		return *m.Type
+	}
+	return ClientType_NATIVESDK
+}
+
+func (m *Client) GetVersion() *Version {
+	if m != nil {
+		return m.Version
+	}
+	return nil
+}
+
 type AdInfo struct {
 	Type             *AdType          `protobuf:"varint,1,req,name=type,enum=jesgoo.uilog.AdType" json:"type,omitempty"`
 	Src              *AdSrc           `protobuf:"varint,2,req,name=src,enum=jesgoo.uilog.AdSrc" json:"src,omitempty"`
@@ -733,6 +794,7 @@ type NoticeLogBody struct {
 	Ads              []*AdInfo   `protobuf:"bytes,6,rep,name=ads" json:"ads,omitempty"`
 	Dspret           []*AdDspRet `protobuf:"bytes,7,rep,name=dspret" json:"dspret,omitempty"`
 	Debug            *bool       `protobuf:"varint,8,opt,name=debug" json:"debug,omitempty"`
+	Client           *Client     `protobuf:"bytes,9,opt,name=client" json:"client,omitempty"`
 	XXX_unrecognized []byte      `json:"-"`
 }
 
@@ -796,6 +858,13 @@ func (m *NoticeLogBody) GetDebug() bool {
 	return false
 }
 
+func (m *NoticeLogBody) GetClient() *Client {
+	if m != nil {
+		return m.Client
+	}
+	return nil
+}
+
 func init() {
 	proto.RegisterEnum("jesgoo.uilog.MediaType", MediaType_name, MediaType_value)
 	proto.RegisterEnum("jesgoo.uilog.AdslotType", AdslotType_name, AdslotType_value)
@@ -805,4 +874,5 @@ func init() {
 	proto.RegisterEnum("jesgoo.uilog.AdType", AdType_name, AdType_value)
 	proto.RegisterEnum("jesgoo.uilog.AdSrc", AdSrc_name, AdSrc_value)
 	proto.RegisterEnum("jesgoo.uilog.InteractionType", InteractionType_name, InteractionType_value)
+	proto.RegisterEnum("jesgoo.uilog.ClientType", ClientType_name, ClientType_value)
 }

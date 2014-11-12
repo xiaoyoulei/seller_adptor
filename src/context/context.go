@@ -105,11 +105,24 @@ type LocationInfo struct {
 	Province uint32
 	City     uint32
 }
+type ClientType int64
+
+const (
+	ClientType_NATIVESDK ClientType = 1
+	ClientType_JSSDK     ClientType = 2
+	ClientType_OPENAPI   ClientType = 3
+)
+
+type Client struct {
+	Type    ClientType
+	Version Version
+}
 type InnerReq struct {
 	Media    MediaInfo
 	AdSlot   AdSlotInfo
 	Network  NetworkInfo
 	Device   Device
+	Client   Client
 	Location LocationInfo
 	Debug    bool
 }

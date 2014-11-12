@@ -47,6 +47,27 @@ func (this *SearchLogModule) fill_notice(noticelog *jesgoo_uilog.NoticeLogBody, 
 	media.App.Packagename = new(string)
 	*media.App.Packagename = inner_data.Req.Media.App.PackageName
 
+	//client
+	noticelog.Client = new(jesgoo_uilog.Client)
+	client := noticelog.Client
+	client.Type = new(jesgoo_uilog.ClientType)
+	inner_client := &inner_data.Req.Client
+	switch inner_client.Type {
+	case context.ClientType_NATIVESDK:
+		*client.Type = jesgoo_uilog.ClientType_NATIVESDK
+	case context.ClientType_JSSDK:
+		*client.Type = jesgoo_uilog.ClientType_JSSDK
+	case context.ClientType_OPENAPI:
+		*client.Type = jesgoo_uilog.ClientType_OPENAPI
+	}
+	client.Version = new(jesgoo_uilog.Version)
+	client.Version.Major = new(uint32)
+	*client.Version.Major = inner_client.Version.Major
+	client.Version.Micro = new(uint32)
+	*client.Version.Micro = inner_client.Version.Micro
+	client.Version.Minor = new(uint32)
+	*client.Version.Minor = inner_client.Version.Minor
+
 	//adslot
 	noticelog.Adslot = make([]*jesgoo_uilog.Adslot, 0)
 	var adslot *jesgoo_uilog.Adslot

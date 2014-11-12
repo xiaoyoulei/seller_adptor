@@ -2,7 +2,7 @@ package reqads
 
 import (
 	"context"
-	"math/rand"
+	//	"math/rand"
 	"utils"
 )
 
@@ -47,12 +47,7 @@ func (this *ReqBsModule) strategy(inner_data *context.Context, bsflag *[]bool) (
 
 	switch inner_data.Req.AdSlot.AdSlotType {
 	case context.AdSlotType_BANNER:
-		randx := rand.Int31n(100)
-		if randx < 10 {
-			(*bsflag)[1] = true
-		} else {
-			(*bsflag)[0] = true
-		}
+		(*bsflag)[0] = true
 	case context.AdSlotType_INITIALIZATION:
 		(*bsflag)[0] = true
 	case context.AdSlotType_INSERT:
