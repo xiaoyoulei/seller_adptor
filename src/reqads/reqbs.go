@@ -104,7 +104,7 @@ func (this *ReqBsModule) Run(inner_data *context.Context) (err error) {
 		}
 	}
 	if need_buyu == true {
-		utils.WarningLog.Write("buyu open, appsid[%s], channelid[%s]", inner_data.Req.Media.Appsid, inner_data.Req.Media.ChannelId)
+		utils.WarningLog.Write("buyu open, appsid[%s], channelid[%s] qiushi[%d] jesgoo[%d]", inner_data.Req.Media.Appsid, inner_data.Req.Media.ChannelId, bsflag[0], bsflag[1])
 		for i := 0; i < len(bsflag); i++ {
 			bsflag[i] = !bsflag[i]
 		}
