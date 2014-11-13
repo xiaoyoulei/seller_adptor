@@ -38,11 +38,12 @@ func (this *ConnPool) Get() (c interface{}, err error) {
 			return
 		}
 		this.active += 1
+		this.mu.Unlock()
 	} else {
 		findflag := false
 		for this.idle.Len() > 0 {
 			c = this.idle.Front().Value
-			this.idle.Remove(this.idle.Back())
+			this.idle.Remove(this.idle.Front())
 			utils.DebugLog.Write("get a interface GET type[%s]", reflect.TypeOf(c))
 			this.mu.Unlock()
 			isconn := this.Alive(c)
@@ -57,10 +58,10 @@ func (this *ConnPool) Get() (c interface{}, err error) {
 				break
 			}
 		}
+		this.mu.Unlock()
 		if findflag == false {
 			c, err = this.Dial()
 			if err != nil {
-				this.mu.Unlock()
 				utils.WarningLog.Write("create a new conn fail . err[%s]", err.Error())
 				return
 			} else {
@@ -68,8 +69,6 @@ func (this *ConnPool) Get() (c interface{}, err error) {
 			}
 		}
 	}
-
-	this.mu.Unlock()
 	return
 }
 
