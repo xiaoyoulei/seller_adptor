@@ -33,6 +33,7 @@ func (this *ConnPool) Get() (c interface{}, err error) {
 		utils.DebugLog.Write("create a new conn, now active[%d]", this.active)
 		c, err = this.Dial()
 		if err != nil {
+			utils.WarningLog.Write("create a new conn fail . err[%s]", err.Error())
 			this.mu.Unlock()
 			return
 		}
@@ -59,6 +60,8 @@ func (this *ConnPool) Get() (c interface{}, err error) {
 		if findflag == false {
 			c, err = this.Dial()
 			if err != nil {
+				this.mu.Unlock()
+				utils.WarningLog.Write("create a new conn fail . err[%s]", err.Error())
 				return
 			} else {
 				utils.DebugLog.Write("create a new conn. active[%d]", this.active)

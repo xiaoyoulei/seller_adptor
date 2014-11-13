@@ -27,7 +27,7 @@ func main() {
 		fmt.Printf("convert args fail . err[%s]\n", err.Error())
 	}
 	for i := 0; i < coutn; i++ {
-		time.Sleep(time.Millisecond * 1)
+		time.Sleep(time.Millisecond * 100)
 		w.Add(1)
 		go run()
 	}
@@ -74,7 +74,7 @@ func run() {
 	adslot.Id = new(string)
 	*adslot.Id = "123"
 	adslot.Type = new(jesgoo_interface.AdSlotType)
-	*adslot.Type = jesgoo_interface.AdSlotType_BANNER
+	*adslot.Type = jesgoo_interface.AdSlotType_RECOMMEND
 	adslot.Size = new(jesgoo_interface.Size)
 	adslot.Size.Width = new(uint32)
 	*adslot.Size.Width = 0
