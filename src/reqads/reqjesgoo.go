@@ -179,7 +179,7 @@ func (this *ReqJesgooModule) convert_resp_ad(inad *context.AdInfo, bsad *ui2bs.A
 
 	inad.Adid = bsad.Adid
 	inad.Groupid = bsad.Groupid
-	inad.Planid = bsad.Groupid
+	inad.Planid = bsad.Planid
 	inad.Userid = bsad.Userid
 	inad.Bid = bsad.Bid
 	inad.Price = 0
